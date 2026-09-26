@@ -69,7 +69,7 @@ function patchHelper(src,label){
   log(s===src?"no destructive pattern":"patched helper",label);
   return s;
 }
-const guard = String.raw\`(() => {
+const guard = String.raw`(() => {
   if (window.__NUVEXA_ROUTE_GUARD_V3__) return;
   window.__NUVEXA_ROUTE_GUARD_V3__ = true;
   const st={root:null,last:[],timer:null,lastError:""};
@@ -88,7 +88,7 @@ const guard = String.raw\`(() => {
   const ps=history.pushState.bind(history);history.pushState=function(){remember();const v=ps.apply(history,arguments);schedule("页面切换未完成。",1600);return v;};
   const rs=history.replaceState.bind(history);history.replaceState=function(){remember();const v=rs.apply(history,arguments);schedule("页面切换未完成。",1600);return v;};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",watch,{once:true});else watch();
-})();\`;
+})();`;
 function patchIndex(html){
   let s=html.replace(/\sclass=["'][^"']*\bnuvexa-boot\b[^"']*["']/i,"");
   s=s.replace(/<script[^>]+src=["']\.\/assets\/ui-enhancements\.js["'][^>]*><\/script>\s*/gi,"");
