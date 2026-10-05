@@ -1,0 +1,130 @@
+.trendWrap,
+.candleWrap {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dataStrip,
+.ohlc {
+  display: grid;
+  gap: 1px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 1px solid #e1e7ef;
+  border-radius: 5px;
+  background: #e5ebf2;
+}
+
+.dataStrip {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ohlc {
+  grid-template-columns: repeat(9, 1fr);
+}
+
+.dataStrip > div,
+.ohlc > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding: 7px 8px;
+  background: linear-gradient(180deg, #fbfcfe, #f6f9fc);
+}
+
+.dataStrip span,
+.ohlc span {
+  font-size: 8px;
+  color: #8390a2;
+  letter-spacing: .01em;
+}
+
+.dataStrip strong,
+.ohlc strong {
+  overflow: hidden;
+  font-family: var(--font-family-monospace);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.svgBox {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 4px;
+  background:
+    linear-gradient(rgba(20, 50, 88, .018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 50, 88, .018) 1px, transparent 1px),
+    #fcfdff;
+  background-size: 28px 28px;
+}
+
+.svgBox svg {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  overflow: visible;
+}
+
+.hit {
+  cursor: crosshair;
+}
+
+.axisText {
+  fill: #8390a2;
+  font-family: var(--font-family-monospace);
+  font-size: 8px;
+}
+
+.chartHint {
+  margin-top: 3px;
+  color: #8794a5;
+  font-size: 8px;
+  text-align: right;
+}
+
+.up {
+  color: #159667 !important;
+}
+
+.down {
+  color: #dc4a53 !important;
+}
+
+@media (min-width: 1800px) {
+  .dataStrip span,
+  .ohlc span {
+    font-size: 9px;
+  }
+
+  .dataStrip strong,
+  .ohlc strong {
+    font-size: 11px;
+  }
+
+  .axisText,
+  .chartHint {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .ohlc {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .ohlc {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dataStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+  130
