@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Overlay layers */
+  --z-overlay: 400;
+
+  --z-spotlight: 1000; /* Tutorial spotlights/guided help */
+
+  /* System layers */
+  --z-critical: 2000; /* Critical system notifications */
+
+  /* spacing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+}
+
+:root {
+  --background: #e9eef5;
+  --foreground: #142033;
+  --surface: #f7f9fc;
+  --surface-foreground: #142033;
+  --sidebar: #061b38;
+  --sidebar-foreground: #dbe8ff;
+  --card: #ffffff;
+  --card-foreground: #142033;
+  --popup: #ffffff;
+  --popup-foreground: #142033;
+  --primary: #0f6eea;
+  --primary-foreground: #ffffff;
+  --secondary: #eef3fa;
+  --secondary-foreground: #21324a;
+  --accent: #0f6eea;
+  --accent-foreground: #ffffff;
+  --muted: #f0f3f8;
+  --muted-foreground: #66738a;
+  --success: #12a06a;
+  --success-foreground: #ffffff;
+  --error: #e5484d;
+  --error-foreground: #ffffff;
+  --warning: #d99822;
+  --warning-foreground: #ffffff;
+  --info: #0f6eea;
+  --info-foreground: #ffffff;
+  --info-hover: #0b5fd0;
+  --info-active: #084fae;
+  --border: #d9e1ec;
+  --font-family-base: 'IBM Plex Sans', sans-serif;
+  --font-family-display: 'IBM Plex Sans', sans-serif;
+  --font-family-monospace: 'IBM Plex Mono', monospace;
+  --font-family-cursive: 'IBM Plex Sans', sans-serif;
+  --shadow: 0 1px 2px rgba(14, 30, 55, 0.06);
+  --shadow-md: 0 8px 24px rgba(14, 30, 55, 0.10);
+  --shadow-lg: 0 24px 70px rgba(14, 30, 55, 0.18);
+  --shadow-focus: 0 0 0 3px rgba(15, 110, 234, 0.18);
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+  --animation-duration-fast: 120ms;
+  --animation-duration-normal: 200ms;
+  --animation-duration-slow: 320ms;
+  --chart-color-1: #0f6eea;
+  --chart-color-2: #12a06a;
+  --chart-color-3: #e5484d;
+  --chart-color-4: #d99822;
+  --chart-color-5: #6d5bd0;
+}
+
+.dark {
+  --background: #071426;
+  --foreground: #edf4ff;
+  --surface: #0b1b31;
+  --surface-foreground: #edf4ff;
+  --sidebar: #040e1d;
+  --sidebar-foreground: #dbe8ff;
+  --card: #10213a;
+  --card-foreground: #edf4ff;
+  --popup: #10213a;
+  --popup-foreground: #edf4ff;
+  --primary: #4e9cff;
+  --primary-foreground: #071426;
+  --secondary: #172944;
+  --secondary-foreground: #edf4ff;
+  --accent: #4e9cff;
+  --accent-foreground: #071426;
+  --muted: #15263f;
+  --muted-foreground: #9eb0c9;
+  --success: #37c98b;
+  --success-foreground: #071426;
+  --error: #ff6b71;
+  --error-foreground: #071426;
+  --warning: #f4b942;
+  --warning-foreground: #071426;
+  --info: #4e9cff;
+  --info-foreground: #071426;
+  --info-hover: #6eaeff;
+  --info-active: #3389ee;
+  --border: #203651;
+  --chart-color-1: #4e9cff;
+  --chart-color-2: #37c98b;
+  --chart-color-3: #ff6b71;
+  --chart-color-4: #f4b942;
+  --chart-color-5: #a997ff;
+}
