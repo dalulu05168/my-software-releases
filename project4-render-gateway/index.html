@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#f4f4f2" />
+  <title>Visionary Financial System</title>
+  <style>
+    html,body,#app{width:100%;height:100%;margin:0;background:#f4f4f2;overflow:hidden}
+    *{box-sizing:border-box}
+    #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      font:500 14px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:#343434;background:linear-gradient(135deg,#f8f8f7,#ececeb);z-index:2}
+    iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;z-index:1}
+    .fallback{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      z-index:3;font:12px system-ui;color:#666;background:rgba(255,255,255,.9);
+      padding:7px 10px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);display:none}
+  </style>
+</head>
+<body>
+  <div id="loading">正在进入系统…</div>
+  <iframe id="platform" title="Visionary Financial System"
+    allow="clipboard-read; clipboard-write"
+    referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  <div id="fallback" class="fallback">页面加载异常，请刷新后重试。</div>
+  <script>
+    (function(){
+      var host=(location.hostname||"").toLowerCase();
+      var isAdmin=host==="admin.nuvexapro.com" ||
+        new URLSearchParams(location.search).get("portal")==="admin";
+      var src="https://jiaoyipingtai-app.floot.app/" + (isAdmin ? "?portal=admin" : "");
+      var frame=document.getElementById("platform");
+      var loading=document.getElementById("loading");
+      var fallback=document.getElementById("fallback");
+      frame.src=src;
+      frame.addEventListener("load",function(){
+        loading.style.display="none";
+      });
+      setTimeout(function(){
+        if(loading.style.display!=="none"){
+          fallback.style.display="block";
+        }
+      },12000);
+    })();
+  </script>
+</body>
+</html>
