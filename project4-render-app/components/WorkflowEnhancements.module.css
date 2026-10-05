@@ -1,0 +1,112 @@
+.proofDetail {
+  margin: -8px 16px 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid #dfe6ef;
+  border-radius: 4px;
+  background: #dfe6ef;
+}
+
+.proofDetail > div {
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  background: #ffffff;
+}
+
+.proofDetail span {
+  color: #8591a1;
+  font-size: 8px;
+}
+
+.proofDetail strong {
+  font-family: var(--font-family-monospace);
+  font-size: 9px;
+}
+
+.marketFilter {
+  display: flex;
+  gap: 3px;
+  padding: 2px;
+  border: 1px solid #d8e0ea;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.marketFilter button {
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #728095;
+  font: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.marketFilterActive {
+  background: #1269df !important;
+  color: #ffffff !important;
+}
+
+.savedMessage,
+.successMessage {
+  grid-column: 1 / -1;
+  padding: 8px 10px;
+  border: 1px solid #bfe8d8;
+  border-radius: 4px;
+  background: #edf9f4;
+  color: #167d5a;
+  font-size: 9px;
+}
+
+.inlineBankForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.inlineBankForm input {
+  height: 36px;
+  padding: 0 9px;
+  border: 1px solid #d6dee9;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 9px;
+}
+
+.inlineBankForm button {
+  height: 36px;
+}
+
+.riskNotice {
+  padding: 9px 11px;
+  border: 1px solid #f0d3a7;
+  border-radius: 4px;
+  background: #fff8ec;
+  color: #8a5b15;
+  font-size: 9px;
+}
+
+@media (min-width: 1900px) {
+  .proofDetail span,
+  .marketFilter button,
+  .savedMessage,
+  .successMessage,
+  .inlineBankForm input {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 720px) {
+  .proofDetail {
+    grid-template-columns: 1fr;
+  }
+
+  .inlineBankForm {
+    grid-template-columns: 1fr;
+  }
+}
