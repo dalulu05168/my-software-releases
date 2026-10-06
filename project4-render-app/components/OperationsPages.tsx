@@ -74,6 +74,20 @@ const opsAccountsSeed = [
   { id: "OPS-MIX-03", name: "Cross Market 03", manager: "Lucía Torres", markets: "US + MX", clients: 198, status: "暂停", invite: "MX2L7D" },
 ];
 
+
+function roOpsStatus(value: string) {
+  const map: Record<string,string> = {
+    "已上架":"Activ","已暂停":"Suspendat","已结束":"Închis","待审核":"În așteptarea verificării",
+    "已通过":"Aprobat","已拒绝":"Respins","待分配":"În așteptarea alocării","已分配":"Alocat",
+    "已联系":"Contactat","已确认":"Confirmat"
+  };
+  return map[value] || value;
+}
+function roProductType(value: string) {
+  const map: Record<string,string> = {"大宗":"Tranzacții în bloc","IPO":"IPO","基金":"Fonduri"};
+  return map[value] || value;
+}
+
 function Status({ value }: { value: string }) {
   const tone =
     value.includes("通过") || value.includes("确认") || value.includes("上架") || value === "启用"
@@ -116,8 +130,8 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
     <div className={styles.stack}>
       <div className={styles.header}>
         <div>
-          <h1>{role === "master" ? "产品管理" : role === "ops" ? "产品运营" : "产品中心"}</h1>
-          <p>{role === "master" ? "大宗、IPO 与基金项目统一配置和状态管理" : role === "ops" ? "查看当前开放项目、客户范围与运营状态" : "查看当前可参与的大宗、IPO 与基金项目"}</p>
+          <h1>{role === "master" ? "产品管理" : role === "ops" ? "产品运营" : "Produse de investiții"}</h1>
+          <p>{role === "master" ? "大宗、IPO 与基金项目统一配置和状态管理" : role === "ops" ? "查看当前开放项目、客户范围与运营状态" : "Consultați oportunitățile disponibile pentru tranzacții în bloc, IPO și fonduri"}</p>
         </div>
         {role === "master" ? <button className={styles.primary} onClick={() => setCreatingProduct(true)}><Layers3 size={15} /> 创建产品</button> : null}
       </div>
@@ -131,25 +145,25 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
       </div>
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>产品编号</th><th>产品</th><th>证券</th><th>市场</th><th>核心参数</th><th>开放时间</th><th>状态</th><th>操作</th></tr></thead>
+          <thead><tr><th>{role === "client" ? "Nr. produs" : "产品编号"}</th><th>{role === "client" ? "Produs" : "产品"}</th><th>{role === "client" ? "Instrument" : "证券"}</th><th>{role === "client" ? "Piață" : "市场"}</th><th>{role === "client" ? "Condiții" : "核心参数"}</th><th>{role === "client" ? "Perioadă" : "开放时间"}</th><th>{role === "client" ? "Stare" : "状态"}</th><th>{role === "client" ? "Acțiune" : "操作"}</th></tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id}>
                 <td className={styles.mono}>{row.id}</td>
-                <td><strong>{row.title}</strong><span>{row.type}产品</span></td>
+                <td><strong>{row.title}</strong><span>{role === "client" ? roProductType(row.type) : `${row.type}产品`}</span></td>
                 <td className={styles.mono}>{row.symbol}</td>
                 <td>{row.market}</td>
                 <td>{row.value}</td>
                 <td>{row.window}</td>
-                <td><Status value={row.status} /></td>
+                <td><Status value={role === "client" ? roOpsStatus(row.status) : row.status} /></td>
                 <td>
                   <div className={styles.actions}>
-                    <button onClick={() => setSelected(row)}>详情</button>
+                    <button onClick={() => setSelected(row)}>{role === "client" ? "Detalii" : "详情"}</button>
                     {role === "master" && row.status === "已上架" ? <button onClick={() => updateStatus(row.id, "已暂停")}>暂停</button> : null}
                     {role === "master" && row.status === "已暂停" ? <button onClick={() => updateStatus(row.id, "已上架")}>恢复</button> : null}
                     {role === "master" && row.status !== "已结束" ? <button onClick={() => updateStatus(row.id, "已结束")}>结束</button> : null}
                     {role === "client" && row.status === "已上架" ? (
-                      <button onClick={() => { setClientProduct(row); setSubmitMessage(""); }}>进入</button>
+                      <button onClick={() => { setClientProduct(row); setSubmitMessage(""); }}>Participă</button>
                     ) : null}
                   </div>
                 </td>
@@ -176,7 +190,7 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
               <label><span>单客户额度</span><input defaultValue={selected.type === "大宗" ? "MXN 2,000,000" : "MXN 500,000"}/></label>
               <label><span>开放窗口</span><input defaultValue={selected.window}/></label>
             </section>
-            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button><button className={styles.primary} onClick={() => setSelected(null)}>保存配置</button></div>
+            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>{role === "client" ? "Închide" : "关闭"}</button><button className={styles.primary} onClick={() => setSelected(null)}>保存配置</button></div>
           </aside>
         </div>
       ) : null}
@@ -188,24 +202,24 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
               <button onClick={() => setClientProduct(null)}><X size={18}/></button>
             </div>
             <div className={styles.detailGrid}>
-              <div><span>证券 / 产品</span><strong>{clientProduct.symbol}</strong></div>
-              <div><span>市场</span><strong>{clientProduct.market}</strong></div>
-              <div><span>项目条件</span><strong>{clientProduct.value}</strong></div>
-              <div><span>开放时间</span><strong>{clientProduct.window}</strong></div>
+              <div><span>Instrument / produs</span><strong>{clientProduct.symbol}</strong></div>
+              <div><span>Piață</span><strong>{clientProduct.market}</strong></div>
+              <div><span>Condiții</span><strong>{clientProduct.value}</strong></div>
+              <div><span>Perioadă disponibilă</span><strong>{clientProduct.window}</strong></div>
             </div>
             <section className={styles.drawerSection}>
-              <h3>{clientProduct.type === "IPO" ? "申购信息" : "参与信息"}</h3>
-              <label><span>提交金额</span><input value={amount} onChange={(event) => setAmount(event.target.value)} /></label>
-              <label><span>确认密码</span><input type="password" placeholder="请输入交易确认密码" /></label>
+              <h3>{clientProduct.type === "IPO" ? "Detalii subscriere" : "Detalii participare"}</h3>
+              <label><span>Valoare</span><input value={amount} onChange={(event) => setAmount(event.target.value)} /></label>
+              <label><span>Parolă de confirmare</span><input type="password" placeholder="Introduceți parola de tranzacționare" /></label>
               {submitMessage ? <div className={extra.successMessage}>{submitMessage}</div> : null}
             </section>
             <div className={styles.drawerFooter}>
-              <button className={styles.secondary} onClick={() => setClientProduct(null)}>取消</button>
+              <button className={styles.secondary} onClick={() => setClientProduct(null)}>Anulează</button>
               <button
                 className={styles.primary}
-                onClick={() => setSubmitMessage(`${clientProduct.type === "IPO" ? "申购" : "订单"}已提交：${clientProduct.symbol} · ${amount}`)}
+                onClick={() => setSubmitMessage(`${clientProduct.type === "IPO" ? "Subscrierea" : "Ordinul"} a fost trimis: ${clientProduct.symbol} · ${amount}`)}
               >
-                {clientProduct.type === "IPO" ? "提交申购" : "提交订单"}
+                {clientProduct.type === "IPO" ? "Trimite subscrierea" : "Trimite ordinul"}
               </button>
             </div>
           </div>
@@ -261,19 +275,19 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
 
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>{role === "client" ? "我的贷款" : "贷款申请"}</h1><p>{role === "client" ? "查看贷款申请与审核进度" : "审核客户贷款申请和查看处理记录"}</p></div>{role === "client" ? <button className={styles.primary} onClick={() => setCreating(true)}><Landmark size={15}/> 新申请</button> : null}</div>
+      <div className={styles.header}><div><h1>{role === "client" ? "Împrumuturi" : "贷款申请"}</h1><p>{role === "client" ? "Consultați cererile de împrumut și progresul evaluării" : "审核客户贷款申请和查看处理记录"}</p></div>{role === "client" ? <button className={styles.primary} onClick={() => setCreating(true)}><Landmark size={15}/> Cerere nouă</button> : null}</div>
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>申请编号</th>{role !== "client" ? <th>客户</th> : null}<th>申请金额</th><th>状态</th><th>申请时间</th><th>操作</th></tr></thead>
+          <thead><tr><th>{role === "client" ? "Nr. cerere" : "申请编号"}</th>{role !== "client" ? <th>客户</th> : null}<th>{role === "client" ? "Valoare" : "申请金额"}</th><th>{role === "client" ? "Stare" : "状态"}</th><th>{role === "client" ? "Data cererii" : "申请时间"}</th><th>{role === "client" ? "Acțiune" : "操作"}</th></tr></thead>
           <tbody>
             {rows.slice(0, role === "client" ? 2 : rows.length).map((row) => (
               <tr key={row.id}>
                 <td className={styles.mono}>{row.id}</td>
                 {role !== "client" ? <td>{row.name}</td> : null}
                 <td className={styles.mono}>{row.amount}</td>
-                <td><Status value={row.status}/></td>
+                <td><Status value={role === "client" ? roOpsStatus(row.status) : row.status}/></td>
                 <td>{row.date}</td>
-                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>查看</button>{role !== "client" && row.status !== "已通过" && row.status !== "已拒绝" ? <><button onClick={() => update(row.id, "已通过")}>通过</button><button onClick={() => update(row.id, "已拒绝")}>拒绝</button></> : null}</div></td>
+                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>{role === "client" ? "Vezi" : "查看"}</button>{role !== "client" && row.status !== "已通过" && row.status !== "已拒绝" ? <><button onClick={() => update(row.id, "已通过")}>通过</button><button onClick={() => update(row.id, "已拒绝")}>拒绝</button></> : null}</div></td>
               </tr>
             ))}
           </tbody>
@@ -282,9 +296,9 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
       {selected ? (
         <div className={styles.shade} onMouseDown={() => setSelected(null)}>
           <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
-            <div className={styles.drawerHeader}><div><span>贷款申请</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
-            <div className={styles.detailGrid}><div><span>客户</span><strong>{selected.name}</strong></div><div><span>申请金额</span><strong>{selected.amount}</strong></div><div><span>申请时间</span><strong>{selected.date}</strong></div><div><span>当前状态</span><Status value={selected.status}/></div></div>
-            <section className={styles.drawerSection}><h3>审核说明</h3><textarea placeholder="输入审核备注或说明" /></section>
+            <div className={styles.drawerHeader}><div><span>{role === "client" ? "Cerere de împrumut" : "贷款申请"}</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
+            <div className={styles.detailGrid}><div><span>{role === "client" ? "Client" : "客户"}</span><strong>{selected.name}</strong></div><div><span>{role === "client" ? "Valoare" : "申请金额"}</span><strong>{selected.amount}</strong></div><div><span>{role === "client" ? "Data cererii" : "申请时间"}</span><strong>{selected.date}</strong></div><div><span>{role === "client" ? "Stare" : "当前状态"}</span><Status value={role === "client" ? roOpsStatus(selected.status) : selected.status}/></div></div>
+            <section className={styles.drawerSection}><h3>{role === "client" ? "Observații" : "审核说明"}</h3><textarea placeholder={role === "client" ? "Observații privind cererea" : "输入审核备注或说明"} /></section>
             <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button>{role !== "client" ? <button className={styles.primary} onClick={() => { update(selected.id, "已通过"); setSelected(null); }}>确认通过</button> : null}</div>
           </div>
         </div>
@@ -300,12 +314,12 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
               setCreating(false);
             }}
           >
-            <div className={styles.drawerHeader}><div><span>客户申请</span><h2>新建贷款申请</h2></div><button type="button" onClick={() => setCreating(false)}><X size={18}/></button></div>
+            <div className={styles.drawerHeader}><div><span>Cerere client</span><h2>Cerere nouă de împrumut</h2></div><button type="button" onClick={() => setCreating(false)}><X size={18}/></button></div>
             <div className={styles.form}>
-              <label><span>申请币种</span><select><option>MXN</option><option>USD</option></select></label>
-              <label><span>申请金额</span><input value={loanAmount} onChange={(event) => setLoanAmount(event.target.value)}/></label>
-              <label><span>用途说明</span><input placeholder="输入资金用途"/></label>
-              <button className={styles.primary} type="submit">提交申请</button>
+              <label><span>Monedă</span><select><option>MXN</option><option>USD</option></select></label>
+              <label><span>Valoare solicitată</span><input value={loanAmount} onChange={(event) => setLoanAmount(event.target.value)}/></label>
+              <label><span>Scop</span><input placeholder="Descrieți utilizarea fondurilor"/></label>
+              <button className={styles.primary} type="submit">Trimite cererea</button>
             </div>
           </form>
         </div>
@@ -319,13 +333,13 @@ function NotificationsPage({ role }: { role: "client" | "ops" | "master" }) {
   const move = (id: string, status: string) => setRows(rows.map((row) => row.id === id ? { ...row, status } : row));
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>{role === "client" ? "通知中心" : "人工通知任务"}</h1><p>{role === "client" ? "查看账户与业务通知" : "跟踪客户联系、确认和后续处理状态"}</p></div><button className={styles.secondary} onClick={() => setRows(rows.map((row) => ({ ...row, status: "已确认" })))}><Bell size={15}/> 全部确认</button></div>
+      <div className={styles.header}><div><h1>{role === "client" ? "Notificări" : "人工通知任务"}</h1><p>{role === "client" ? "Consultați notificările privind contul și operațiunile" : "跟踪客户联系、确认和后续处理状态"}</p></div><button className={styles.secondary} onClick={() => setRows(rows.map((row) => ({ ...row, status: "已确认" })))}><Bell size={15}/> {role === "client" ? "Marchează toate" : "全部确认"}</button></div>
       <div className={styles.noticeGrid}>
         {rows.map((row) => (
           <article key={row.id}>
             <div className={styles.noticeIcon}><Bell size={17}/></div>
-            <div><div className={styles.noticeMeta}><span>{row.type}</span><small>{row.time}</small></div><h3>{row.subject}</h3>{role !== "client" ? <p>{row.name} · {row.id}</p> : <p>账户通知 · {row.id}</p>}</div>
-            <div className={styles.noticeRight}><Status value={row.status}/>{role !== "client" ? <button onClick={() => move(row.id, row.status === "已确认" ? "已确认" : row.status === "已联系" ? "已确认" : "已联系")}>{row.status === "已确认" ? "查看" : row.status === "已联系" ? "确认完成" : "标记已联系"}</button> : <button onClick={() => move(row.id, "已确认")}>查看</button>}</div>
+            <div><div className={styles.noticeMeta}><span>{row.type}</span><small>{row.time}</small></div><h3>{row.subject}</h3>{role !== "client" ? <p>{row.name} · {row.id}</p> : <p>Notificare cont · {row.id}</p>}</div>
+            <div className={styles.noticeRight}><Status value={role === "client" ? roOpsStatus(row.status) : row.status}/>{role !== "client" ? <button onClick={() => move(row.id, row.status === "已确认" ? "已确认" : row.status === "已联系" ? "已确认" : "已联系")}>{row.status === "已确认" ? "查看" : row.status === "已联系" ? "确认完成" : "标记已联系"}</button> : <button onClick={() => move(row.id, "已确认")}>Vezi</button>}</div>
           </article>
         ))}
       </div>
