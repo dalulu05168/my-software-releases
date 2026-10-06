@@ -1234,3 +1234,92 @@
   min-height:0;
   flex:1;
 }
+
+
+/* ADMIN_DENSITY_REPAIR_V5 */
+.adminShell .workspaceBody{
+  padding:10px 12px 12px;
+}
+.adminShell .contentStack{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  min-height:0;
+  max-height:100%;
+  gap:8px;
+  overflow:hidden;
+}
+.adminShell .contentStack>.pageHeader{
+  flex:0 0 56px;
+  min-height:56px;
+  max-height:56px;
+  padding:4px 4px 6px;
+}
+.adminShell .pageHeader h1{
+  margin:0;
+  font-size:20px;
+  line-height:1.15;
+}
+.adminShell .pageHeader p{
+  margin:4px 0 0;
+  font-size:10px;
+  font-weight:400!important;
+}
+.adminShell .filterBar{
+  flex:0 0 54px;
+  min-height:54px!important;
+  max-height:54px;
+  grid-template-columns:minmax(320px,1fr) 150px 150px 66px;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:9px;
+  border-color:rgba(188,139,56,.27);
+  background:rgba(255,255,255,.96);
+}
+.adminShell .searchBox,
+.adminShell .filterBar select,
+.adminShell .filterBar>.secondaryButton{
+  height:36px;
+  min-height:36px;
+  max-height:36px;
+}
+.adminShell .filterBar>.secondaryButton{
+  padding:0 12px;
+  justify-content:center;
+}
+.adminShell .tablePanel{
+  flex:1 1 auto;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:auto;
+  border-radius:9px;
+  border-color:rgba(188,139,56,.27);
+  background:#fff;
+}
+.adminShell .tablePanel th{
+  height:34px;
+  background:#fbf5e9;
+  border-bottom-color:rgba(188,139,56,.25);
+}
+.adminShell .tablePanel td{
+  height:46px;
+}
+.adminShell .rowActions button,
+.adminShell .tableLink{
+  color:#a50c1b!important;
+}
+.adminShell .primarySmall{
+  height:36px;
+  border-radius:7px;
+  padding:0 13px;
+}
+.adminShell .secondaryButton{
+  border-radius:7px;
+}
+@media(max-width:1180px){
+  .adminShell .filterBar{
+    grid-template-columns:minmax(220px,1fr) 125px 125px 58px;
+  }
+}
