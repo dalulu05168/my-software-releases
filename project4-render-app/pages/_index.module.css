@@ -1632,3 +1632,246 @@
 .appShell.appShell.appShell svg{
   font-size:inherit!important;
 }
+
+
+/* FINAL_COMPONENT_RHYTHM_V9 */
+/* Final visual rhythm lock — authenticated client/admin only */
+.appShell.appShell.appShell{
+  --ui-radius:9px;
+  --ui-border:rgba(177,124,44,.28);
+  --ui-surface:#ffffff;
+  --ui-surface-soft:#fbf6ed;
+  --ui-gap:10px;
+}
+.appShell.appShell.appShell .sidebar{
+  width:auto;
+  border-right:1px solid var(--ui-border)!important;
+}
+.appShell.appShell.appShell .sidebarLogo{
+  height:112px!important;
+  padding:10px 10px 8px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.appShell.appShell.appShell .logoCompact img{
+  width:168px!important;
+  max-width:calc(100% - 8px)!important;
+  max-height:90px!important;
+  object-fit:contain!important;
+}
+.appShell.appShell.appShell .sidebarRole{
+  min-height:42px!important;
+  padding:7px 10px!important;
+}
+.appShell.appShell.appShell .nav{
+  gap:4px!important;
+  padding:8px 10px!important;
+}
+.appShell.appShell.appShell .navItem,
+.appShell.appShell.appShell .navActive,
+.appShell.appShell.appShell .logout{
+  min-height:38px!important;
+  height:38px!important;
+  border-radius:7px!important;
+  padding:0 10px!important;
+  gap:9px!important;
+}
+.appShell.appShell.appShell .topbar{
+  min-height:64px!important;
+  height:64px!important;
+  padding:0 16px!important;
+  border-bottom:1px solid var(--ui-border)!important;
+}
+.appShell.appShell.appShell .topbarActions>button{
+  width:36px!important;
+  height:36px!important;
+  min-width:36px!important;
+  min-height:36px!important;
+  border-radius:8px!important;
+}
+.appShell.appShell.appShell .avatar{
+  width:36px!important;
+  height:36px!important;
+  min-width:36px!important;
+  min-height:36px!important;
+}
+.appShell.appShell.appShell .workspaceBody{
+  padding:12px 14px 14px!important;
+}
+.appShell.appShell.appShell .contentStack{
+  gap:var(--ui-gap)!important;
+}
+.appShell.appShell.appShell .pageHeader{
+  min-height:54px!important;
+  height:auto!important;
+  max-height:none!important;
+  padding:4px 2px 6px!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+}
+.appShell.appShell.appShell .pageHeader h1{
+  margin:0!important;
+}
+.appShell.appShell.appShell .pageHeader p{
+  margin:4px 0 0!important;
+}
+.appShell.appShell.appShell .panel,
+.appShell.appShell.appShell .tablePanel,
+.appShell.appShell.appShell .metricCard,
+.appShell.appShell.appShell .fourStats,
+.appShell.appShell.appShell .heroBalance,
+.appShell.appShell.appShell [class*="summaryGrid"]>div,
+.appShell.appShell.appShell [class*="noticeGrid"]>article,
+.appShell.appShell.appShell [class*="riskGrid"]>article,
+.appShell.appShell.appShell [class*="providerBox"],
+.appShell.appShell.appShell [class*="supportLayout"]{
+  border:1px solid var(--ui-border)!important;
+  border-radius:var(--ui-radius)!important;
+  box-shadow:0 8px 22px rgba(66,45,17,.035)!important;
+}
+.appShell.appShell.appShell .metricGrid,
+.appShell.appShell.appShell [class*="summaryGrid"],
+.appShell.appShell.appShell [class*="noticeGrid"],
+.appShell.appShell.appShell [class*="riskGrid"]{
+  gap:10px!important;
+}
+.appShell.appShell.appShell .metricCard,
+.appShell.appShell.appShell [class*="summaryGrid"]>div{
+  min-height:68px!important;
+  padding:10px 12px!important;
+}
+.appShell.appShell.appShell .filterBar,
+.appShell.appShell.appShell [class*="filters"]{
+  min-height:50px!important;
+  max-height:58px!important;
+  padding:7px 9px!important;
+  gap:8px!important;
+  border:1px solid var(--ui-border)!important;
+  border-radius:var(--ui-radius)!important;
+  background:var(--ui-surface)!important;
+}
+.appShell.appShell.appShell input,
+.appShell.appShell.appShell select,
+.appShell.appShell.appShell textarea{
+  min-height:36px!important;
+  height:36px!important;
+  border:1px solid #d9dee6!important;
+  border-radius:7px!important;
+  padding:0 11px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.appShell.appShell.appShell textarea{
+  height:auto!important;
+  min-height:82px!important;
+  padding:9px 11px!important;
+}
+.appShell.appShell.appShell button[class*="primary"],
+.appShell.appShell.appShell button[class*="secondary"],
+.appShell.appShell.appShell .primarySmall,
+.appShell.appShell.appShell .secondaryButton{
+  min-height:34px!important;
+  height:34px!important;
+  border-radius:7px!important;
+  padding:0 12px!important;
+}
+.appShell.appShell.appShell button[class*="primary"],
+.appShell.appShell.appShell .primarySmall{
+  background:linear-gradient(135deg,#7b0d28,#9a1435)!important;
+  border-color:#7b0d28!important;
+}
+.appShell.appShell.appShell button[class*="secondary"],
+.appShell.appShell.appShell .secondaryButton{
+  background:#fffdf8!important;
+  border-color:var(--ui-border)!important;
+  color:#071b42!important;
+}
+.appShell.appShell.appShell .tablePanel{
+  overflow:auto!important;
+  background:#fff!important;
+}
+.appShell.appShell.appShell .tablePanel table{
+  border-collapse:collapse!important;
+  width:100%!important;
+}
+.appShell.appShell.appShell .tablePanel th{
+  height:34px!important;
+  padding:7px 10px!important;
+  background:var(--ui-surface-soft)!important;
+  border-bottom:1px solid var(--ui-border)!important;
+  vertical-align:middle!important;
+}
+.appShell.appShell.appShell .tablePanel td{
+  height:42px!important;
+  padding:7px 10px!important;
+  border-bottom:1px solid #edf0f4!important;
+  vertical-align:middle!important;
+}
+.appShell.appShell.appShell .tablePanel tbody tr:last-child td{
+  border-bottom:0!important;
+}
+.appShell.appShell.appShell .tablePanel tbody tr:hover{
+  background:#fffaf2!important;
+}
+.appShell.appShell.appShell [class*="badge"],
+.appShell.appShell.appShell [class*="Badge"],
+.appShell.appShell.appShell [class*="status"],
+.appShell.appShell.appShell [class*="Status"],
+.appShell.appShell.appShell [class*="good"],
+.appShell.appShell.appShell [class*="bad"],
+.appShell.appShell.appShell [class*="wait"]{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:22px!important;
+  padding:0 7px!important;
+  border-radius:5px!important;
+  white-space:nowrap!important;
+}
+.appShell.appShell.appShell [class*="good"],
+.appShell.appShell.appShell [class*="positive"],
+.appShell.appShell.appShell [class*="okBadge"]{
+  background:#edf8f2!important;
+}
+.appShell.appShell.appShell [class*="wait"],
+.appShell.appShell.appShell [class*="pending"],
+.appShell.appShell.appShell [class*="vipBadge"]{
+  background:#fff6e5!important;
+}
+.appShell.appShell.appShell [class*="bad"],
+.appShell.appShell.appShell [class*="negative"],
+.appShell.appShell.appShell [class*="error"],
+.appShell.appShell.appShell [class*="danger"]{
+  background:#fff0f1!important;
+}
+.appShell.appShell.appShell [class*="segment"],
+.appShell.appShell.appShell [class*="tabs"]{
+  min-height:38px!important;
+}
+.appShell.appShell.appShell [class*="segment"] button,
+.appShell.appShell.appShell [class*="tabs"] button{
+  min-height:32px!important;
+  height:32px!important;
+  border-radius:6px!important;
+  padding:0 11px!important;
+}
+.appShell.appShell.appShell [class*="activeSegment"],
+.appShell.appShell.appShell [class*="tabActive"]{
+  background:#fff0dc!important;
+  color:#8b1029!important;
+}
+.appShell.appShell.appShell .rowActions,
+.appShell.appShell.appShell [class*="actions"]{
+  gap:8px!important;
+}
+.appShell.appShell.appShell .rowActions button,
+.appShell.appShell.appShell [class*="actions"] button{
+  padding:0!important;
+  min-height:auto!important;
+  height:auto!important;
+  background:transparent!important;
+  border:0!important;
+}
