@@ -865,6 +865,7 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
       tradable: item.tradable,
       quotePercent: item.quote?.percentChange == null ? null : Number(item.quote.percentChange),
       quoteTimestamp: item.quote?.providerTimestamp ?? null,
+      quoteProvider: item.referenceProvider ?? item.marketDataProviderKey ?? null,
     };
   });
   const selected = liveStocks.find((s)=>s.symbol===symbol) ?? liveStocks[0] ?? {
@@ -877,6 +878,7 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
     tradable: false,
     quotePercent: null,
     quoteTimestamp: null,
+    quoteProvider: null,
   };
   const globalOrderEnabled =
     riskControls.find((item) => item.key === "GLOBAL")?.enabled ?? true;
@@ -914,7 +916,12 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
         {visibleStocks.length===0?<div className={enh.emptyMarket}>{clientLocale ? "Nu există instrumente potrivite" : "没有匹配的证券"}</div>:null}
       </section>
       <section className={styles.marketCenter}>
-        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?(clientLocale?"Urmărit":"已自选"):(clientLocale?"Adaugă la urmărite":"加入自选")}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>{clientLocale?"Max.":"最高"} <b>231.44</b></span><span>{clientLocale?"Min.":"最低"} <b>223.98</b></span><span>{clientLocale?"Volum":"成交量"} <b>42.8M</b></span><span>{clientLocale?"Piață":"市场"} <b>{selected.market}</b></span></div></div>
+        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?(clientLocale?"Urmărit":"已自选"):(clientLocale?"Adaugă la urmărite":"加入自选")}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}>
+          <span>{clientLocale?"Piață":"市场"} <b>{selected.market}</b></span>
+          <span>{clientLocale?"Sursă":"数据源"} <b>{selected.quoteProvider || "—"}</b></span>
+          <span>{clientLocale?"Ora cotației":"报价时间"} <b>{selected.quoteTimestamp ? new Date(selected.quoteTimestamp).toLocaleTimeString(clientLocale?"ro-RO":"zh-CN",{hour12:false}) : "—"}</b></span>
+          <span>{clientLocale?"Stare":"状态"} <b>{selected.quoteTimestamp ? (clientLocale?"Cotație disponibilă":"报价可用") : (clientLocale?"Fără cotație":"暂无报价")}</b></span>
+        </div></div>
         <div className={styles.chartToolbar}>
           {["分时","1分","5分","15分","1小时","日K"].map((item) => (
             <button
@@ -936,7 +943,20 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
             locale={clientLocale ? "ro" : "zh"}
           />
         </div>
-        <div className={styles.marketBottom}><section><h3>{clientLocale?"Registru ordine":"盘口"}</h3>{[1,2,3,4,5].map(i=><div key={i}><span>{clientLocale?"Cump.":"买"} {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>{clientLocale?"Tranzacții recente":"最近成交"}</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
+        <div className={styles.marketBottom}>
+          <section>
+            <h3>{clientLocale?"Registru ordine":"盘口"}</h3>
+            <div className={styles.marketDataUnavailable}>
+              <span>{clientLocale?"Datele Level 2 nu sunt conectate.":"Level 2五档盘口数据源尚未接入。"}</span>
+            </div>
+          </section>
+          <section>
+            <h3>{clientLocale?"Tranzacții recente":"最近成交"}</h3>
+            <div className={styles.marketDataUnavailable}>
+              <span>{clientLocale?"Fluxul de tranzacții tick-by-tick nu este conectat.":"逐笔成交数据源尚未接入。"}</span>
+            </div>
+          </section>
+        </div>
       </section>
       <section className={styles.orderPanel}>
         <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>{clientLocale?"Cumpărare":"买入"}</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>{clientLocale?"Vânzare":"卖出"}</button></div>
