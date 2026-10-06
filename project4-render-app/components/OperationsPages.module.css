@@ -23,3 +23,31 @@
 .actions button,.auditButton{color:#ad0b17!important}
 .tablePanel{min-height:0;max-height:calc(100dvh - 180px);overflow:auto}
 .modal{max-height:82dvh}
+
+
+/* ROMANIA_LUXURY_THEME_V2 */
+.header h1,.drawerHeader h2,.drawerSection h3,.noticeGrid h3{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+}
+.header p{color:#111!important}
+.primary{
+  background:linear-gradient(135deg,#b40818,#d11527);
+  border-color:#b40818;
+  box-shadow:0 7px 16px rgba(175,9,22,.10);
+}
+.secondary{border-color:rgba(188,139,56,.34);background:#fffdf9}
+.tablePanel,.noticeGrid article,.riskGrid article,.providerBox{
+  border-color:rgba(188,139,56,.27);
+  background:rgba(255,255,255,.95);
+  box-shadow:0 8px 24px rgba(73,51,17,.03);
+}
+.tablePanel th{background:#fbf6ed;border-bottom-color:rgba(188,139,56,.26)}
+.tablePanel tbody tr:hover{background:#fffaf2}
+.tabs{border-bottom-color:rgba(188,139,56,.28)}
+.tabActive{color:#b20d1b!important;border-color:#b20d1b!important}
+.noticeIcon,.riskIcon{background:#fff3df;color:#a66a11}
+.modal,.drawer{
+  background:#fffdf9;
+  border:1px solid rgba(188,139,56,.26);
+}
