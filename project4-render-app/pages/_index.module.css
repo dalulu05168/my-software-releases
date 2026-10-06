@@ -495,3 +495,359 @@
   .mobileLogo{display:flex;justify-content:center;margin-bottom:18px}
   .mobileLogo .logoBlock img{width:min(280px,76vw)}
 }
+
+
+/* ROMANIA_LOGIN_REDESIGN_V3 */
+.loginPage{
+  grid-template-columns:minmax(0,1.16fr) minmax(430px,.84fr);
+  background:#f5efe5;
+  border:0;
+}
+.loginPage:before{
+  height:4px;
+  background:linear-gradient(90deg,#002b7f 0 33.333%,#fcd116 33.333% 66.666%,#ce1126 66.666% 100%);
+  box-shadow:0 1px 0 rgba(85,54,14,.16);
+}
+.loginVisual{
+  padding:clamp(34px,3.5vw,62px) clamp(48px,5vw,86px) clamp(30px,3vw,52px);
+  justify-content:flex-start;
+  gap:clamp(22px,3vh,34px);
+  background:
+    radial-gradient(circle at 86% 16%,rgba(222,171,91,.24),transparent 25%),
+    radial-gradient(circle at 14% 86%,rgba(137,0,18,.065),transparent 28%),
+    linear-gradient(135deg,#fffefb 0%,#f9f4eb 50%,#efe5d5 100%);
+  border-right:1px solid rgba(169,117,40,.27);
+  color:#000;
+}
+.loginVisual:before{
+  content:"";
+  position:absolute;
+  left:45%;
+  right:-4%;
+  bottom:-2%;
+  height:46%;
+  opacity:.22;
+  z-index:-1;
+  background:
+    linear-gradient(to top,rgba(170,116,44,.28),transparent 72%),
+    repeating-linear-gradient(90deg,transparent 0 42px,rgba(150,100,36,.23) 43px 45px,transparent 46px 88px);
+  clip-path:polygon(
+    0 100%,0 77%,4% 77%,4% 53%,8% 53%,8% 69%,12% 69%,12% 41%,
+    16% 41%,16% 63%,20% 63%,20% 32%,24% 32%,24% 56%,28% 56%,28% 23%,
+    32% 23%,32% 62%,36% 62%,36% 38%,40% 38%,40% 51%,44% 51%,44% 17%,
+    48% 17%,48% 60%,52% 60%,52% 35%,56% 35%,56% 72%,60% 72%,60% 48%,
+    64% 48%,64% 66%,68% 66%,68% 30%,72% 30%,72% 58%,76% 58%,76% 42%,
+    80% 42%,80% 67%,84% 67%,84% 52%,88% 52%,88% 73%,92% 73%,92% 59%,
+    96% 59%,96% 78%,100% 78%,100% 100%
+  );
+}
+.loginVisual:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  opacity:.65;
+  background:
+    radial-gradient(ellipse 58% 86% at 90% 44%,transparent 0 67%,rgba(177,125,53,.16) 67.4% 67.8%,transparent 68.2%),
+    radial-gradient(ellipse 47% 73% at 90% 44%,transparent 0 64%,rgba(177,125,53,.13) 64.4% 64.8%,transparent 65.2%),
+    repeating-linear-gradient(90deg,rgba(117,84,43,.03) 0 1px,transparent 1px 56px);
+}
+.loginHeroTop{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+}
+.loginBrand{align-self:auto}
+.loginBrand .logoBlock img{
+  width:min(390px,34vw);
+  max-height:168px;
+  object-fit:contain;
+  filter:drop-shadow(0 14px 28px rgba(49,34,12,.13));
+}
+.brandMeta{
+  display:grid;
+  gap:5px;
+  padding-top:12px;
+  text-align:right;
+  color:#7b5a2d;
+  font-size:9px;
+  letter-spacing:.18em;
+}
+.brandMeta span{font-weight:400!important}
+.visualText{
+  position:relative;
+  z-index:1;
+  max-width:760px;
+  margin-top:auto;
+}
+.eyebrow{
+  display:block;
+  margin-bottom:14px;
+  color:#a20d1a!important;
+  font-size:10px;
+  letter-spacing:.22em;
+  font-weight:400!important;
+}
+.visualText h1{
+  max-width:760px;
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:clamp(42px,3.7vw,68px);
+  line-height:1.05;
+  letter-spacing:-.035em;
+  font-weight:700!important;
+}
+.visualText h1:after{
+  content:"";
+  display:block;
+  width:84px;
+  height:3px;
+  margin-top:20px;
+  background:linear-gradient(90deg,#a70b18 0 58%,#c89139 58% 100%);
+  border-radius:999px;
+}
+.visualText p{
+  max-width:690px;
+  margin:18px 0 0;
+  color:#000!important;
+  font-size:clamp(12px,.96vw,15px);
+  line-height:1.8;
+  font-weight:400!important;
+}
+.visualGrid{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-top:auto;
+}
+.visualGrid div{
+  min-height:78px;
+  padding:15px 16px;
+  border:1px solid rgba(174,122,47,.34);
+  border-radius:10px;
+  background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(255,249,239,.78));
+  box-shadow:0 12px 26px rgba(75,51,19,.045);
+  backdrop-filter:blur(8px);
+}
+.visualGrid strong{
+  display:block;
+  color:#071b42!important;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:15px;
+  letter-spacing:.04em;
+  font-weight:400!important;
+}
+.visualGrid span{
+  display:block;
+  margin-top:7px;
+  color:#000!important;
+  font-size:10px;
+  line-height:1.35;
+  font-weight:400!important;
+}
+.romanianSignature{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:#6f5837;
+  font-size:8px;
+  letter-spacing:.24em;
+}
+.romanianSignature span{font-weight:400!important}
+.romanianSignature i{
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,rgba(173,120,42,.46),transparent);
+}
+
+.loginPanel{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:clamp(26px,3vw,48px);
+  background:
+    radial-gradient(circle at 84% 13%,rgba(218,169,91,.09),transparent 25%),
+    linear-gradient(145deg,#fffefc 0%,#fff 62%,#fbf5ea 100%);
+}
+.loginPanel:before{display:none!important}
+.loginPanel:after{
+  content:"";
+  position:absolute;
+  right:22px;
+  top:22px;
+  width:88px;
+  height:88px;
+  border-top:1px solid rgba(175,122,43,.24);
+  border-right:1px solid rgba(175,122,43,.24);
+  pointer-events:none;
+}
+.loginPanelInner{
+  width:min(520px,100%);
+  min-height:min(690px,82dvh);
+  max-height:88dvh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:clamp(34px,3.5vw,58px);
+  border:1px solid rgba(177,124,44,.28);
+  border-radius:14px;
+  background:rgba(255,255,255,.88);
+  box-shadow:
+    0 28px 70px rgba(65,42,11,.075),
+    inset 0 1px 0 rgba(255,255,255,.96);
+  backdrop-filter:blur(18px);
+}
+.panelBrandMark{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:26px;
+  padding-bottom:16px;
+  border-bottom:1px solid rgba(177,124,44,.22);
+}
+.panelBrandMark span{
+  color:#071b42!important;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+  letter-spacing:.08em;
+  font-weight:400!important;
+}
+.panelBrandMark small{
+  color:#9a681d!important;
+  font-size:8px;
+  letter-spacing:.16em;
+  font-weight:400!important;
+}
+.loginForm{
+  width:100%;
+  max-width:none;
+  margin:0;
+}
+.formTitle{margin-bottom:26px}
+.roleLabel{
+  padding:5px 8px;
+  border-color:rgba(174,121,43,.38)!important;
+  border-radius:4px;
+  background:#fffaf1!important;
+  color:#946018!important;
+  font-size:9px;
+  letter-spacing:.08em;
+  font-weight:400!important;
+}
+.formTitle h2{
+  margin:15px 0 7px;
+  color:#071b42!important;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(30px,2.25vw,40px);
+  line-height:1.08;
+  font-weight:700!important;
+}
+.formTitle p{
+  margin:0;
+  color:#000!important;
+  font-size:11px;
+  line-height:1.65;
+  font-weight:400!important;
+}
+.loginForm label{
+  gap:8px;
+  margin-bottom:16px;
+}
+.loginForm label span{
+  color:#000!important;
+  font-size:10px;
+  letter-spacing:.02em;
+  font-weight:400!important;
+}
+.loginForm input{
+  height:50px;
+  border:1px solid #d6d8db;
+  border-radius:7px;
+  background:#fff;
+  padding:0 14px;
+  color:#000!important;
+  box-shadow:inset 0 1px 0 rgba(0,0,0,.015);
+}
+.loginForm input:focus{
+  border-color:#b47a28;
+  box-shadow:0 0 0 3px rgba(180,122,40,.09);
+}
+.primaryButton{
+  height:50px;
+  margin-top:4px;
+  border-radius:7px;
+  background:linear-gradient(135deg,#a80a18,#c60f20);
+  border:1px solid #a80a18;
+  color:#fff!important;
+  box-shadow:0 12px 24px rgba(166,9,23,.14);
+  font-weight:400!important;
+}
+.primaryButton:hover{filter:brightness(1.035)}
+.textButton{
+  margin-top:12px;
+  color:#a70b18!important;
+  font-weight:400!important;
+}
+.panelFooter{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:26px;
+  color:#7a6341;
+  font-size:8px;
+  letter-spacing:.12em;
+}
+.panelFooter span{font-weight:400!important}
+.panelFooter i{
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,rgba(176,124,48,.38),transparent);
+}
+.mobileLogo{display:none}
+
+.adminLogin .visualText h1{font-size:clamp(42px,3.5vw,64px)}
+.clientLogin .visualText h1{max-width:700px}
+
+@media(max-width:1100px){
+  .loginPage{grid-template-columns:minmax(0,1fr) minmax(400px,.9fr)}
+  .loginVisual{padding:34px 38px 30px}
+  .loginBrand .logoBlock img{width:min(320px,32vw)}
+  .visualGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .brandMeta{display:none}
+  .loginPanelInner{padding:34px;min-height:620px}
+}
+@media(max-width:900px){
+  .loginPage{grid-template-columns:1fr}
+  .loginVisual{display:none}
+  .loginPanel{
+    min-height:100dvh;
+    padding:24px;
+    background:linear-gradient(145deg,#fffefb,#f7efe2);
+  }
+  .loginPanelInner{
+    min-height:0;
+    max-height:calc(100dvh - 48px);
+    overflow:auto;
+    padding:28px 24px;
+  }
+  .mobileLogo{
+    display:flex;
+    justify-content:center;
+    margin:0 0 16px;
+  }
+  .mobileLogo .logoBlock img{
+    width:min(300px,76vw);
+    max-height:120px;
+  }
+  .panelBrandMark{margin-bottom:20px}
+}
