@@ -52,7 +52,7 @@ import {
 import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
 
-const logoUrl = "/visionary-studio-logo.png";
+const logoUrl = "/brantone-veyor-logo.webp";
 
 type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
@@ -178,13 +178,11 @@ function RoleLabel({ role }: { role: Role }) {
 function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? styles.logoCompact : styles.logoBlock}>
-      <img src={logoUrl} alt="Visionary Studio" />
-      {!compact ? (
-        <div>
-          <strong>VISIONARY STUDIO</strong>
-          <span>Financial Operations</span>
-        </div>
-      ) : null}
+      <img
+        src={logoUrl}
+        alt="Brantone Veylor Private Capital Advisory"
+        draggable={false}
+      />
     </div>
   );
 }
@@ -270,7 +268,7 @@ function LoginScreen({
           <Logo />
         </div>
         <div className={styles.visualText}>
-          <span className={styles.eyebrow}>VISIONARY FINANCIAL SYSTEM</span>
+          <span className={styles.eyebrow}>BRANTONE VEYLOR · PRIVATE CAPITAL ADVISORY</span>
           <h1>
             {isClient
               ? "Mercados, operaciones y cuenta en un solo lugar"
