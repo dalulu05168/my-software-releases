@@ -851,3 +851,386 @@
   }
   .panelBrandMark{margin-bottom:20px}
 }
+
+
+/* ROMANIA_CASTLE_CLIENT_V4 */
+.clientLogin .loginVisual{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(255,254,250,.97) 0%,rgba(255,253,248,.92) 48%,rgba(250,245,236,.74) 72%,rgba(248,242,232,.9) 100%);
+}
+.clientLogin .loginVisual:before{
+  content:"";
+  position:absolute;
+  inset:auto -4% 0 36%;
+  height:66%;
+  opacity:.34;
+  z-index:-1;
+  background:
+    linear-gradient(145deg,transparent 0 35%,rgba(59,72,92,.11) 35.2% 37%,transparent 37.2% 43%,rgba(59,72,92,.09) 43.2% 46%,transparent 46.2%),
+    linear-gradient(to top,rgba(60,75,96,.12),transparent 62%);
+  clip-path:polygon(0 100%,0 72%,7% 63%,13% 68%,21% 49%,28% 56%,36% 37%,44% 48%,54% 26%,63% 43%,72% 31%,82% 47%,91% 39%,100% 52%,100% 100%);
+}
+.clientLogin .loginVisual:after{
+  content:"";
+  position:absolute;
+  right:-2%;
+  top:8%;
+  width:26%;
+  height:84%;
+  z-index:-1;
+  opacity:.13;
+  background:
+    linear-gradient(#9a7a45,#9a7a45) 50% 2%/62% 1px no-repeat,
+    linear-gradient(90deg,#9a7a45,#9a7a45) 50% 0/1px 100% no-repeat,
+    repeating-linear-gradient(90deg,transparent 0 18%,rgba(131,98,46,.45) 18.4% 19%,transparent 19.4% 40%),
+    repeating-linear-gradient(0deg,transparent 0 13%,rgba(131,98,46,.38) 13.4% 14%,transparent 14.4% 27%);
+  border:1px solid rgba(155,112,46,.38);
+  border-bottom:0;
+  clip-path:polygon(13% 100%,13% 20%,24% 20%,24% 12%,38% 12%,38% 7%,50% 0,62% 7%,62% 12%,76% 12%,76% 20%,87% 20%,87% 100%);
+}
+.clientLogin .visualText{
+  max-width:790px;
+}
+.clientLogin .visualText h1{
+  max-width:780px;
+  font-size:clamp(46px,4.15vw,76px);
+  line-height:1.02;
+  color:#061b43!important;
+}
+.clientLogin .visualText p{
+  max-width:770px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(14px,1.05vw,18px);
+  line-height:1.55;
+}
+.clientLogin .visualGrid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:0;
+  border-top:1px solid rgba(177,124,44,.22);
+  border-bottom:1px solid rgba(177,124,44,.22);
+}
+.clientLogin .visualGrid div{
+  min-height:102px;
+  border:0;
+  border-right:1px solid rgba(177,124,44,.26);
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  display:grid;
+  align-content:center;
+  justify-items:start;
+  gap:7px;
+  padding:16px 18px;
+}
+.clientLogin .visualGrid div:last-child{border-right:0}
+.clientLogin .visualGrid svg{color:#071b42}
+.clientLogin .visualGrid strong{
+  font-family:var(--font-family-base);
+  font-size:10px;
+  letter-spacing:.055em;
+  color:#071b42!important;
+}
+.clientLogin .visualGrid span{
+  margin:0;
+  color:#2b2b2b!important;
+  font-size:9px;
+  line-height:1.45;
+}
+.clientLogin .loginPanel{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.98),rgba(251,248,242,.95));
+}
+.clientLogin .loginPanelInner{
+  width:min(510px,100%);
+  min-height:0;
+  padding:clamp(38px,4.2vw,64px);
+  border:1px solid rgba(166,118,47,.56);
+  border-radius:16px;
+  box-shadow:0 24px 60px rgba(73,51,20,.10);
+}
+.clientLogin .panelBrandMark{
+  justify-content:center;
+  text-align:center;
+  border-bottom:0;
+  padding-bottom:6px;
+  margin-bottom:22px;
+}
+.clientLogin .panelBrandMark{
+  display:grid;
+  gap:8px;
+}
+.clientLogin .panelBrandMark span{
+  font-size:22px;
+  font-weight:700!important;
+  letter-spacing:.03em;
+}
+.clientLogin .panelBrandMark small{
+  font-size:10px;
+  color:#071b42!important;
+  letter-spacing:.13em;
+}
+.clientLogin .roleLabel{
+  display:none;
+}
+.clientLogin .formTitle h2{
+  display:none;
+}
+.clientLogin .formTitle p{
+  display:none;
+}
+.clientLogin .loginForm label{
+  margin-bottom:15px;
+}
+.clientLogin .loginForm label span{
+  font-size:12px;
+}
+.clientLogin .rememberRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:-2px 0 14px;
+}
+.clientLogin .rememberCheck{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:0!important;
+}
+.clientLogin .rememberCheck input{
+  width:17px!important;
+  height:17px!important;
+  margin:0;
+  accent-color:#8d0d2a;
+  box-shadow:none!important;
+}
+.clientLogin .rememberCheck span{
+  font-size:11px!important;
+}
+.clientLogin .inlineForgot{
+  border:0;
+  padding:0;
+  background:transparent;
+  color:#7e1227;
+  font:inherit;
+  font-size:11px;
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.clientLogin .primaryButton{
+  background:linear-gradient(135deg,#720b26,#951232);
+  border-color:#720b26;
+  box-shadow:0 12px 28px rgba(105,10,34,.16);
+}
+.clientLogin .textButton{
+  color:#6f0d25!important;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.clientLogin .panelFooter{
+  display:none;
+}
+
+/* Full client portal: Romanian castle/private-capital visual language */
+.clientShell{
+  grid-template-columns:190px minmax(0,1fr);
+  background:
+    radial-gradient(circle at 72% 0%,rgba(214,177,112,.14),transparent 23%),
+    linear-gradient(135deg,#fffefb 0%,#fbf7ef 56%,#efe8dc 100%);
+}
+.clientShell:before{
+  content:"";
+  position:fixed;
+  top:0;left:0;right:0;
+  height:3px;
+  z-index:90;
+  background:linear-gradient(90deg,#002b7f 0 33.333%,#fcd116 33.333% 66.666%,#ce1126 66.666% 100%);
+}
+.clientShell .sidebar{
+  background:
+    linear-gradient(180deg,rgba(255,254,250,.98),rgba(247,240,229,.98));
+  border-right:1px solid rgba(177,124,44,.34);
+  box-shadow:10px 0 32px rgba(58,42,18,.04);
+}
+.clientShell .sidebarLogo{
+  height:108px;
+  background:transparent;
+  border-bottom:1px solid rgba(177,124,44,.23);
+}
+.clientShell .logoCompact img{
+  width:162px;
+  max-height:88px;
+}
+.clientShell .sidebarRole .roleLabel{
+  color:#7c5a2a!important;
+  background:#fffaf0!important;
+  border-color:rgba(177,124,44,.34)!important;
+}
+.clientShell .nav{
+  gap:3px;
+  padding:8px 10px;
+}
+.clientShell .navItem,.clientShell .navActive,.clientShell .logout{
+  min-height:40px;
+  border-radius:7px;
+  color:#111!important;
+}
+.clientShell .navItem:hover{
+  background:#fff8ed;
+}
+.clientShell .navActive{
+  background:linear-gradient(90deg,#071b42,#0d2c62);
+  color:#fff!important;
+  border-left:0;
+  box-shadow:0 8px 18px rgba(7,27,66,.12);
+}
+.clientShell .navActive span,.clientShell .navActive svg{color:#fff!important}
+.clientShell .logout{color:#7b0d26!important}
+.clientShell .topbar{
+  flex-basis:66px;
+  height:66px;
+  background:rgba(255,254,250,.96);
+  border-bottom:1px solid rgba(177,124,44,.24);
+}
+.clientShell .topbar>div:first-child strong{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:15px;
+}
+.clientShell .topbarActions>button{
+  border-color:rgba(177,124,44,.25);
+  background:#fffdf8;
+}
+.clientShell .avatar{
+  background:#071b42;
+  color:#fff!important;
+}
+.clientShell .workspace{
+  position:relative;
+}
+.clientShell .workspaceBody{
+  position:relative;
+  height:calc(100dvh - 66px);
+  padding:14px 16px 16px;
+  background:
+    radial-gradient(circle at 88% 7%,rgba(224,190,131,.11),transparent 21%),
+    linear-gradient(180deg,rgba(255,255,255,.58),rgba(249,245,238,.7));
+}
+.clientShell .workspaceBody:before{
+  content:"";
+  pointer-events:none;
+  position:absolute;
+  left:28%;
+  right:0;
+  bottom:0;
+  height:33%;
+  opacity:.075;
+  background:linear-gradient(to top,#132c55,transparent);
+  clip-path:polygon(0 100%,0 86%,6% 73%,12% 79%,17% 58%,22% 66%,29% 46%,35% 61%,42% 32%,49% 54%,56% 40%,63% 58%,70% 48%,77% 67%,84% 55%,92% 72%,100% 62%,100% 100%);
+}
+.clientShell .contentStack{
+  position:relative;
+  z-index:1;
+  gap:10px;
+}
+.clientShell .pageHeader{
+  min-height:58px;
+  padding:4px 4px 8px;
+}
+.clientShell .pageHeader h1{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:22px;
+}
+.clientShell .pageHeader p{
+  color:#111!important;
+  font-weight:400!important;
+}
+.clientShell .metricGrid{
+  gap:9px;
+}
+.clientShell .metricCard,
+.clientShell .panel,
+.clientShell .tablePanel,
+.clientShell .fourStats,
+.clientShell .settingsGrid>button{
+  border:1px solid rgba(177,124,44,.27);
+  border-radius:9px;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 10px 26px rgba(70,49,17,.035);
+}
+.clientShell .metricIcon{
+  background:#fff4df;
+  color:#9b6719!important;
+}
+.clientShell .heroBalance{
+  border-radius:10px;
+  border-color:rgba(177,124,44,.32);
+  background:
+    radial-gradient(circle at 92% 10%,rgba(201,151,73,.13),transparent 27%),
+    linear-gradient(135deg,#fffefb,#f8efe2);
+}
+.clientShell .panelTitle h3{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+}
+.clientShell .panelTitle>button{
+  color:#7a1026!important;
+}
+.clientShell .tablePanel th{
+  background:#fbf4e8;
+  border-bottom-color:rgba(177,124,44,.27);
+  color:#071b42!important;
+}
+.clientShell .tablePanel tbody tr:hover{
+  background:#fff8ed;
+}
+.clientShell .segment{
+  border-color:rgba(177,124,44,.26);
+}
+.clientShell .segment .segmentActive{
+  background:#fff0d8;
+  color:#7c1027!important;
+}
+.clientShell .marketTerminal{
+  border:1px solid rgba(177,124,44,.29);
+  border-radius:10px;
+  background:#fff;
+}
+.clientShell .marketListHeader,
+.clientShell .quoteHeader,
+.clientShell .orderPanel{
+  background:linear-gradient(180deg,#fffefb,#fbf5ea);
+}
+.clientShell .quoteHeader h2,
+.clientShell .marketListHeader strong{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+}
+.clientShell .primarySmall{
+  background:linear-gradient(135deg,#790d29,#981333);
+  border-color:#790d29;
+}
+
+/* Admin whitespace repair: use the 16:9 canvas instead of leaving large empty bands */
+.adminShell .workspaceBody{
+  padding:10px 12px 12px;
+}
+.adminShell .contentStack{
+  gap:8px;
+}
+.adminShell .pageHeader{
+  min-height:52px;
+  padding:2px 2px 4px;
+}
+.adminShell .filterBar{
+  min-height:52px;
+}
+.adminShell .tablePanel{
+  min-height:0;
+  flex:1;
+}
