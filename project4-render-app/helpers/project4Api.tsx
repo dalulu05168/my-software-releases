@@ -47,10 +47,10 @@ async function request(init?: RequestInit, scope?: "client" | "admin") {
 }
 
 export const project4Api = {
-  async loginMaster(username: string, password: string, totp: string) {
+  async loginAdmin(username: string, password: string, totp: string) {
     const data = await request({
       method: "POST",
-      body: JSON.stringify({ action: "login_master", username, password, totp }),
+      body: JSON.stringify({ action: "login_admin", username, password, totp }),
     });
     if (typeof window !== "undefined" && data.sessionToken) {
       window.localStorage.setItem(SESSION_KEY, data.sessionToken);
@@ -59,13 +59,76 @@ export const project4Api = {
       ok: boolean;
       sessionToken: string;
       expiresAt: string;
-      role: "master";
+      role: "master" | "ops";
       displayName: string;
+      opsAccountId?: string;
     };
+  },
+
+  async loginMaster(username: string, password: string, totp: string) {
+    return this.loginAdmin(username, password, totp);
   },
 
   logoutMaster() {
     if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+  },
+
+  async listOpsAccounts() {
+    const data = await request({
+      method: "POST",
+      body: JSON.stringify({ action: "list_ops_accounts" }),
+    });
+    return (data.accounts || []) as Array<{
+      id: string;
+      identityId: string | null;
+      name: string;
+      username: string;
+      manager: string;
+      markets: Array<"US" | "MX">;
+      status: "ACTIVE" | "SUSPENDED";
+      enabled: boolean;
+      invite: string;
+      clients: number;
+    }>;
+  },
+
+  async createOpsAccount(input: {
+    name: string;
+    username: string;
+    password: string;
+    markets: Array<"US" | "MX">;
+  }) {
+    return request({
+      method: "POST",
+      body: JSON.stringify({ action: "create_ops_account", ...input }),
+    }) as Promise<{
+      ok: boolean;
+      account: {
+        id: string;
+        identityId: string;
+        name: string;
+        username: string;
+        markets: Array<"US" | "MX">;
+        status: "ACTIVE";
+        invite: string;
+      };
+      totpSecret: string;
+      otpauthUri: string;
+    }>;
+  },
+
+  async resetOpsTotp(identityId: string) {
+    return request({
+      method: "POST",
+      body: JSON.stringify({ action: "reset_ops_totp", identityId }),
+    }) as Promise<{ ok: boolean; totpSecret: string; otpauthUri: string }>;
+  },
+
+  async setOpsStatus(opsAccountId: string, status: "ACTIVE" | "SUSPENDED") {
+    return request({
+      method: "POST",
+      body: JSON.stringify({ action: "set_ops_status", opsAccountId, status }),
+    }) as Promise<{ ok: boolean; status: "ACTIVE" | "SUSPENDED" }>;
   },
 
   async listClientSecurities() {
