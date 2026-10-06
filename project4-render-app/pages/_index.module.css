@@ -250,3 +250,248 @@
   .navItem,.navActive,.logout{justify-content:center;padding:8px 4px}
   .navItem span,.navActive span,.logout span,.sidebarRole{display:none}
 }
+
+
+/* ROMANIA_LUXURY_THEME_V2 */
+.loginPage{
+  position:relative;
+  background:#fffdf9;
+  border:1px solid rgba(188,139,56,.28);
+}
+.loginPage:before{
+  content:"";
+  position:absolute;
+  z-index:20;
+  left:0;right:0;top:0;
+  height:5px;
+  background:linear-gradient(90deg,#002b7f 0 33.333%,#fcd116 33.333% 66.666%,#ce1126 66.666% 100%);
+}
+.loginVisual{
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse at 92% 8%,rgba(244,192,113,.38),transparent 31%),
+    radial-gradient(ellipse at 15% 88%,rgba(206,17,38,.07),transparent 34%),
+    linear-gradient(135deg,#fffefb 0%,#f8f2e9 52%,#efe6d8 100%);
+  border-right:1px solid rgba(194,146,68,.34);
+}
+.loginVisual:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:.52;
+  background:
+    radial-gradient(ellipse 40% 76% at 97% 47%,transparent 0 63%,rgba(184,127,42,.2) 64% 64.5%,transparent 65%),
+    radial-gradient(ellipse 52% 90% at 100% 46%,transparent 0 67%,rgba(184,127,42,.12) 68% 68.4%,transparent 69%),
+    repeating-linear-gradient(90deg,rgba(148,113,65,.035) 0 1px,transparent 1px 46px);
+  mask-image:linear-gradient(to bottom,black,rgba(0,0,0,.6),transparent 94%);
+}
+.loginVisual:before{
+  content:"";
+  position:absolute;
+  right:-1px;
+  bottom:0;
+  width:42%;
+  height:34%;
+  z-index:-1;
+  opacity:.24;
+  background:
+    linear-gradient(to top,rgba(167,112,37,.24),transparent),
+    repeating-linear-gradient(90deg,transparent 0 26px,rgba(154,105,47,.26) 27px 29px,transparent 30px 56px);
+  clip-path:polygon(0 100%,12% 58%,20% 64%,28% 35%,35% 50%,43% 22%,52% 42%,60% 12%,70% 37%,78% 18%,88% 45%,100% 26%,100% 100%);
+}
+.loginBrand{align-self:flex-start}
+.logoBlock img{
+  width:min(330px,32vw);
+  max-height:132px;
+  filter:drop-shadow(0 10px 22px rgba(51,38,16,.12));
+}
+.visualText h1{
+  max-width:720px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(38px,3.25vw,60px);
+  color:#071b42!important;
+  letter-spacing:-.025em;
+}
+.visualText h1::after{
+  content:"";
+  display:block;
+  width:74px;
+  height:4px;
+  margin-top:20px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#b60e1d,#d5a24f);
+}
+.visualText p{
+  color:#111!important;
+  font-size:clamp(13px,1.05vw,17px);
+  max-width:650px;
+  line-height:1.75;
+}
+.eyebrow{
+  color:#b70e1c!important;
+  letter-spacing:.19em;
+  font-size:11px;
+}
+.visualGrid{gap:12px}
+.visualGrid div{
+  border:1px solid rgba(188,139,56,.42);
+  background:rgba(255,255,255,.82);
+  border-radius:10px;
+  box-shadow:0 12px 30px rgba(77,52,18,.055);
+}
+.visualGrid strong{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:18px;
+}
+.visualGrid span{color:#111!important}
+.loginPanel{
+  position:relative;
+  background:
+    radial-gradient(circle at 90% 14%,rgba(214,167,92,.12),transparent 28%),
+    #fff;
+}
+.loginPanel:before{
+  content:"";
+  position:absolute;
+  inset:4% 3%;
+  pointer-events:none;
+  border:1px solid rgba(194,146,68,.22);
+  border-radius:48% 8% 48% 8% / 18% 48% 18% 48%;
+}
+.formTitle h2{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:clamp(30px,2.4vw,43px);
+}
+.formTitle p{color:#111!important}
+.roleLabel{
+  border-color:rgba(183,122,31,.45)!important;
+  color:#9b6819!important;
+  background:#fffaf1!important;
+}
+.loginForm input{
+  height:50px;
+  border:1px solid #d6d9de;
+  border-radius:7px;
+  background:rgba(255,255,255,.96);
+}
+.loginForm input:focus{
+  border-color:#bb812c;
+  box-shadow:0 0 0 3px rgba(187,129,44,.10);
+}
+.primaryButton,.primarySmall{
+  background:linear-gradient(135deg,#b40818,#d11527);
+  border-color:#b40818;
+  box-shadow:0 9px 20px rgba(174,8,22,.13);
+}
+.textButton{color:#b40818!important}
+
+.appShell{
+  background:
+    radial-gradient(circle at 78% 0%,rgba(244,197,121,.12),transparent 28%),
+    linear-gradient(135deg,#fffefb 0%,#faf7f1 56%,#f1eadf 100%);
+}
+.sidebar{
+  background:
+    linear-gradient(rgba(255,255,255,.92),rgba(255,252,246,.92)),
+    repeating-linear-gradient(115deg,rgba(173,124,53,.035) 0 1px,transparent 1px 22px);
+  border-right:1px solid rgba(188,139,56,.34);
+  box-shadow:8px 0 30px rgba(88,62,21,.035);
+}
+.sidebarLogo{
+  background:linear-gradient(180deg,#fffdf9,#fbf5eb);
+  border-bottom:1px solid rgba(188,139,56,.26);
+}
+.logoCompact img{width:154px;max-height:78px}
+.navActive{
+  background:linear-gradient(90deg,#b70c1c,#cc1425);
+  color:#fff!important;
+  border-left:0;
+  box-shadow:0 7px 18px rgba(173,10,25,.12);
+}
+.navActive span,.navActive svg{color:#fff!important}
+.navItem:hover{background:#fff6ea}
+.logout{color:#a30b18!important}
+.topbar{
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.97),rgba(255,250,242,.95));
+  border-bottom:1px solid rgba(188,139,56,.26);
+}
+.topbar>div:first-child strong{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+}
+.workspaceBody{
+  background:
+    radial-gradient(circle at 95% 0%,rgba(221,174,99,.08),transparent 23%),
+    transparent;
+}
+.pageHeader h1,.panelTitle h3{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+}
+.pageHeader p,.panelTitle p{color:#111!important}
+.metricCard,.panel,.tablePanel,.fourStats,.settingsGrid button{
+  border-color:rgba(188,139,56,.25);
+  background:rgba(255,255,255,.94);
+  box-shadow:0 10px 28px rgba(71,49,16,.035);
+}
+.metricIcon,.settingsGrid button>svg:first-child{
+  background:#fff4e3;
+  color:#a66a11!important;
+}
+.heroBalance{
+  background:
+    linear-gradient(120deg,rgba(255,255,255,.98),rgba(255,248,237,.98));
+  border:1px solid rgba(188,139,56,.35);
+  position:relative;
+  overflow:hidden;
+}
+.heroBalance:after{
+  content:"";
+  position:absolute;
+  width:180px;height:180px;
+  right:-50px;top:-90px;
+  border:1px solid rgba(188,139,56,.17);
+  border-radius:50%;
+  box-shadow:0 0 0 22px rgba(188,139,56,.035),0 0 0 45px rgba(188,139,56,.025);
+}
+.heroBalance>div{position:relative;z-index:1}
+.heroBalance>div:first-child strong{
+  color:#071b42!important;
+  font-family:Georgia,"Times New Roman",serif;
+}
+.tablePanel th{
+  background:#fbf6ed;
+  border-bottom-color:rgba(188,139,56,.26);
+}
+.tablePanel tbody tr:hover{background:#fffaf2}
+.marketTerminal{
+  border-color:rgba(188,139,56,.34);
+  box-shadow:0 12px 30px rgba(67,44,13,.04);
+}
+.marketListHeader,.quoteHeader,.orderPanel{
+  background:linear-gradient(180deg,#fffefb,#fff9ef);
+}
+.marketListHeader strong,.quoteHeader h2,.orderPanel strong{
+  color:#071b42!important;
+}
+.marketTabActive,.chartActive{
+  color:#b20d1b!important;
+  border-color:#b20d1b!important;
+}
+.buyButton{background:#16834f!important}
+.sellButton{background:#bd1524!important}
+.buyTab{color:#16834f!important}
+.sellTab{color:#bd1524!important}
+
+@media(max-width:900px){
+  .loginVisual{display:none}
+  .loginPage{grid-template-columns:1fr}
+  .loginPanel{padding:30px 24px}
+  .mobileLogo{display:flex;justify-content:center;margin-bottom:18px}
+  .mobileLogo .logoBlock img{width:min(280px,76vw)}
+}
