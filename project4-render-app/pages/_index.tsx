@@ -221,12 +221,12 @@ function LoginScreen({
     if (portal === "admin") {
       setLoggingIn(true);
       try {
-        const result = await project4Api.loginMaster(
+        const result = await project4Api.loginAdmin(
           account.trim(),
           password,
           totp,
         );
-        onLogin("master", result.displayName || account.trim() || "Master Admin");
+        onLogin(result.role, result.displayName || account.trim() || (result.role === "master" ? "Master Admin" : "Operations Admin"));
       } catch (error) {
         const code = error instanceof Error ? error.message : "LOGIN_FAILED";
         setLoginError(
@@ -1167,7 +1167,7 @@ export default function App() {
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master") project4Api.logoutMaster();setRole(null);setName("");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutMaster();setRole(null);setName("");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
         <div className={styles.workspaceBody}>{content}</div>
