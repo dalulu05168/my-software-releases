@@ -276,147 +276,218 @@ function LoginScreen({
   const isClient = portal === "client";
 
   return (
-    <main className={styles.loginPage}>
+    <main className={`${styles.loginPage} ${isClient ? styles.clientLogin : styles.adminLogin}`}>
       <section className={styles.loginVisual}>
-        <div className={styles.loginBrand}>
-          <Logo />
+        <div className={styles.loginHeroTop}>
+          <div className={styles.loginBrand}>
+            <Logo />
+          </div>
+          <div className={styles.brandMeta}>
+            <span>EST. 1996</span>
+            <span>{isClient ? "BUCUREȘTI · PRIVATE CAPITAL" : "PRIVATE CAPITAL · OPERATIONS"}</span>
+          </div>
         </div>
+
         <div className={styles.visualText}>
-          <span className={styles.eyebrow}>BRANTONE VEYLOR · PRIVATE CAPITAL ADVISORY</span>
+          <span className={styles.eyebrow}>
+            {isClient
+              ? "BRANTONE VEYLOR · PRIVATE CAPITAL ADVISORY"
+              : "BRANTONE VEYLOR · PRIVATE CAPITAL ADVISORY"}
+          </span>
           <h1>
             {isClient
-              ? "Piețe globale, operațiuni și cont într-un singur loc"
-              : "清晰、精准、可控的证券运营工作台"}
+              ? "Capital privat, administrat cu precizie"
+              : "私人资本运营管理中心"}
           </h1>
           <p>
             {isClient
-              ? "Accesați piețele, pozițiile, ordinele și operațiunile disponibile din contul dumneavoastră."
-              : "统一管理客户、资金、订单、持仓与证券行情。系统接入真实证券信息，外部券商交易未接入。"}
+              ? "Acces securizat la portofoliu, piețe, ordine și servicii de cont într-un mediu financiar european clar și controlat."
+              : "客户、资金、订单、持仓、证券与风险控制统一管理。安全认证、权限分级与全流程审计集中于同一工作台。"}
           </p>
         </div>
+
         <div className={styles.visualGrid}>
-          <div><strong>US</strong><span>{isClient ? "Piața SUA" : "美国市场"}</span></div>
-          <div><strong>MX</strong><span>{isClient ? "Piața Mexic" : "墨西哥市场"}</span></div>
-          <div><strong>2FA</strong><span>{isClient ? "Securitatea contului" : "后台安全登录"}</span></div>
-          <div><strong>VIP 1–5</strong><span>{isClient ? "Nivelul contului" : "客户等级体系"}</span></div>
+          <div>
+            <strong>SECURITY</strong>
+            <span>{isClient ? "Acces securizat" : "安全认证"}</span>
+          </div>
+          <div>
+            <strong>2FA</strong>
+            <span>{isClient ? "Verificare dinamică" : "动态验证"}</span>
+          </div>
+          <div>
+            <strong>VIP 1–5</strong>
+            <span>{isClient ? "Niveluri de cont" : "客户等级"}</span>
+          </div>
+          <div>
+            <strong>AUDIT</strong>
+            <span>{isClient ? "Trasabilitate operațională" : "操作审计"}</span>
+          </div>
+        </div>
+
+        <div className={styles.romanianSignature}>
+          <span>{isClient ? "ROMÂNIA · PRIVATE CAPITAL" : "ROMANIA · PRIVATE CAPITAL"}</span>
+          <i />
         </div>
       </section>
 
       <section className={styles.loginPanel}>
-        <div className={styles.mobileLogo}><Logo /></div>
+        <div className={styles.loginPanelInner}>
+          <div className={styles.mobileLogo}><Logo /></div>
+          <div className={styles.panelBrandMark}>
+            <span>BRANTONE VEYLOR</span>
+            <small>{isClient ? "ACCES SECURIZAT" : "SECURE OPERATIONS ACCESS"}</small>
+          </div>
 
-        <form className={styles.loginForm} onSubmit={submit}>
-          <div className={styles.formTitle}>
-            <span className={styles.roleLabel}>
-              {isClient ? "CLIENT" : "后台管理"}
-            </span>
-            <h2>
+          <form className={styles.loginForm} onSubmit={submit}>
+            <div className={styles.formTitle}>
+              <span className={styles.roleLabel}>
+                {isClient ? "CLIENT" : "后台管理"}
+              </span>
+              <h2>
+                {isClient
+                  ? mode === "register"
+                    ? "Creați cont"
+                    : mode === "forgot"
+                      ? "Recuperați accesul"
+                      : "Autentificare"
+                  : "后台登录"}
+              </h2>
+              <p>
+                {isClient
+                  ? mode === "forgot"
+                    ? "Verificați contul și setați o parolă nouă."
+                    : "Introduceți datele contului pentru acces securizat."
+                  : "总账户与子账户共用此入口，系统将根据登录凭证自动识别权限。"}
+              </p>
+            </div>
+
+            {isClient && mode === "register" ? (
+              <label>
+                <span>Nume complet</span>
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Introduceți numele" />
+              </label>
+            ) : null}
+
+            <label>
+              <span>{isClient ? "Telefon / e-mail / cont" : "后台账户"}</span>
+              <input
+                value={account}
+                onChange={(e) => setAccount(e.target.value)}
+                placeholder={isClient ? "+40 7xx xxx xxx / nume@exemplu.ro" : "请输入后台账户"}
+              />
+            </label>
+
+            {mode !== "forgot" ? (
+              <label>
+                <span>{isClient ? "Parolă" : "登录密码"}</span>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={isClient ? "Introduceți parola" : "请输入密码"}
+                />
+              </label>
+            ) : (
+              <>
+                <label>
+                  <span>{isClient ? "Cod de verificare" : "验证码"}</span>
+                  <input
+                    inputMode="numeric"
+                    placeholder={isClient ? "Introduceți codul primit" : "输入收到的验证码"}
+                    maxLength={6}
+                  />
+                </label>
+                <label>
+                  <span>{isClient ? "Parolă nouă" : "新密码"}</span>
+                  <input
+                    type="password"
+                    placeholder={isClient ? "Setați o parolă nouă" : "设置新的登录密码"}
+                  />
+                </label>
+              </>
+            )}
+
+            {isClient && mode === "register" ? (
+              <label>
+                <span>Confirmați parola</span>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Repetați parola"
+                />
+              </label>
+            ) : null}
+
+            {!isClient && mode === "login" ? (
+              <label>
+                <span>2FA 验证码</span>
+                <input
+                  inputMode="numeric"
+                  placeholder="6 位验证码"
+                  maxLength={6}
+                  value={totp}
+                  onChange={(event) =>
+                    setTotp(event.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
+                />
+              </label>
+            ) : null}
+
+            {isClient && mode === "register" ? (
+              <label>
+                <span>Cod de invitație</span>
+                <input
+                  value={invite}
+                  onChange={(e) => setInvite(e.target.value)}
+                  placeholder="Introduceți codul de invitație"
+                />
+              </label>
+            ) : null}
+
+            {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
+            {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
+
+            <button className={styles.primaryButton} type="submit">
               {isClient
                 ? mode === "register"
                   ? "Creați cont"
                   : mode === "forgot"
-                    ? "Recuperați accesul"
-                    : "Autentificare"
-                : "后台登录"}
-            </h2>
-            <p>
-              {isClient
-                ? mode === "forgot"
-                  ? "Verificați contul și setați o parolă nouă."
-                  : "Folosiți telefonul, adresa de e-mail sau contul asociat."
-                : "总账户与子账户共用此入口，系统将根据登录凭证自动识别权限。"}
-            </p>
+                    ? "Confirmați modificarea"
+                    : "Intră"
+                : loggingIn ? "验证中…" : "进入后台"}
+              <ChevronRight size={17} />
+            </button>
+
+            {isClient && mode === "login" ? (
+              <button
+                type="button"
+                className={styles.textButton}
+                onClick={() => { setMode("forgot"); setResetMessage(""); }}
+              >
+                Ați uitat parola?
+              </button>
+            ) : null}
+
+            {isClient ? (
+              <button
+                type="button"
+                className={styles.textButton}
+                onClick={() => { setMode(mode === "login" ? "register" : "login"); setResetMessage(""); }}
+              >
+                {mode === "login"
+                  ? "Nu aveți cont? Înregistrați-vă cu un cod de invitație"
+                  : "Înapoi la autentificare"}
+              </button>
+            ) : null}
+          </form>
+
+          <div className={styles.panelFooter}>
+            <span>{isClient ? "Brantone Veylor · România" : "Brantone Veylor · Private Capital Advisory"}</span>
+            <i />
           </div>
-
-          {isClient && mode === "register" ? (
-            <label>
-              <span>Nume complet</span>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Introduceți numele" />
-            </label>
-          ) : null}
-
-          <label>
-            <span>{isClient ? "Telefon / e-mail / cont" : "后台账户"}</span>
-            <input value={account} onChange={(e) => setAccount(e.target.value)} placeholder={isClient ? "+40 7xx xxx xxx / nume@exemplu.ro" : "请输入后台账户"} />
-          </label>
-
-          {mode !== "forgot" ? (
-            <label>
-              <span>{isClient ? "Parolă" : "登录密码"}</span>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={isClient ? "Introduceți parola" : "请输入密码"} />
-            </label>
-          ) : (
-            <>
-              <label>
-                <span>{isClient ? "Cod de verificare" : "验证码"}</span>
-                <input inputMode="numeric" placeholder={isClient ? "Introduceți codul primit" : "输入收到的验证码"} maxLength={6} />
-              </label>
-              <label>
-                <span>{isClient ? "Parolă nouă" : "新密码"}</span>
-                <input type="password" placeholder={isClient ? "Setați o parolă nouă" : "设置新的登录密码"} />
-              </label>
-            </>
-          )}
-
-          {isClient && mode === "register" ? (
-            <label>
-              <span>Confirmați parola</span>
-              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repetați parola" />
-            </label>
-          ) : null}
-
-          {!isClient && mode === "login" ? (
-            <label>
-              <span>2FA 验证码</span>
-              <input
-                inputMode="numeric"
-                placeholder="6 位验证码"
-                maxLength={6}
-                value={totp}
-                onChange={(event) =>
-                  setTotp(event.target.value.replace(/\D/g, "").slice(0, 6))
-                }
-              />
-            </label>
-          ) : null}
-
-          {isClient && mode === "register" ? (
-            <label>
-              <span>Cod de invitație</span>
-              <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="Introduceți codul de invitație" />
-            </label>
-          ) : null}
-
-          {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
-          {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
-
-          <button className={styles.primaryButton} type="submit">
-            {isClient
-              ? mode === "register"
-                ? "Creați cont"
-                : mode === "forgot"
-                  ? "Confirmați modificarea"
-                  : "Intră"
-              : loggingIn ? "验证中…" : "进入后台"}
-            <ChevronRight size={17} />
-          </button>
-
-          {isClient && mode === "login" ? (
-            <button type="button" className={styles.textButton} onClick={() => { setMode("forgot"); setResetMessage(""); }}>
-              Ați uitat parola?
-            </button>
-          ) : null}
-
-          {isClient ? (
-            <button
-              type="button"
-              className={styles.textButton}
-              onClick={() => { setMode(mode === "login" ? "register" : "login"); setResetMessage(""); }}
-            >
-              {mode === "login" ? "Nu aveți cont? Înregistrați-vă cu un cod de invitație" : "Înapoi la autentificare"}
-            </button>
-          ) : null}
-        </form>
+        </div>
       </section>
     </main>
   );
