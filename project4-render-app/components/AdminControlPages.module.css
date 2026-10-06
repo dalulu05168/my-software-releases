@@ -26,3 +26,24 @@
 .tablePanel{min-height:0;max-height:calc(100dvh - 190px);overflow:auto}
 .supportLayout{height:calc(100dvh - 138px);min-height:0}
 .modal{max-height:82dvh}
+
+
+/* ROMANIA_LUXURY_THEME_V2 */
+.header h1,.drawerHeader h2,.drawerSection h3,.providerTitle strong{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+}
+.header p{color:#111!important}
+.primary{
+  background:linear-gradient(135deg,#b40818,#d11527);
+  border-color:#b40818;
+}
+.secondary{border-color:rgba(188,139,56,.34);background:#fffdf9}
+.tablePanel,.providerBox,.riskGrid article,.supportLayout{
+  border-color:rgba(188,139,56,.27);
+  background:rgba(255,255,255,.95);
+  box-shadow:0 8px 24px rgba(73,51,17,.03);
+}
+.tablePanel th{background:#fbf6ed;border-bottom-color:rgba(188,139,56,.26)}
+.activeSegment{background:#fff3df!important;color:#b20d1b!important;border-color:#e8cb98!important}
+.modal,.drawer{background:#fffdf9;border:1px solid rgba(188,139,56,.26)}
