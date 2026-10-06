@@ -139,3 +139,46 @@ body :where(h1,h2,h3,h4,h5,h6){
 body :where(input,select,textarea){
   color:#000;
 }
+
+
+/* UI_TYPOGRAPHY_SYSTEM_V6 */
+:root{
+  --ui-page-title-size:32px;
+  --ui-module-title-size:19px;
+  --ui-card-number-size:28px;
+  --ui-body-size:14px;
+  --ui-table-size:13px;
+  --ui-button-size:14px;
+  --ui-tag-size:12px;
+  --ui-caption-size:12px;
+  --ui-title-weight:700;
+  --ui-medium-weight:500;
+  --ui-body-weight:400;
+}
+body{
+  font-size:var(--ui-body-size);
+  font-weight:var(--ui-body-weight);
+}
+body :where(p,span,small,label,td,th,input,select,textarea,a,em,b,strong){
+  color:#000;
+  font-size:var(--ui-body-size);
+  font-weight:var(--ui-body-weight);
+}
+body :where(button){
+  font-size:var(--ui-button-size);
+  font-weight:var(--ui-medium-weight);
+}
+body :where(input,select,textarea){
+  font-size:var(--ui-body-size);
+  font-weight:var(--ui-body-weight);
+}
+body :where(h1){
+  font-size:var(--ui-page-title-size);
+  line-height:1.15;
+  font-weight:var(--ui-title-weight);
+}
+body :where(h2,h3,h4,h5,h6){
+  font-size:var(--ui-module-title-size);
+  line-height:1.25;
+  font-weight:var(--ui-title-weight);
+}
