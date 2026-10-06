@@ -1323,3 +1323,77 @@
     grid-template-columns:minmax(220px,1fr) 125px 125px 58px;
   }
 }
+
+
+/* UNIFIED_MODULE_TYPOGRAPHY_V6 */
+.logoCompact img{
+  width:176px!important;
+  max-height:94px!important;
+}
+.adminShell .sidebarLogo,
+.clientShell .sidebarLogo{
+  height:118px!important;
+  padding:10px 8px!important;
+}
+.adminShell{
+  grid-template-columns:190px minmax(0,1fr)!important;
+}
+.clientShell{
+  grid-template-columns:198px minmax(0,1fr)!important;
+}
+.adminShell .pageHeader h1,
+.clientShell .pageHeader h1,
+.contentStack .pageHeader h1{
+  font-size:var(--ui-page-title-size)!important;
+  line-height:1.15!important;
+  font-weight:var(--ui-title-weight)!important;
+}
+.adminShell .pageHeader p,
+.clientShell .pageHeader p,
+.panelTitle p,
+.topbar span,
+.profile span,
+.metricCard span,
+.metricCard small,
+.fourStats span,
+.fourStats small,
+.heroBalance span,
+.heroBalance small{
+  font-size:var(--ui-body-size)!important;
+  font-weight:var(--ui-body-weight)!important;
+}
+.panelTitle h3,
+.marketListHeader strong,
+.quoteHeader h2,
+.orderPanel strong{
+  font-size:var(--ui-module-title-size)!important;
+  font-weight:var(--ui-title-weight)!important;
+}
+.metricCard strong,
+.fourStats strong,
+.heroBalance strong{
+  font-size:var(--ui-card-number-size)!important;
+  line-height:1.12!important;
+  font-weight:600!important;
+}
+.tablePanel th,
+.tablePanel td,
+.stockRows,
+.orderRows{
+  font-size:var(--ui-table-size)!important;
+  font-weight:var(--ui-body-weight)!important;
+}
+.tablePanel th{
+  font-weight:var(--ui-medium-weight)!important;
+}
+.navItem,.navActive,.logout,
+.primarySmall,.primaryButton,.secondaryButton,
+.rowActions button,.tableLink,.textButton,
+.marketTabs button,.chartToolbar button{
+  font-size:var(--ui-button-size)!important;
+  font-weight:var(--ui-medium-weight)!important;
+}
+.roleLabel,.headerPills span,.green,.red,.positive,.negative,.okBadge,.pendingBadge,.vipBadge{
+  font-size:var(--ui-tag-size)!important;
+  font-weight:var(--ui-medium-weight)!important;
+}
