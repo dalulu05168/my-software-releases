@@ -19,68 +19,18 @@ const trendPoints: TrendPoint[] = [
 ];
 
 export function InteractiveTrendChart() {
-  const [selected, setSelected] = useState(6);
-  const min = Math.min(...trendPoints.map((p) => p.value));
-  const max = Math.max(...trendPoints.map((p) => p.value));
-  const points = trendPoints.map((point, index) => {
-    const x = 40 + (index / (trendPoints.length - 1)) * 620;
-    const y = 190 - ((point.value - min) / (max - min)) * 135;
-    return { ...point, x, y };
-  });
-  const polyline = points.map((p) => `${p.x},${p.y}`).join(" ");
-  const active = points[selected];
-
   return (
     <div className={styles.trendWrap}>
       <div className={styles.dataStrip}>
-        <div><span>日期</span><strong>{active.label}</strong></div>
-        <div><span>平台资金</span><strong>MXN {active.value.toFixed(2)}M</strong></div>
-        <div><span>当日入金</span><strong>MXN {active.deposits.toFixed(2)}M</strong></div>
-        <div><span>当日提现</span><strong>MXN {active.withdrawals.toFixed(2)}M</strong></div>
+        <div><span>资金趋势</span><strong>—</strong></div>
+        <div><span>近 7 日入金</span><strong>—</strong></div>
+        <div><span>近 7 日提现</span><strong>—</strong></div>
+        <div><span>数据状态</span><strong>未接入</strong></div>
       </div>
       <div className={styles.svgBox}>
-        <svg viewBox="0 0 700 220" preserveAspectRatio="none" role="img">
-          <defs>
-            <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#8b1029" stopOpacity=".16" />
-              <stop offset="100%" stopColor="#8b1029" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          {[55, 90, 125, 160, 195].map((y) => (
-            <line key={y} x1="30" x2="675" y1={y} y2={y} stroke="#eadfce" strokeWidth="1" />
-          ))}
-          <polygon points={`40,200 ${polyline} 660,200`} fill="url(#trendFill)" />
-          <polyline points={polyline} fill="none" stroke="#8b1029" strokeWidth="2.5" />
-          <line x1={active.x} x2={active.x} y1="35" y2="200" stroke="#b98a45" strokeDasharray="4 4" />
-          {points.map((point, index) => (
-            <g key={point.label}>
-              <circle
-                cx={point.x}
-                cy={point.y}
-                r={index === selected ? 6 : 4}
-                fill={index === selected ? "#8b1029" : "#ffffff"}
-                stroke="#8b1029"
-                strokeWidth="2"
-              />
-              <rect
-                x={point.x - 34}
-                y="28"
-                width="68"
-                height="178"
-                fill="transparent"
-                className={styles.hit}
-                onMouseEnter={() => setSelected(index)}
-                onFocus={() => setSelected(index)}
-                onClick={() => setSelected(index)}
-              />
-              <text x={point.x} y="216" textAnchor="middle" className={styles.axisText}>
-                {point.label}
-              </text>
-            </g>
-          ))}
-        </svg>
+        <div className={styles.emptyChart}>真实资金趋势数据源尚未接入</div>
       </div>
-      <div className={styles.chartHint}>鼠标经过或点击日期节点查看对应数据</div>
+      <div className={styles.historyNotice}>未接入真实资金流水接口前，不展示生成或估算趋势数据。</div>
     </div>
   );
 }
