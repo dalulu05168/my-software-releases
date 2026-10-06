@@ -199,3 +199,44 @@
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
   }
 }
+
+
+/* MODULE_TYPOGRAPHY_V6 */
+.header h1{
+  font-size:var(--ui-page-title-size)!important;
+  line-height:1.15!important;
+  font-weight:var(--ui-title-weight)!important;
+}
+.header p,
+.drawerHeader span,
+.drawerSection label span,
+.form label span,
+.detailGrid span,
+.noticeMeta span,
+.noticeMeta small{
+  font-size:var(--ui-body-size)!important;
+  font-weight:var(--ui-body-weight)!important;
+}
+.drawerHeader h2,
+.drawerSection h3,
+.noticeGrid h3,
+.providerTitle strong{
+  font-size:var(--ui-module-title-size)!important;
+  font-weight:var(--ui-title-weight)!important;
+}
+.tablePanel th,
+.tablePanel td{
+  font-size:var(--ui-table-size)!important;
+  font-weight:var(--ui-body-weight)!important;
+}
+.tablePanel th{
+  font-weight:var(--ui-medium-weight)!important;
+}
+.primary,.secondary,.actions button,.linkButton,.auditButton,.addBank{
+  font-size:var(--ui-button-size)!important;
+  font-weight:var(--ui-medium-weight)!important;
+}
+.good,.bad,.wait,.status,.badge{
+  font-size:var(--ui-tag-size)!important;
+  font-weight:var(--ui-medium-weight)!important;
+}
