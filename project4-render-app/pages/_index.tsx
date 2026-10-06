@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { project4Api } from "../helpers/project4Api";
 import {
@@ -52,7 +52,7 @@ import {
 import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
 
-const logoUrl = "https://jiaoyipingtai-app.floot.app/_cdn/static/770adad5-ac2a-4117-a772-19f701ebdbd2-brantone-veyor-logo-v3.png";
+const logoUrl = "/brantone-veyor-logo-v3.png";
 
 type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
@@ -1156,6 +1156,10 @@ export default function App() {
     )
       ? "admin"
       : "client";
+
+  useEffect(() => {
+    document.documentElement.lang = portal === "client" ? "ro-RO" : "zh-CN";
+  }, [portal]);
 
   if (!role) {
     return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setRole(nextRole);setName(nextName);setView("dashboard");}} />;
