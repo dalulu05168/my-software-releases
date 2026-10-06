@@ -863,6 +863,8 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
       up: pct >= 0,
       market: item.market,
       tradable: item.tradable,
+      quotePercent: item.quote?.percentChange == null ? null : Number(item.quote.percentChange),
+      quoteTimestamp: item.quote?.providerTimestamp ?? null,
     };
   });
   const selected = liveStocks.find((s)=>s.symbol===symbol) ?? liveStocks[0] ?? {
@@ -873,6 +875,8 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
     up: true,
     market: "US" as const,
     tradable: false,
+    quotePercent: null,
+    quoteTimestamp: null,
   };
   const globalOrderEnabled =
     riskControls.find((item) => item.key === "GLOBAL")?.enabled ?? true;
@@ -923,7 +927,14 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
           ))}
         </div>
         <div className={styles.candleChart}>
-          <InteractiveCandleChart symbol={selected.symbol} interval={interval} />
+          <InteractiveCandleChart
+            symbol={selected.symbol}
+            interval={interval}
+            currentPrice={Number(selected.price) || null}
+            percentChange={selected.quotePercent}
+            providerTimestamp={selected.quoteTimestamp}
+            locale={clientLocale ? "ro" : "zh"}
+          />
         </div>
         <div className={styles.marketBottom}><section><h3>{clientLocale?"Registru ordine":"盘口"}</h3>{[1,2,3,4,5].map(i=><div key={i}><span>{clientLocale?"Cump.":"买"} {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>{clientLocale?"Tranzacții recente":"最近成交"}</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
       </section>
