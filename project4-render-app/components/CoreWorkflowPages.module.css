@@ -62,3 +62,128 @@
   background:#fffdf9;
   border:1px solid rgba(188,139,56,.26);
 }
+
+/* ROMANIA_CASTLE_CLIENT_V4 */
+.stack{
+  grid-template-rows:max-content max-content minmax(0,1fr);
+}
+.header{
+  min-height:58px;
+  padding:2px 2px 7px;
+}
+.tablePanel{
+  min-height:0;
+  height:100%;
+  max-height:none!important;
+}
+.clientStack{
+  position:relative;
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+  gap:10px;
+}
+.clientStack:before{
+  content:"";
+  position:absolute;
+  right:-2%;
+  bottom:-4%;
+  width:38%;
+  height:40%;
+  pointer-events:none;
+  opacity:.05;
+  background:
+    linear-gradient(to top,#102b55,transparent 64%);
+  clip-path:polygon(0 100%,0 77%,8% 68%,15% 73%,23% 50%,31% 62%,40% 37%,50% 59%,60% 31%,70% 55%,80% 45%,90% 67%,100% 55%,100% 100%);
+}
+.clientStack>*{position:relative;z-index:1}
+.clientStack .header h1{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:22px;
+}
+.clientStack .header p{
+  color:#111!important;
+  font-weight:400!important;
+}
+.clientStack .primary{
+  background:linear-gradient(135deg,#790d29,#971232);
+  border-color:#790d29;
+  color:#fff!important;
+}
+.clientStack .secondary{
+  border-color:rgba(177,124,44,.35);
+  background:#fffdf8;
+  color:#071b42!important;
+}
+.clientStack .filters,
+.clientStack .tablePanel,
+.clientStack .summaryGrid>div,
+.clientStack .settingsGrid>button,
+.clientStack .bankList article{
+  border-color:rgba(177,124,44,.28);
+  background:rgba(255,255,255,.95);
+  box-shadow:0 9px 24px rgba(72,49,16,.03);
+}
+.clientStack .filters{
+  min-height:50px;
+  padding:8px 10px;
+}
+.clientStack .search{
+  border-color:rgba(177,124,44,.28);
+  background:#fffdf9;
+}
+.clientStack .tablePanel{
+  border-radius:9px;
+}
+.clientStack .tablePanel th{
+  background:#fbf3e6;
+  color:#071b42!important;
+  border-bottom-color:rgba(177,124,44,.28);
+}
+.clientStack .tablePanel tbody tr:hover{
+  background:#fff8ed;
+}
+.clientStack .summaryGrid{
+  gap:9px;
+}
+.clientStack .summaryGrid>div{
+  border-radius:9px;
+}
+.clientStack .summaryGrid strong{
+  color:#071b42!important;
+  font-family:Georgia,"Times New Roman",serif;
+}
+.clientStack .segment,
+.clientStack .segmentWide{
+  border-color:rgba(177,124,44,.28);
+}
+.clientStack .activeSegment{
+  background:#fff0d8!important;
+  color:#7a1027!important;
+  border-color:#e4c58f!important;
+}
+.clientStack .settingsGrid>button{
+  min-height:96px;
+  border-radius:9px;
+}
+.clientStack .settingsIcon,
+.clientStack .bankIcon{
+  background:#fff2dc;
+  color:#9b6719;
+}
+.clientStack .positionHero{
+  background:
+    radial-gradient(circle at 88% 12%,rgba(211,165,88,.16),transparent 28%),
+    linear-gradient(135deg,#071b42,#0d2f66)!important;
+  border-bottom:1px solid rgba(177,124,44,.34);
+}
+.clientStack .modal,
+.clientStack .drawer{
+  background:#fffdf9;
+  border:1px solid rgba(177,124,44,.30);
+}
+.clientStack .drawerHeader{
+  background:#fff9ef;
+  border-bottom-color:rgba(177,124,44,.25);
+}
