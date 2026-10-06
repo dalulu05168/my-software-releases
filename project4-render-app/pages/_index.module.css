@@ -1875,3 +1875,129 @@
   background:transparent!important;
   border:0!important;
 }
+
+
+/* HOVER_AND_BORDER_QA_V10 */
+.appShell.appShell.appShell .metricCard,
+.appShell.appShell.appShell .panel,
+.appShell.appShell.appShell [class*="settingsGrid"]>button,
+.appShell.appShell.appShell [class*="noticeGrid"]>article,
+.appShell.appShell.appShell [class*="riskGrid"]>article,
+.appShell.appShell.appShell [class*="bankList"]>article,
+.appShell.appShell.appShell [class*="providerBox"]{
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease,
+    background .18s ease!important;
+  will-change:transform;
+}
+.appShell.appShell.appShell .metricCard:hover,
+.appShell.appShell.appShell .panel:hover,
+.appShell.appShell.appShell [class*="settingsGrid"]>button:hover,
+.appShell.appShell.appShell [class*="noticeGrid"]>article:hover,
+.appShell.appShell.appShell [class*="riskGrid"]>article:hover,
+.appShell.appShell.appShell [class*="bankList"]>article:hover,
+.appShell.appShell.appShell [class*="providerBox"]:hover{
+  transform:translateY(-3px)!important;
+  border-color:rgba(139,16,41,.36)!important;
+  box-shadow:0 14px 34px rgba(63,39,14,.075)!important;
+}
+.appShell.appShell.appShell .navItem{
+  transition:transform .16s ease,background .16s ease,color .16s ease!important;
+}
+.appShell.appShell.appShell .navItem:hover{
+  transform:translateX(3px)!important;
+  background:#fff4e6!important;
+}
+.appShell.appShell.appShell .navActive{
+  box-shadow:0 9px 20px rgba(7,27,66,.13)!important;
+}
+.appShell.appShell.appShell button{
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease,
+    background .16s ease,
+    border-color .16s ease,
+    filter .16s ease!important;
+}
+.appShell.appShell.appShell button:not(:disabled):hover{
+  transform:translateY(-1px);
+}
+.appShell.appShell.appShell button[class*="primary"]:not(:disabled):hover,
+.appShell.appShell.appShell .primarySmall:not(:disabled):hover{
+  box-shadow:0 10px 24px rgba(123,13,40,.16)!important;
+  filter:brightness(1.025);
+}
+.appShell.appShell.appShell input,
+.appShell.appShell.appShell select,
+.appShell.appShell.appShell textarea{
+  transition:border-color .16s ease,box-shadow .16s ease,background .16s ease!important;
+}
+.appShell.appShell.appShell input:hover,
+.appShell.appShell.appShell select:hover,
+.appShell.appShell.appShell textarea:hover{
+  border-color:rgba(177,124,44,.52)!important;
+}
+.appShell.appShell.appShell input:focus,
+.appShell.appShell.appShell select:focus,
+.appShell.appShell.appShell textarea:focus{
+  outline:none!important;
+  border-color:#a36d22!important;
+  box-shadow:0 0 0 3px rgba(163,109,34,.09)!important;
+}
+.appShell.appShell.appShell .tablePanel{
+  transition:border-color .18s ease,box-shadow .18s ease!important;
+}
+.appShell.appShell.appShell .tablePanel:hover{
+  border-color:rgba(177,124,44,.42)!important;
+  box-shadow:0 10px 26px rgba(70,45,14,.045)!important;
+}
+.appShell.appShell.appShell .tablePanel tbody tr{
+  transition:background .14s ease,box-shadow .14s ease!important;
+}
+.appShell.appShell.appShell .tablePanel tbody tr:hover{
+  background:#fff7e9!important;
+  box-shadow:inset 3px 0 0 #8b1029!important;
+}
+.appShell.appShell.appShell .stockItem,
+.appShell.appShell.appShell .stockItemActive{
+  transition:background .15s ease,transform .15s ease,border-color .15s ease!important;
+}
+.appShell.appShell.appShell .stockItem:hover{
+  background:#fff7e9!important;
+  transform:translateX(2px)!important;
+}
+.appShell.appShell.appShell .stockItemActive{
+  background:#fff0dc!important;
+  box-shadow:inset 3px 0 0 #8b1029!important;
+}
+.appShell.appShell.appShell .marketTerminal,
+.appShell.appShell.appShell .marketCenter,
+.appShell.appShell.appShell .orderPanel{
+  border-color:rgba(177,124,44,.30)!important;
+}
+.appShell.appShell.appShell .marketDataUnavailable{
+  min-height:68px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:12px!important;
+  border:1px dashed rgba(177,124,44,.34)!important;
+  border-radius:7px!important;
+  background:#fffaf2!important;
+  text-align:center!important;
+}
+.appShell.appShell.appShell .marketDataUnavailable span{
+  color:#5c6470!important;
+  font-size:10px!important;
+  font-weight:400!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .appShell.appShell.appShell *,
+  .appShell.appShell.appShell *:before,
+  .appShell.appShell.appShell *:after{
+    transition:none!important;
+    animation:none!important;
+    transform:none!important;
+  }
+}
