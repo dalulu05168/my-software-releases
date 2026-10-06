@@ -240,3 +240,50 @@
   font-size:var(--ui-tag-size)!important;
   font-weight:var(--ui-medium-weight)!important;
 }
+
+
+/* FINAL_TYPOGRAPHY_LOCK_V7 */
+.stack .header h1,
+.drawerHeader h2{
+  color:var(--text-title)!important;
+  font-size:var(--typo-page)!important;
+  font-weight:700!important;
+}
+.stack :where(.drawerSection h3,.noticeGrid h3,.providerTitle strong,.chatHeader strong){
+  color:var(--text-title)!important;
+  font-size:var(--typo-section)!important;
+  font-weight:700!important;
+}
+.stack :where(.header p,.providerTitle span,.providerResults span,.detailGrid span,.detailGrid strong,.controlRow,.form label span,.codeResult p,.codeResult div span,.codeResult div strong,.riskGrid span,.thread span,.threadActive span,.thread small,.threadActive small,.thread p,.threadActive p,.chatHeader span,.clientMessage p,.staffMessage p,.clientMessage span,.staffMessage span){
+  color:var(--text-main)!important;
+  font-size:var(--typo-body)!important;
+  font-weight:400!important;
+}
+.stack .tablePanel th{
+  color:var(--text-title)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:500!important;
+}
+.stack .tablePanel td,
+.stack .tablePanel td span{
+  color:var(--text-main)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:400!important;
+}
+.stack :where(.primary,.secondary,.actions button,.link,.auditButton){
+  font-size:var(--typo-button)!important;
+  font-weight:500!important;
+}
+.stack :where(.good,.bad,.wait){
+  font-size:var(--typo-label)!important;
+  font-weight:500!important;
+}
+.stack .good{color:var(--text-success)!important}
+.stack .wait{color:var(--text-warning)!important}
+.stack .bad{color:var(--text-danger)!important}
+.stack :where(.actions button,.link,.auditButton){color:var(--text-action)!important}
+.stack .riskGrid strong{
+  color:var(--text-title)!important;
+  font-size:var(--typo-label)!important;
+  font-weight:600!important;
+}
