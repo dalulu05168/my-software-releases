@@ -1397,3 +1397,81 @@
   font-size:var(--ui-tag-size)!important;
   font-weight:var(--ui-medium-weight)!important;
 }
+
+
+/* FINAL_TYPOGRAPHY_LOCK_V7 */
+.appShell :where(.pageHeader h1,.formTitle h2){
+  color:var(--text-title)!important;
+  font-size:var(--typo-page)!important;
+  font-weight:700!important;
+}
+.appShell :where(.panelTitle h3,.marketListHeader strong,.quoteHeader h2,.orderPanel strong),
+.loginPage :where(.formTitle h2){
+  color:var(--text-title)!important;
+  font-size:var(--typo-section)!important;
+  font-weight:700!important;
+}
+.appShell :where(.pageHeader p,.panelTitle p,.topbar span,.profile span,.metricCard span,.metricCard small,.fourStats span,.fourStats small,.heroBalance span,.heroBalance small,.orderSummary span,.quoteFacts span,.stockItem span,.stockItemActive span,.drawerSection label span,.loginForm label span),
+.loginPage :where(.formTitle p,.loginForm label span,.visualText p){
+  color:var(--text-main)!important;
+  font-size:var(--typo-body)!important;
+  font-weight:400!important;
+}
+.appShell :where(.metricCard strong,.fourStats strong,.heroBalance strong){
+  color:var(--text-title)!important;
+  font-size:var(--typo-card-value)!important;
+  font-weight:600!important;
+}
+.appShell :where(.tablePanel th){
+  color:var(--text-title)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:500!important;
+}
+.appShell :where(.tablePanel td,.tablePanel td span,.stockRows,.orderRows){
+  color:var(--text-main)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:400!important;
+}
+.appShell :where(.navItem,.navActive,.logout,.primarySmall,.secondaryButton,.rowActions button,.tableLink,.marketTabs button,.chartToolbar button,.textButton),
+.loginPage :where(.primaryButton,.textButton,.inlineForgot){
+  font-size:var(--typo-button)!important;
+  font-weight:500!important;
+}
+.appShell :where(.roleLabel,.headerPills span,.vipBadge,.okBadge,.pendingBadge,.green,.red,.positive,.negative),
+.loginPage :where(.roleLabel,.eyebrow,.brandMeta span,.panelBrandMark small,.romanianSignature span){
+  font-size:var(--typo-label)!important;
+  font-weight:500!important;
+}
+.appShell :where(.green,.positive,.okBadge){color:var(--text-success)!important}
+.appShell :where(.wait,.pendingBadge,.vipBadge){color:var(--text-warning)!important}
+.appShell :where(.red,.negative){color:var(--text-danger)!important}
+.appShell :where(.rowActions button,.tableLink,.textButton,.segmentActive,.marketTabActive,.chartActive),
+.loginPage :where(.textButton,.inlineForgot){color:var(--text-action)!important}
+.appShell :where(.navItem,.logout){color:var(--text-main)!important}
+.appShell .navActive,
+.appShell .navActive span,
+.appShell .navActive svg{color:#fff!important}
+.loginPage .visualText h1{
+  color:var(--text-title)!important;
+  font-weight:700!important;
+}
+.loginPage .panelBrandMark span{
+  color:var(--text-title)!important;
+  font-size:18px!important;
+  font-weight:700!important;
+}
+.loginPage .visualGrid strong{
+  color:var(--text-title)!important;
+  font-size:var(--typo-label)!important;
+  font-weight:600!important;
+}
+.loginPage .visualGrid span{
+  color:var(--text-main)!important;
+  font-size:var(--typo-caption)!important;
+  font-weight:400!important;
+}
+.loginPage input{
+  color:var(--text-main)!important;
+  font-size:var(--typo-body)!important;
+  font-weight:400!important;
+}
