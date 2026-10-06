@@ -732,7 +732,7 @@ function CustomersPage({
       </section>
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>用户ID</th><th>客户</th><th>VIP</th><th>实名认证</th><th>登录</th><th>Tranzacții</th><th>提现</th><th>余额</th><th>邀请码</th><th>操作</th></tr></thead>
+          <thead><tr><th>用户ID</th><th>客户</th><th>VIP</th><th>实名认证</th><th>登录</th><th>交易</th><th>提现</th><th>余额</th><th>邀请码</th><th>操作</th></tr></thead>
           <tbody>
             {filtered.map((c)=>(
               <tr key={c.id}>
