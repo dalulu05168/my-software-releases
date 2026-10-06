@@ -594,18 +594,18 @@ function Dashboard({
           <button className={styles.primarySmall} onClick={onOpenMarket}>Vezi piețele <ChevronRight size={15} /></button>
         </div>
         <section className={styles.heroBalance}>
-          <div><span>Valoarea totală a portofoliului</span><strong>RON 248,630.80</strong><small>Disponibil RON 186,240.00 · EUR 3,471.20</small></div>
+          <div><span>Valoarea totală a portofoliului</span><strong>—</strong><small>Datele reale ale contului nu sunt conectate încă</small></div>
           <div className={styles.heroStats}>
-            <div><span>Variația de azi</span><strong className={styles.green}>+2,418.70</strong></div>
-            <div><span>Poziții</span><strong>8</strong></div>
-            <div><span>Nivel cont</span><strong>VIP3</strong></div>
+            <div><span>Variația de azi</span><strong>—</strong></div>
+            <div><span>Poziții</span><strong>—</strong></div>
+            <div><span>Nivel cont</span><strong>—</strong></div>
           </div>
         </section>
         <div className={styles.metricGrid}>
-          <Metric icon={WalletCards} title="Sold disponibil" value="RON 186,240" sub="Disponibil acum" />
-          <Metric icon={LineChart} title="Valoarea pozițiilor" value="RON 62,390" sub="8 poziții" />
-          <Metric icon={Heart} title="Lista de urmărire" value="12" sub="US / EU" />
-          <Metric icon={ShieldCheck} title="Identitate verificată" value="Finalizat" sub="Cont în stare normală" />
+          <Metric icon={WalletCards} title="Sold disponibil" value="—" sub="Sursa contului nu este conectată" />
+          <Metric icon={LineChart} title="Valoarea pozițiilor" value="—" sub="Sursa pozițiilor nu este conectată" />
+          <Metric icon={Heart} title="Lista de urmărire" value="—" sub="Se va sincroniza cu datele reale" />
+          <Metric icon={ShieldCheck} title="Starea contului" value="—" sub="Datele profilului nu sunt conectate" />
         </div>
         <div className={styles.twoColumns}>
           <section className={styles.panel}>
@@ -628,17 +628,17 @@ function Dashboard({
         <div className={styles.headerPills}><span>US</span><span>MX</span><span>系统正常</span></div>
       </div>
       <div className={styles.metricGrid}>
-        <Metric icon={Users} title="客户总数" value={role === "master" ? "2,846" : "428"} sub="+18 今日新增" />
-        <Metric icon={Banknote} title="累计入金" value="MXN 18.62M" sub="USD 624,830" />
-        <Metric icon={Activity} title="订单数量" value="1,284" sub="今日 74" />
-        <Metric icon={BadgeDollarSign} title="持仓市值" value="MXN 26.84M" sub="USD 906,420" />
+        <Metric icon={Users} title="客户总数" value="—" sub="客户数据源未接入" />
+        <Metric icon={Banknote} title="累计入金" value="—" sub="资金数据源未接入" />
+        <Metric icon={Activity} title="订单数量" value="—" sub="订单数据源未接入" />
+        <Metric icon={BadgeDollarSign} title="持仓市值" value="—" sub="持仓数据源未接入" />
       </div>
       <div className={styles.fourStats}>
         {[
-          ["今日充值", "MXN 386,200", "+12.8%"],
-          ["今日提现", "MXN 94,700", "-4.2%"],
-          ["今日买入", "MXN 612,540", "+18.6%"],
-          ["今日卖出", "MXN 428,310", "+7.4%"],
+          ["今日充值", "—", "未接入"],
+          ["今日提现", "—", "未接入"],
+          ["今日买入", "—", "未接入"],
+          ["今日卖出", "—", "未接入"],
         ].map(([title, value, change]) => (
           <div key={title}><span>{title}</span><strong>{value}</strong><small>{change}</small></div>
         ))}
@@ -654,10 +654,10 @@ function Dashboard({
           <div className={styles.panelTitle}><div><h3>待处理事项</h3><p>需要运营确认</p></div></div>
           <div className={styles.todoList}>
             {[
-              ["实名认证审核", "18", FileCheck2, "customers"],
-              ["充值审核", "12", Banknote, "cash"],
-              ["提现审核", "7", CreditCard, "cash"],
-              ["人工通知", "24", Bell, "notifications"],
+              ["实名认证审核", "—", FileCheck2, "customers"],
+              ["充值审核", "—", Banknote, "cash"],
+              ["提现审核", "—", CreditCard, "cash"],
+              ["人工通知", "—", Bell, "notifications"],
             ].map(([label,count,Icon,target]:any)=>(
               <button key={label} onClick={() => onNavigate(target)}><span><Icon size={16}/>{label}</span><strong>{count}</strong><ChevronRight size={15}/></button>
             ))}
@@ -896,10 +896,8 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
       stock.name.toLowerCase().includes(searchText.toLowerCase());
     return marketMatch && searchMatch;
   });
-  const choosePercent = (ratio: number) => {
-    const available = 186240;
-    const price = Math.max(0.01, Number(selected.price));
-    setQty(String(Math.max(1, Math.floor((available * ratio) / price))));
+  const choosePercent = (_ratio: number) => {
+    setNotice(clientLocale ? "Soldul real al contului nu este conectat; calculul procentual este indisponibil." : "真实账户可用资金尚未接入，暂不能按资金比例计算数量。");
   };
 
   return (
@@ -960,7 +958,7 @@ function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role:
       </section>
       <section className={styles.orderPanel}>
         <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>{clientLocale?"Cumpărare":"买入"}</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>{clientLocale?"Vânzare":"卖出"}</button></div>
-        <div className={styles.orderSummary}><span>{clientLocale?"Sold disponibil":"可用资金"}</span><strong>{clientLocale?"RON":"MXN"} 186,240.00</strong></div>
+        <div className={styles.orderSummary}><span>{clientLocale?"Sold disponibil":"可用资金"}</span><strong>—</strong></div>
         <label><span>{clientLocale?"Instrument":"证券"}</span><input value={selected.symbol} readOnly/></label>
         <label><span>{clientLocale?"Preț":"价格"}</span><input value={selected.price} readOnly/></label>
         <label><span>{clientLocale?"Cantitate":"数量"}</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
