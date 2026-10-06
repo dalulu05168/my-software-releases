@@ -182,3 +182,55 @@ body :where(h2,h3,h4,h5,h6){
   line-height:1.25;
   font-weight:var(--ui-title-weight);
 }
+
+
+/* FINAL_TYPOGRAPHY_LOCK_V7 */
+:root{
+  --typo-page:22px;
+  --typo-section:16px;
+  --typo-card-value:20px;
+  --typo-body:12px;
+  --typo-table:11px;
+  --typo-button:12px;
+  --typo-label:11px;
+  --typo-caption:10px;
+  --text-main:#000000;
+  --text-title:#071b42;
+  --text-action:#8b1029;
+  --text-success:#168654;
+  --text-warning:#9a650f;
+  --text-danger:#b91c2b;
+}
+html,body,#root{
+  font-size:var(--typo-body)!important;
+  color:var(--text-main)!important;
+}
+body,
+body :where(p,span,small,label,td,th,input,select,textarea,a,em,b,strong){
+  color:var(--text-main)!important;
+  font-size:var(--typo-body)!important;
+  font-weight:400!important;
+  line-height:1.45!important;
+}
+body :where(button){
+  font-size:var(--typo-button)!important;
+  font-weight:500!important;
+  line-height:1.2!important;
+}
+body :where(h1){
+  color:var(--text-title)!important;
+  font-size:var(--typo-page)!important;
+  font-weight:700!important;
+  line-height:1.15!important;
+}
+body :where(h2,h3,h4,h5,h6){
+  color:var(--text-title)!important;
+  font-size:var(--typo-section)!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+}
+body :where(input,select,textarea){
+  color:var(--text-main)!important;
+  font-size:var(--typo-body)!important;
+  font-weight:400!important;
+}
