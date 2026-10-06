@@ -46,6 +46,25 @@ const positionSeed = [
   { user: "Fernanda Pérez", symbol: "TSLA", name: "Tesla Inc.", market: "US", quantity: 50, cost: 418.60, price: 443.21, currency: "USD" },
 ];
 
+
+function roStatus(value: string) {
+  const map: Record<string,string> = {
+    "已记录":"Înregistrat","处理中":"În procesare","待确认":"În așteptarea confirmării",
+    "待配售":"În așteptarea alocării","已配售":"Alocat","已完成":"Finalizat","已取消":"Anulat",
+    "待审核":"În așteptarea verificării","已通过":"Aprobat","已拒绝":"Respins",
+    "充值":"Depozit","提现":"Retragere"
+  };
+  return map[value] || value;
+}
+function roOrderType(value: string) {
+  const map: Record<string,string> = {"全部":"Toate","股票":"Acțiuni","大宗":"Bloc","IPO":"IPO","基金":"Fond"};
+  return map[value] || value;
+}
+function roOrderSide(value: string) {
+  const map: Record<string,string> = {"买入":"Cumpărare","卖出":"Vânzare","申购":"Subscriere"};
+  return map[value] || value;
+}
+
 function Badge({ value }: { value: string }) {
   const cls =
     value.includes("通过") || value.includes("记录") || value.includes("完成")
@@ -96,30 +115,30 @@ function OrdersPage({ role, accountName }: { role: Role; accountName: string }) 
   return (
     <div className={styles.stack}>
       <div className={styles.header}>
-        <div><h1>{role === "client" ? "我的订单" : "订单管理"}</h1><p>查看股票、大宗、IPO 与基金订单状态和处理记录</p></div>
-        <button className={styles.secondary} onClick={() => setExported(true)}><Filter size={14}/> {exported ? "已生成导出记录" : "导出筛选结果"}</button>
+        <div><h1>{role === "client" ? "Ordinele mele" : "订单管理"}</h1><p>{role === "client" ? "Consultați starea și istoricul ordinelor pentru acțiuni, blocuri, IPO și fonduri" : "查看股票、大宗、IPO 与基金订单状态和处理记录"}</p></div>
+        <button className={styles.secondary} onClick={() => setExported(true)}><Filter size={14}/> {role === "client" ? (exported ? "Export pregătit" : "Exportă rezultatele") : (exported ? "已生成导出记录" : "导出筛选结果")}</button>
       </div>
       <section className={styles.filters}>
-        <div className={styles.search}><Search size={14}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="订单号 / 客户 / 产品 / 状态"/></div>
+        <div className={styles.search}><Search size={14}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={role === "client" ? "Ordin / produs / stare" : "订单号 / 客户 / 产品 / 状态"}/></div>
         <div className={styles.segment}>
-          {["全部","股票","大宗","IPO","基金"].map((item) => <button key={item} className={type === item ? styles.activeSegment : ""} onClick={() => setType(item)}>{item}</button>)}
+          {["全部","股票","大宗","IPO","基金"].map((item) => <button key={item} className={type === item ? styles.activeSegment : ""} onClick={() => setType(item)}>{role === "client" ? roOrderType(item) : item}</button>)}
         </div>
       </section>
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>订单号</th>{role !== "client" ? <th>客户</th> : null}<th>类型</th><th>产品</th><th>方向</th><th>金额</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>
+          <thead><tr><th>{role === "client" ? "Nr. ordin" : "订单号"}</th>{role !== "client" ? <th>客户</th> : null}<th>{role === "client" ? "Tip" : "类型"}</th><th>{role === "client" ? "Produs" : "产品"}</th><th>{role === "client" ? "Direcție" : "方向"}</th><th>{role === "client" ? "Valoare" : "金额"}</th><th>{role === "client" ? "Stare" : "状态"}</th><th>{role === "client" ? "Timp" : "时间"}</th><th>{role === "client" ? "Acțiune" : "操作"}</th></tr></thead>
           <tbody>
             {filtered.map((row) => (
               <tr key={row.id}>
                 <td className={styles.mono}>{row.id}</td>
                 {role !== "client" ? <td>{row.user}</td> : null}
-                <td>{row.type}</td>
+                <td>{role === "client" ? roOrderType(row.type) : row.type}</td>
                 <td className={styles.mono}>{row.product}</td>
-                <td>{row.side}</td>
+                <td>{role === "client" ? roOrderSide(row.side) : row.side}</td>
                 <td className={styles.mono}>{row.amount}</td>
-                <td><Badge value={row.status}/></td>
+                <td><Badge value={role === "client" ? roStatus(row.status) : row.status}/></td>
                 <td>{row.time}</td>
-                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>详情</button>{role !== "client" && row.type === "IPO" && row.status === "待配售" ? <button onClick={() => transition(row.id, "已配售")}>配售</button> : null}{role !== "client" && ["待确认","处理中","已配售"].includes(row.status) ? <button onClick={() => transition(row.id, "已完成")}>完成</button> : null}{role === "client" && ["待确认","处理中","待配售"].includes(row.status) ? <button onClick={() => transition(row.id, "已取消")}>取消</button> : null}</div></td>
+                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>{role === "client" ? "Detalii" : "详情"}</button>{role !== "client" && row.type === "IPO" && row.status === "待配售" ? <button onClick={() => transition(row.id, "已配售")}>配售</button> : null}{role !== "client" && ["待确认","处理中","已配售"].includes(row.status) ? <button onClick={() => transition(row.id, "已完成")}>完成</button> : null}{role === "client" && ["待确认","处理中","待配售"].includes(row.status) ? <button onClick={() => transition(row.id, "已取消")}>Anulează</button> : null}</div></td>
               </tr>
             ))}
           </tbody>
@@ -128,20 +147,20 @@ function OrdersPage({ role, accountName }: { role: Role; accountName: string }) 
       {selected ? (
         <div className={styles.shade} onMouseDown={() => setSelected(null)}>
           <aside className={styles.drawer} onMouseDown={(e) => e.stopPropagation()}>
-            <div className={styles.drawerHeader}><div><span>订单详情</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
+            <div className={styles.drawerHeader}><div><span>{role === "client" ? "Detalii ordin" : "订单详情"}</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
             <div className={styles.detailGrid}>
-              <div><span>客户</span><strong>{selected.user}</strong></div>
-              <div><span>类型</span><strong>{selected.type}</strong></div>
-              <div><span>产品</span><strong>{selected.product}</strong></div>
-              <div><span>方向</span><strong>{selected.side}</strong></div>
-              <div><span>金额</span><strong>{selected.amount}</strong></div>
-              <div><span>状态</span><Badge value={selected.status}/></div>
+              <div><span>{role === "client" ? "Client" : "客户"}</span><strong>{selected.user}</strong></div>
+              <div><span>{role === "client" ? "Tip" : "类型"}</span><strong>{role === "client" ? roOrderType(selected.type) : selected.type}</strong></div>
+              <div><span>{role === "client" ? "Produs" : "产品"}</span><strong>{selected.product}</strong></div>
+              <div><span>{role === "client" ? "Direcție" : "方向"}</span><strong>{role === "client" ? roOrderSide(selected.side) : selected.side}</strong></div>
+              <div><span>{role === "client" ? "Valoare" : "金额"}</span><strong>{selected.amount}</strong></div>
+              <div><span>{role === "client" ? "Stare" : "状态"}</span><Badge value={role === "client" ? roStatus(selected.status) : selected.status}/></div>
             </div>
             <section className={styles.timeline}>
-              <h3>订单流程</h3>
-              {["订单创建","资金校验","订单记录","状态更新"].map((label, index) => <div key={label}><i className={index < 3 ? styles.timelineDone : ""}/><span>{label}</span><small>{index === 0 ? selected.time : index === 1 ? "已完成" : index === 2 ? "已记录" : selected.status}</small></div>)}
+              <h3>{role === "client" ? "Fluxul ordinului" : "订单流程"}</h3>
+              {(role === "client" ? ["Ordin creat","Fonduri verificate","Ordin înregistrat","Stare actualizată"] : ["订单创建","资金校验","订单记录","状态更新"]).map((label, index) => <div key={label}><i className={index < 3 ? styles.timelineDone : ""}/><span>{label}</span><small>{index === 0 ? selected.time : index === 1 ? (role === "client" ? "Finalizat" : "已完成") : index === 2 ? (role === "client" ? "Înregistrat" : "已记录") : (role === "client" ? roStatus(selected.status) : selected.status)}</small></div>)}
             </section>
-            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button></div>
+            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>{role === "client" ? "Închide" : "关闭"}</button></div>
           </aside>
         </div>
       ) : null}
@@ -181,28 +200,28 @@ function CashPage({
 
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>{role === "client" ? "资金中心" : "资金审核"}</h1><p>{role === "client" ? "提交充值和提现申请并查看进度" : "处理客户充值、提现与银行信息"}</p></div>{role === "client" ? <button className={styles.primary} disabled={type === "提现" && !withdrawEnabled} onClick={() => { if (type === "提现" && !withdrawEnabled) return; setCreating(true); setCreated(""); }}><Banknote size={14}/> 新申请</button> : null}</div>
+      <div className={styles.header}><div><h1>{role === "client" ? "Fonduri" : "资金审核"}</h1><p>{role === "client" ? "Trimiteți cereri de depozit sau retragere și urmăriți progresul" : "处理客户充值、提现与银行信息"}</p></div>{role === "client" ? <button className={styles.primary} disabled={type === "提现" && !withdrawEnabled} onClick={() => { if (type === "提现" && !withdrawEnabled) return; setCreating(true); setCreated(""); }}><Banknote size={14}/> Cerere nouă</button> : null}</div>
       <div className={styles.summaryGrid}>
-        <div><span>可用资金</span><strong>MXN 186,240.00</strong></div>
-        <div><span>冻结资金</span><strong>MXN 21,400.00</strong></div>
-        <div><span>今日充值</span><strong>MXN 120,000.00</strong></div>
-        <div><span>今日提现</span><strong>MXN 48,500.00</strong></div>
+        <div><span>{role === "client" ? "Sold disponibil" : "可用资金"}</span><strong>{role === "client" ? "RON" : "MXN"} 186,240.00</strong></div>
+        <div><span>{role === "client" ? "Fonduri blocate" : "冻结资金"}</span><strong>{role === "client" ? "RON" : "MXN"} 21,400.00</strong></div>
+        <div><span>{role === "client" ? "Depozite azi" : "今日充值"}</span><strong>{role === "client" ? "RON" : "MXN"} 120,000.00</strong></div>
+        <div><span>{role === "client" ? "Retrageri azi" : "今日提现"}</span><strong>{role === "client" ? "RON" : "MXN"} 48,500.00</strong></div>
       </div>
-      <div className={styles.segmentWide}><button className={type === "充值" ? styles.activeSegment : ""} onClick={() => setType("充值")}>充值申请</button><button className={type === "提现" ? styles.activeSegment : ""} disabled={role === "client" && !withdrawEnabled} onClick={() => withdrawEnabled && setType("提现")}>提现申请</button></div>
-      {role === "client" && !withdrawEnabled ? <div className={extra.riskNotice}>当前提现申请入口受平台风控限制。</div> : null}
+      <div className={styles.segmentWide}><button className={type === "充值" ? styles.activeSegment : ""} onClick={() => setType("充值")}>{role === "client" ? "Depozite" : "充值申请"}</button><button className={type === "提现" ? styles.activeSegment : ""} disabled={role === "client" && !withdrawEnabled} onClick={() => withdrawEnabled && setType("提现")}>{role === "client" ? "Retrageri" : "提现申请"}</button></div>
+      {role === "client" && !withdrawEnabled ? <div className={extra.riskNotice}>Retragerile sunt restricționate momentan de controlul de risc.</div> : null}
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>申请号</th>{role !== "client" ? <th>客户</th> : null}<th>币种</th><th>金额</th><th>银行信息</th><th>参考号</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>
-          <tbody>{visible.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td>{role !== "client" ? <td>{row.user}</td> : null}<td>{row.currency}</td><td className={styles.mono}>{row.amount}</td><td>{row.bank}</td><td className={styles.mono}>{row.ref}</td><td><Badge value={row.status}/></td><td>{row.time}</td><td><div className={styles.actions}><button onClick={() => setSelected(row)}>查看</button>{role !== "client" && !["已通过","已拒绝"].includes(row.status) ? <><button onClick={() => move(row.id, "已通过")}>通过</button><button onClick={() => move(row.id, "已拒绝")}>拒绝</button></> : null}</div></td></tr>)}</tbody>
+          <thead><tr><th>{role === "client" ? "Nr. cerere" : "申请号"}</th>{role !== "client" ? <th>客户</th> : null}<th>{role === "client" ? "Monedă" : "币种"}</th><th>{role === "client" ? "Valoare" : "金额"}</th><th>{role === "client" ? "Cont bancar" : "银行信息"}</th><th>{role === "client" ? "Referință" : "参考号"}</th><th>{role === "client" ? "Stare" : "状态"}</th><th>{role === "client" ? "Timp" : "时间"}</th><th>{role === "client" ? "Acțiune" : "操作"}</th></tr></thead>
+          <tbody>{visible.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td>{role !== "client" ? <td>{row.user}</td> : null}<td>{row.currency}</td><td className={styles.mono}>{row.amount}</td><td>{row.bank}</td><td className={styles.mono}>{row.ref}</td><td><Badge value={role === "client" ? roStatus(row.status) : row.status}/></td><td>{row.time}</td><td><div className={styles.actions}><button onClick={() => setSelected(row)}>{role === "client" ? "Vezi" : "查看"}</button>{role !== "client" && !["已通过","已拒绝"].includes(row.status) ? <><button onClick={() => move(row.id, "已通过")}>通过</button><button onClick={() => move(row.id, "已拒绝")}>拒绝</button></> : null}</div></td></tr>)}</tbody>
         </table>
       </section>
       {selected ? (
         <div className={styles.shade} onMouseDown={() => setSelected(null)}>
           <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
-            <div className={styles.drawerHeader}><div><span>{selected.type}申请</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
-            <div className={styles.detailGrid}><div><span>客户</span><strong>{selected.user}</strong></div><div><span>金额</span><strong>{selected.currency} {selected.amount}</strong></div><div><span>银行信息</span><strong>{selected.bank}</strong></div><div><span>状态</span><Badge value={selected.status}/></div></div>
-            <section className={styles.proof}><FileCheck2 size={26}/><div><strong>{selected.type === "充值" ? "付款凭证" : "银行账户快照"}</strong><span>{selected.type === "充值" ? "已提交凭证 · 可查看凭证信息" : "申请时账户信息已锁定"}</span></div><button onClick={() => setProofOpen(!proofOpen)}>{proofOpen ? "收起" : "查看"}</button></section>
-            {proofOpen ? <section className={extra.proofDetail}><div><span>文件编号</span><strong>{selected.ref}-DOC</strong></div><div><span>提交时间</span><strong>{selected.time}</strong></div><div><span>校验状态</span><strong>资料完整</strong></div></section> : null}
+            <div className={styles.drawerHeader}><div><span>{role === "client" ? `${roStatus(selected.type)} · cerere` : `${selected.type}申请`}</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
+            <div className={styles.detailGrid}><div><span>{role === "client" ? "Client" : "客户"}</span><strong>{selected.user}</strong></div><div><span>{role === "client" ? "Valoare" : "金额"}</span><strong>{selected.currency} {selected.amount}</strong></div><div><span>{role === "client" ? "Cont bancar" : "银行信息"}</span><strong>{selected.bank}</strong></div><div><span>{role === "client" ? "Stare" : "状态"}</span><Badge value={role === "client" ? roStatus(selected.status) : selected.status}/></div></div>
+            <section className={styles.proof}><FileCheck2 size={26}/><div><strong>{role === "client" ? (selected.type === "充值" ? "Dovada plății" : "Date cont bancar") : (selected.type === "充值" ? "付款凭证" : "银行账户快照")}</strong><span>{role === "client" ? (selected.type === "充值" ? "Document încărcat · detaliile pot fi consultate" : "Datele contului au fost fixate la trimitere") : (selected.type === "充值" ? "已提交凭证 · 可查看凭证信息" : "申请时账户信息已锁定")}</span></div><button onClick={() => setProofOpen(!proofOpen)}>{role === "client" ? (proofOpen ? "Ascunde" : "Vezi") : (proofOpen ? "收起" : "查看")}</button></section>
+            {proofOpen ? <section className={extra.proofDetail}><div><span>{role === "client" ? "Nr. document" : "文件编号"}</span><strong>{selected.ref}-DOC</strong></div><div><span>{role === "client" ? "Trimis la" : "提交时间"}</span><strong>{selected.time}</strong></div><div><span>{role === "client" ? "Validare" : "校验状态"}</span><strong>{role === "client" ? "Documentație completă" : "资料完整"}</strong></div></section> : null}
             <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button></div>
           </div>
         </div>
@@ -210,8 +229,8 @@ function CashPage({
       {creating ? (
         <div className={styles.shade}>
           <div className={styles.modal}>
-            <div className={styles.drawerHeader}><div><span>资金申请</span><h2>新建{type}申请</h2></div><button onClick={() => setCreating(false)}><X size={18}/></button></div>
-            {!created ? <form className={styles.form} onSubmit={createRequest}><label><span>币种</span><select><option>MXN</option><option>USD</option></select></label><label><span>金额</span><input value={amount} onChange={(e) => setAmount(e.target.value)}/></label><label><span>银行账户</span><select><option>BBVA México · ••7812</option><option>Santander · ••3097</option></select></label>{type === "充值" ? <label><span>付款参考号</span><input placeholder="输入银行转账参考号"/></label> : <label><span>交易密码</span><input type="password" placeholder="输入交易密码"/></label>}<button className={styles.primary} type="submit">提交申请</button></form> : <div className={styles.doneBox}><CircleCheck size={34}/><h3>申请已提交</h3><p>申请编号 {created}</p><button className={styles.primary} onClick={() => setCreating(false)}>完成</button></div>}
+            <div className={styles.drawerHeader}><div><span>{role === "client" ? "Cerere de fonduri" : "资金申请"}</span><h2>{role === "client" ? `Cerere nouă · ${roStatus(type)}` : `新建${type}申请`}</h2></div><button onClick={() => setCreating(false)}><X size={18}/></button></div>
+            {!created ? <form className={styles.form} onSubmit={createRequest}><label><span>{role === "client" ? "Monedă" : "币种"}</span><select><option>MXN</option><option>USD</option></select></label><label><span>{role === "client" ? "Valoare" : "金额"}</span><input value={amount} onChange={(e) => setAmount(e.target.value)}/></label><label><span>{role === "client" ? "Cont bancar" : "银行账户"}</span><select><option>BBVA México · ••7812</option><option>Santander · ••3097</option></select></label>{type === "充值" ? <label><span>{role === "client" ? "Referință plată" : "付款参考号"}</span><input placeholder={role === "client" ? "Introduceți referința transferului" : "输入银行转账参考号"}/></label> : <label><span>{role === "client" ? "Parolă tranzacție" : "交易密码"}</span><input type="password" placeholder={role === "client" ? "Introduceți parola de tranzacționare" : "输入交易密码"}/></label>}<button className={styles.primary} type="submit">{role === "client" ? "Trimite cererea" : "提交申请"}</button></form> : <div className={styles.doneBox}><CircleCheck size={34}/><h3>{role === "client" ? "Cererea a fost trimisă" : "申请已提交"}</h3><p>{role === "client" ? "Nr. cerere" : "申请编号"} {created}</p><button className={styles.primary} onClick={() => setCreating(false)}>{role === "client" ? "Finalizat" : "完成"}</button></div>}
           </div>
         </div>
       ) : null}
@@ -225,10 +244,10 @@ function PositionsPage({ role, accountName }: { role: Role; accountName: string 
   const visible = positionSeed.filter((row) => (role !== "client" || row.user === "Carlos Ramírez" || row.user === accountName) && (market === "ALL" || row.market === market));
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>{role === "client" ? "我的持仓" : "客户持仓"}</h1><p>查看当前证券数量、成本、市值与浮动变化</p></div><div className={extra.marketFilter}>{(["ALL","US","MX"] as const).map((item)=><button key={item} className={market===item?extra.marketFilterActive:""} onClick={()=>setMarket(item)}>{item==="ALL"?"全部":item}</button>)}</div></div>
-      <div className={styles.summaryGrid}><div><span>持仓市值</span><strong>MXN 248,630.80</strong></div><div><span>累计成本</span><strong>MXN 226,410.20</strong></div><div><span>浮动金额</span><strong className={styles.positive}>+22,220.60</strong></div><div><span>持仓项目</span><strong>{visible.length}</strong></div></div>
-      <section className={styles.tablePanel}><table><thead><tr>{role !== "client" ? <th>客户</th> : null}<th>证券</th><th>市场</th><th>数量</th><th>平均成本</th><th>现价</th><th>市值</th><th>浮动</th><th>操作</th></tr></thead><tbody>{visible.map((row) => { const pnl = (row.price-row.cost)*row.quantity; const pct=(row.price-row.cost)/row.cost*100; return <tr key={row.user+row.symbol}>{role !== "client" ? <td>{row.user}</td> : null}<td><strong>{row.symbol}</strong><span>{row.name}</span></td><td>{row.market}</td><td className={styles.mono}>{row.quantity.toLocaleString()}</td><td className={styles.mono}>{row.cost.toFixed(2)}</td><td className={styles.mono}>{row.price.toFixed(2)}</td><td className={styles.mono}>{row.currency} {(row.price*row.quantity).toLocaleString(undefined,{maximumFractionDigits:2})}</td><td className={pnl>=0?styles.positive:styles.negative}>{pnl>=0?"+":""}{pnl.toFixed(2)} · {pct.toFixed(2)}%</td><td><button className={styles.linkButton} onClick={() => setSelected(row)}>详情</button></td></tr>; })}</tbody></table></section>
-      {selected ? <div className={styles.shade} onMouseDown={() => setSelected(null)}><aside className={styles.drawer} onMouseDown={(e) => e.stopPropagation()}><div className={styles.drawerHeader}><div><span>持仓详情</span><h2>{selected.symbol}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div><div className={styles.positionHero}><strong>{selected.price.toFixed(2)}</strong><span>{selected.name} · {selected.market}</span></div><div className={styles.detailGrid}><div><span>客户</span><strong>{selected.user}</strong></div><div><span>数量</span><strong>{selected.quantity.toLocaleString()}</strong></div><div><span>平均成本</span><strong>{selected.cost.toFixed(2)}</strong></div><div><span>当前价格</span><strong>{selected.price.toFixed(2)}</strong></div></div><section className={styles.drawerSection}><h3>持仓记录</h3><div className={styles.miniTimeline}><div><i/><span>09/22</span><strong>首次买入</strong><small>40%</small></div><div><i/><span>09/24</span><strong>追加持仓</strong><small>35%</small></div><div><i/><span>09/26</span><strong>当前持仓</strong><small>100%</small></div></div></section></aside></div> : null}
+      <div className={styles.header}><div><h1>{role === "client" ? "Portofoliu" : "客户持仓"}</h1><p>{role === "client" ? "Consultați cantitățile, costul, valoarea de piață și variațiile pozițiilor" : "查看当前证券数量、成本、市值与浮动变化"}</p></div><div className={extra.marketFilter}>{(["ALL","US","MX"] as const).map((item)=><button key={item} className={market===item?extra.marketFilterActive:""} onClick={()=>setMarket(item)}>{item==="ALL"?(role==="client"?"Toate":"全部"):item}</button>)}</div></div>
+      <div className={styles.summaryGrid}><div><span>{role === "client" ? "Valoare portofoliu" : "持仓市值"}</span><strong>{role === "client" ? "RON" : "MXN"} 248,630.80</strong></div><div><span>{role === "client" ? "Cost total" : "累计成本"}</span><strong>{role === "client" ? "RON" : "MXN"} 226,410.20</strong></div><div><span>{role === "client" ? "Profit / pierdere" : "浮动金额"}</span><strong className={styles.positive}>+22,220.60</strong></div><div><span>{role === "client" ? "Poziții" : "持仓项目"}</span><strong>{visible.length}</strong></div></div>
+      <section className={styles.tablePanel}><table><thead><tr>{role !== "client" ? <th>客户</th> : null}<th>{role === "client" ? "Instrument" : "证券"}</th><th>{role === "client" ? "Piață" : "市场"}</th><th>{role === "client" ? "Cantitate" : "数量"}</th><th>{role === "client" ? "Cost mediu" : "平均成本"}</th><th>{role === "client" ? "Preț curent" : "现价"}</th><th>{role === "client" ? "Valoare" : "市值"}</th><th>{role === "client" ? "P/L" : "浮动"}</th><th>{role === "client" ? "Acțiune" : "操作"}</th></tr></thead><tbody>{visible.map((row) => { const pnl = (row.price-row.cost)*row.quantity; const pct=(row.price-row.cost)/row.cost*100; return <tr key={row.user+row.symbol}>{role !== "client" ? <td>{row.user}</td> : null}<td><strong>{row.symbol}</strong><span>{row.name}</span></td><td>{row.market}</td><td className={styles.mono}>{row.quantity.toLocaleString()}</td><td className={styles.mono}>{row.cost.toFixed(2)}</td><td className={styles.mono}>{row.price.toFixed(2)}</td><td className={styles.mono}>{row.currency} {(row.price*row.quantity).toLocaleString(undefined,{maximumFractionDigits:2})}</td><td className={pnl>=0?styles.positive:styles.negative}>{pnl>=0?"+":""}{pnl.toFixed(2)} · {pct.toFixed(2)}%</td><td><button className={styles.linkButton} onClick={() => setSelected(row)}>{role === "client" ? "Detalii" : "详情"}</button></td></tr>; })}</tbody></table></section>
+      {selected ? <div className={styles.shade} onMouseDown={() => setSelected(null)}><aside className={styles.drawer} onMouseDown={(e) => e.stopPropagation()}><div className={styles.drawerHeader}><div><span>{role === "client" ? "Detalii poziție" : "持仓详情"}</span><h2>{selected.symbol}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div><div className={styles.positionHero}><strong>{selected.price.toFixed(2)}</strong><span>{selected.name} · {selected.market}</span></div><div className={styles.detailGrid}><div><span>{role === "client" ? "Client" : "客户"}</span><strong>{selected.user}</strong></div><div><span>{role === "client" ? "Cantitate" : "数量"}</span><strong>{selected.quantity.toLocaleString()}</strong></div><div><span>{role === "client" ? "Cost mediu" : "平均成本"}</span><strong>{selected.cost.toFixed(2)}</strong></div><div><span>{role === "client" ? "Preț curent" : "当前价格"}</span><strong>{selected.price.toFixed(2)}</strong></div></div><section className={styles.drawerSection}><h3>{role === "client" ? "Istoric poziție" : "持仓记录"}</h3><div className={styles.miniTimeline}><div><i/><span>09/22</span><strong>{role === "client" ? "Prima cumpărare" : "首次买入"}</strong><small>40%</small></div><div><i/><span>09/24</span><strong>{role === "client" ? "Poziție suplimentată" : "追加持仓"}</strong><small>35%</small></div><div><i/><span>09/26</span><strong>{role === "client" ? "Poziție curentă" : "当前持仓"}</strong><small>100%</small></div></div></section></aside></div> : null}
     </div>
   );
 }
@@ -245,9 +264,9 @@ function SettingsPage({ role, accountName }: { role: Role; accountName: string }
   const [bankNumber, setBankNumber] = useState("");
   const cards = role === "client"
     ? [
-        ["security","登录与安全",ShieldCheck,"登录密码、交易密码与会话"],
-        ["bank","银行卡",CreditCard,"管理账户关联银行卡"],
-        ["identity","实名认证",FileCheck2,"查看身份认证状态"],
+        ["security","Autentificare și securitate",ShieldCheck,"Parola de acces, parola de tranzacționare și sesiunile"],
+        ["bank","Conturi bancare",CreditCard,"Gestionați conturile bancare asociate"],
+        ["identity","Verificarea identității",FileCheck2,"Consultați starea verificării identității"],
       ] as const
     : [
         ["security","登录与安全",ShieldCheck,"后台密码、2FA 与会话"],
@@ -257,9 +276,9 @@ function SettingsPage({ role, accountName }: { role: Role; accountName: string }
       ] as const;
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>系统设置</h1><p>账户、安全、银行和权限设置</p></div></div>
+      <div className={styles.header}><div><h1>{role === "client" ? "Profil și securitate" : "系统设置"}</h1><p>{role === "client" ? "Setări pentru cont, securitate și conturi bancare" : "账户、安全、银行和权限设置"}</p></div></div>
       <div className={styles.settingsGrid}>{cards.map(([key,title,Icon,desc]) => <button key={key} onClick={() => { setSection(key); setSaved(""); }}><div className={styles.settingsIcon}><Icon size={20}/></div><div><strong>{title}</strong><span>{desc}</span></div><ChevronRight size={16}/></button>)}</div>
-      {section ? <div className={styles.shade} onMouseDown={() => setSection(null)}><div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}><div className={styles.drawerHeader}><div><span>账户设置</span><h2>{cards.find((item)=>item[0]===section)?.[1]}</h2></div><button onClick={() => setSection(null)}><X size={18}/></button></div>{section==="security"?<div className={styles.form}><label><span>当前账户</span><input value={accountName} readOnly/></label><label><span>当前密码</span><input type="password"/></label><label><span>新密码</span><input type="password"/></label><label><span>确认新密码</span><input type="password"/></label>{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} onClick={()=>setSaved("密码设置已保存")}>保存密码</button></div>:null}{section==="bank"?<div className={styles.bankList}>{banks.map((bank,index)=><article key={bank.name+index}><div className={styles.bankIcon}>{index===0?<Building2 size={18}/>:<Landmark size={18}/>}</div><div><strong>{bank.name}</strong><span>{bank.number} · MXN{bank.primary?" · 默认账户":""}</span></div>{bank.primary?<Badge value="已绑定"/>:<button className={styles.linkButton} onClick={()=>setBanks(banks.map((item,i)=>({...item,primary:i===index})))}>设为默认</button>}</article>)}{addingBank?<form className={extra.inlineBankForm} onSubmit={(event)=>{event.preventDefault();setBanks([...banks,{name:bankName||"新银行",number:bankNumber||"•••• 0000",primary:false}]);setAddingBank(false);setBankName("");setBankNumber("");}}><input value={bankName} onChange={(e)=>setBankName(e.target.value)} placeholder="银行名称"/><input value={bankNumber} onChange={(e)=>setBankNumber(e.target.value)} placeholder="账户尾号"/><button className={styles.primary} type="submit">添加</button></form>:<button className={styles.addBank} onClick={()=>setAddingBank(true)}><CreditCard size={16}/> 添加银行卡</button>}</div>:null}{section==="identity"?<div className={styles.identityPanel}><div><FileCheck2 size={28}/><strong>实名认证已完成</strong><span>姓名：{accountName || "Carlos Ramírez"}</span><span>证件：MEX••••••2481</span></div><button className={styles.secondary} onClick={()=>setSaved("身份资料完整，当前状态正常")}>查看身份资料</button>{saved?<div className={extra.savedMessage}>{saved}</div>:null}</div>:null}{section==="permissions"?<div className={styles.permissionList}>{["US 市场","MX 市场","股票","大宗","IPO","基金","客户审核","资金审核"].map((label)=><label key={label}><span>{label}</span><input type="checkbox" defaultChecked={label!=="IPO"}/></label>)}{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} onClick={()=>setSaved("权限设置已保存")}>保存权限</button></div>:null}</div></div> : null}
+      {section ? <div className={styles.shade} onMouseDown={() => setSection(null)}><div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}><div className={styles.drawerHeader}><div><span>{role === "client" ? "Setări cont" : "账户设置"}</span><h2>{cards.find((item)=>item[0]===section)?.[1]}</h2></div><button onClick={() => setSection(null)}><X size={18}/></button></div>{section==="security"?<div className={styles.form}><label><span>{role === "client" ? "Cont curent" : "当前账户"}</span><input value={accountName} readOnly/></label><label><span>{role === "client" ? "Parola curentă" : "当前密码"}</span><input type="password"/></label><label><span>{role === "client" ? "Parolă nouă" : "新密码"}</span><input type="password"/></label><label><span>{role === "client" ? "Confirmați parola" : "确认新密码"}</span><input type="password"/></label>{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} onClick={()=>setSaved(role === "client" ? "Setările parolei au fost salvate" : "密码设置已保存")}>{role === "client" ? "Salvați parola" : "保存密码"}</button></div>:null}{section==="bank"?<div className={styles.bankList}>{banks.map((bank,index)=><article key={bank.name+index}><div className={styles.bankIcon}>{index===0?<Building2 size={18}/>:<Landmark size={18}/>}</div><div><strong>{bank.name}</strong><span>{bank.number} · MXN{bank.primary?(role === "client" ? " · Implicit" : " · 默认账户"):""}</span></div>{bank.primary?<Badge value={role === "client" ? "Asociat" : "已绑定"}/>:<button className={styles.linkButton} onClick={()=>setBanks(banks.map((item,i)=>({...item,primary:i===index})))}>{role === "client" ? "Setați implicit" : "设为默认"}</button>}</article>)}{addingBank?<form className={extra.inlineBankForm} onSubmit={(event)=>{event.preventDefault();setBanks([...banks,{name:bankName||"新银行",number:bankNumber||"•••• 0000",primary:false}]);setAddingBank(false);setBankName("");setBankNumber("");}}><input value={bankName} onChange={(e)=>setBankName(e.target.value)} placeholder={role === "client" ? "Numele băncii" : "银行名称"}/><input value={bankNumber} onChange={(e)=>setBankNumber(e.target.value)} placeholder={role === "client" ? "Ultimele cifre ale contului" : "账户尾号"}/><button className={styles.primary} type="submit">{role === "client" ? "Adăugați" : "添加"}</button></form>:<button className={styles.addBank} onClick={()=>setAddingBank(true)}><CreditCard size={16}/> 添加银行卡</button>}</div>:null}{section==="identity"?<div className={styles.identityPanel}><div><FileCheck2 size={28}/><strong>实名认证已完成</strong><span>姓名：{accountName || "Carlos Ramírez"}</span><span>证件：MEX••••••2481</span></div><button className={styles.secondary} onClick={()=>setSaved("身份资料完整，当前状态正常")}>查看身份资料</button>{saved?<div className={extra.savedMessage}>{saved}</div>:null}</div>:null}{section==="permissions"?<div className={styles.permissionList}>{["US 市场","MX 市场","股票","大宗","IPO","基金","客户审核","资金审核"].map((label)=><label key={label}><span>{label}</span><input type="checkbox" defaultChecked={label!=="IPO"}/></label>)}{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} onClick={()=>setSaved("权限设置已保存")}>保存权限</button></div>:null}</div></div> : null}
     </div>
   );
 }
