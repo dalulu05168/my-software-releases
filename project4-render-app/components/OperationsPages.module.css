@@ -51,3 +51,82 @@
   background:#fffdf9;
   border:1px solid rgba(188,139,56,.26);
 }
+
+/* ROMANIA_CASTLE_CLIENT_V4 */
+.stack{
+  grid-template-rows:max-content max-content minmax(0,1fr);
+}
+.header{
+  min-height:58px;
+  padding:2px 2px 7px;
+}
+.tablePanel{
+  min-height:0;
+  height:100%;
+  max-height:none!important;
+}
+.clientStack{
+  position:relative;
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+  gap:10px;
+}
+.clientStack>*{position:relative;z-index:1}
+.clientStack .header h1{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:22px;
+}
+.clientStack .header p{
+  color:#111!important;
+  font-weight:400!important;
+}
+.clientStack .primary{
+  background:linear-gradient(135deg,#790d29,#971232);
+  border-color:#790d29;
+}
+.clientStack .secondary{
+  background:#fffdf8;
+  border-color:rgba(177,124,44,.35);
+  color:#071b42!important;
+}
+.clientStack .tabs{
+  border-bottom-color:rgba(177,124,44,.28);
+}
+.clientStack .tabs button{
+  color:#071b42;
+}
+.clientStack .tabs .tabActive{
+  color:#7a1027!important;
+  border-bottom-color:#7a1027!important;
+}
+.clientStack .tabs button span{
+  background:#fff0da;
+}
+.clientStack .tablePanel,
+.clientStack .noticeGrid article{
+  border-color:rgba(177,124,44,.28);
+  background:rgba(255,255,255,.95);
+  border-radius:9px;
+  box-shadow:0 9px 24px rgba(72,49,16,.03);
+}
+.clientStack .tablePanel th{
+  background:#fbf3e6;
+  color:#071b42!important;
+  border-bottom-color:rgba(177,124,44,.28);
+}
+.clientStack .tablePanel tbody tr:hover{background:#fff8ed}
+.clientStack .noticeIcon{
+  background:#fff2dc;
+  color:#9b6719;
+}
+.clientStack .modal,
+.clientStack .drawer{
+  background:#fffdf9;
+  border:1px solid rgba(177,124,44,.30);
+}
+.clientStack .drawerHeader{
+  background:#fff9ef;
+  border-bottom-color:rgba(177,124,44,.25);
+}
