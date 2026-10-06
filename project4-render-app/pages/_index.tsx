@@ -90,7 +90,7 @@ type Customer = {
 const initialCustomers: Customer[] = [
   {
     id: "1035821",
-    name: "Carlos Ramírez",
+    name: "Andrei Popescu",
     phone: "+52 55 0182 7731",
     vip: "VIP3",
     kyc: "已认证",
@@ -167,10 +167,24 @@ const navItems: Array<{ key: View; label: string; icon: any }> = [
   { key: "settings", label: "系统设置", icon: Settings },
 ];
 
+const clientNavLabels: Partial<Record<View, string>> = {
+  dashboard: "Panou de control",
+  products: "Produse",
+  orders: "Ordine",
+  cash: "Fonduri",
+  positions: "Portofoliu",
+  loans: "Împrumuturi",
+  notifications: "Notificări",
+  market: "Piețe",
+  support: "Asistență",
+  settings: "Profil și securitate",
+};
+
+
 function RoleLabel({ role }: { role: Role }) {
   return (
     <span className={styles.roleLabel}>
-      {role === "master" ? "总账户" : role === "ops" ? "子账户" : "客户"}
+      {role === "master" ? "总账户" : role === "ops" ? "子账户" : "Client"}
     </span>
   );
 }
@@ -211,7 +225,7 @@ function LoginScreen({
     if (mode === "forgot") {
       setResetMessage(
         portal === "client"
-          ? "Verificación completada. Configure una nueva contraseña."
+          ? "Verificarea a fost finalizată. Setați o parolă nouă."
           : "验证完成，请设置新的登录密码。",
       );
       return;
@@ -247,7 +261,7 @@ function LoginScreen({
           : "master";
     const displayName =
       mode === "register"
-        ? name.trim() || "Cliente"
+        ? name.trim() || "Client"
         : account.includes("@")
           ? account.split("@")[0]
           : account.trim() ||
@@ -255,7 +269,7 @@ function LoginScreen({
               ? "Master Admin"
               : role === "ops"
                 ? "Operations Admin"
-                : "Carlos Ramírez");
+                : "Andrei Popescu");
     onLogin(role, displayName);
   };
 
@@ -271,20 +285,20 @@ function LoginScreen({
           <span className={styles.eyebrow}>BRANTONE VEYLOR · PRIVATE CAPITAL ADVISORY</span>
           <h1>
             {isClient
-              ? "Mercados, operaciones y cuenta en un solo lugar"
+              ? "Piețe globale, operațiuni și cont într-un singur loc"
               : "清晰、精准、可控的证券运营工作台"}
           </h1>
           <p>
             {isClient
-              ? "Consulte mercados, posiciones, órdenes y operaciones disponibles desde su cuenta."
+              ? "Accesați piețele, pozițiile, ordinele și operațiunile disponibile din contul dumneavoastră."
               : "统一管理客户、资金、订单、持仓与证券行情。系统接入真实证券信息，外部券商交易未接入。"}
           </p>
         </div>
         <div className={styles.visualGrid}>
-          <div><strong>US</strong><span>{isClient ? "Mercado de EE. UU." : "美国市场"}</span></div>
-          <div><strong>MX</strong><span>{isClient ? "Mercado de México" : "墨西哥市场"}</span></div>
-          <div><strong>2FA</strong><span>{isClient ? "Seguridad de cuenta" : "后台安全登录"}</span></div>
-          <div><strong>VIP 1–5</strong><span>{isClient ? "Nivel de cuenta" : "客户等级体系"}</span></div>
+          <div><strong>US</strong><span>{isClient ? "Piața SUA" : "美国市场"}</span></div>
+          <div><strong>MX</strong><span>{isClient ? "Piața Mexic" : "墨西哥市场"}</span></div>
+          <div><strong>2FA</strong><span>{isClient ? "Securitatea contului" : "后台安全登录"}</span></div>
+          <div><strong>VIP 1–5</strong><span>{isClient ? "Nivelul contului" : "客户等级体系"}</span></div>
         </div>
       </section>
 
@@ -294,60 +308,60 @@ function LoginScreen({
         <form className={styles.loginForm} onSubmit={submit}>
           <div className={styles.formTitle}>
             <span className={styles.roleLabel}>
-              {isClient ? "CLIENTE" : "后台管理"}
+              {isClient ? "CLIENT" : "后台管理"}
             </span>
             <h2>
               {isClient
                 ? mode === "register"
-                  ? "Crear cuenta"
+                  ? "Creați cont"
                   : mode === "forgot"
-                    ? "Recuperar acceso"
-                    : "Iniciar sesión"
+                    ? "Recuperați accesul"
+                    : "Autentificare"
                 : "后台登录"}
             </h2>
             <p>
               {isClient
                 ? mode === "forgot"
-                  ? "Verifique su cuenta y configure una nueva contraseña."
-                  : "Use el teléfono, correo o cuenta vinculada."
+                  ? "Verificați contul și setați o parolă nouă."
+                  : "Folosiți telefonul, adresa de e-mail sau contul asociat."
                 : "总账户与子账户共用此入口，系统将根据登录凭证自动识别权限。"}
             </p>
           </div>
 
           {isClient && mode === "register" ? (
             <label>
-              <span>Nombre completo</span>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ingrese su nombre" />
+              <span>Nume complet</span>
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Introduceți numele" />
             </label>
           ) : null}
 
           <label>
-            <span>{isClient ? "Teléfono / correo / cuenta" : "后台账户"}</span>
-            <input value={account} onChange={(e) => setAccount(e.target.value)} placeholder={isClient ? "+52 55... / nombre@ejemplo.com" : "请输入后台账户"} />
+            <span>{isClient ? "Telefon / e-mail / cont" : "后台账户"}</span>
+            <input value={account} onChange={(e) => setAccount(e.target.value)} placeholder={isClient ? "+40 7xx xxx xxx / nume@exemplu.ro" : "请输入后台账户"} />
           </label>
 
           {mode !== "forgot" ? (
             <label>
-              <span>{isClient ? "Contraseña" : "登录密码"}</span>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={isClient ? "Ingrese su contraseña" : "请输入密码"} />
+              <span>{isClient ? "Parolă" : "登录密码"}</span>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={isClient ? "Introduceți parola" : "请输入密码"} />
             </label>
           ) : (
             <>
               <label>
-                <span>{isClient ? "Código de verificación" : "验证码"}</span>
-                <input inputMode="numeric" placeholder={isClient ? "Ingrese el código recibido" : "输入收到的验证码"} maxLength={6} />
+                <span>{isClient ? "Cod de verificare" : "验证码"}</span>
+                <input inputMode="numeric" placeholder={isClient ? "Introduceți codul primit" : "输入收到的验证码"} maxLength={6} />
               </label>
               <label>
-                <span>{isClient ? "Nueva contraseña" : "新密码"}</span>
-                <input type="password" placeholder={isClient ? "Configure una nueva contraseña" : "设置新的登录密码"} />
+                <span>{isClient ? "Parolă nouă" : "新密码"}</span>
+                <input type="password" placeholder={isClient ? "Setați o parolă nouă" : "设置新的登录密码"} />
               </label>
             </>
           )}
 
           {isClient && mode === "register" ? (
             <label>
-              <span>Confirmar contraseña</span>
-              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita su contraseña" />
+              <span>Confirmați parola</span>
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repetați parola" />
             </label>
           ) : null}
 
@@ -368,8 +382,8 @@ function LoginScreen({
 
           {isClient && mode === "register" ? (
             <label>
-              <span>Código de invitación</span>
-              <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="Ingrese su código de invitación" />
+              <span>Cod de invitație</span>
+              <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="Introduceți codul de invitație" />
             </label>
           ) : null}
 
@@ -379,17 +393,17 @@ function LoginScreen({
           <button className={styles.primaryButton} type="submit">
             {isClient
               ? mode === "register"
-                ? "Crear cuenta"
+                ? "Creați cont"
                 : mode === "forgot"
-                  ? "Confirmar cambio"
-                  : "Entrar"
+                  ? "Confirmați modificarea"
+                  : "Intră"
               : loggingIn ? "验证中…" : "进入后台"}
             <ChevronRight size={17} />
           </button>
 
           {isClient && mode === "login" ? (
             <button type="button" className={styles.textButton} onClick={() => { setMode("forgot"); setResetMessage(""); }}>
-              ¿Olvidó su contraseña?
+              Ați uitat parola?
             </button>
           ) : null}
 
@@ -399,7 +413,7 @@ function LoginScreen({
               className={styles.textButton}
               onClick={() => { setMode(mode === "login" ? "register" : "login"); setResetMessage(""); }}
             >
-              {mode === "login" ? "¿No tiene cuenta? Regístrese con código de invitación" : "Volver al inicio de sesión"}
+              {mode === "login" ? "Nu aveți cont? Înregistrați-vă cu un cod de invitație" : "Înapoi la autentificare"}
             </button>
           ) : null}
         </form>
@@ -444,14 +458,14 @@ function Sidebar({
               onClick={() => onView(item.key)}
             >
               <Icon size={17} />
-              <span>{item.label}</span>
+              <span>{role === "client" ? (clientNavLabels[item.key] ?? item.label) : item.label}</span>
             </button>
           );
         })}
       </nav>
       <button className={styles.logout} onClick={onLogout}>
         <LogOut size={17} />
-        <span>退出登录</span>
+        <span>{role === "client" ? "Deconectare" : "退出登录"}</span>
       </button>
     </aside>
   );
@@ -469,15 +483,15 @@ function Topbar({
   return (
     <header className={styles.topbar}>
       <div>
-        <strong>Hello, {name}</strong>
-        <span>{role === "master" ? "全平台运营控制台" : role === "ops" ? "客户运营工作台" : "证券账户中心"}</span>
+        <strong>{role === "client" ? "Bun venit" : "您好"}，{name}</strong>
+        <span>{role === "master" ? "全平台运营控制台" : role === "ops" ? "客户运营工作台" : "Centrul contului de investiții"}</span>
       </div>
       <div className={styles.topbarActions}>
         <button onClick={() => onNavigate(role === "client" ? "market" : "customers")}><Search size={17} /></button>
         <button onClick={() => onNavigate("notifications")}><Bell size={17} /><i /></button>
         <div className={styles.profile}>
           <div className={styles.avatar}>{name.slice(0, 1).toUpperCase()}</div>
-          <div><strong>{name}</strong><span>{role === "master" ? "Master Admin" : role === "ops" ? "Operations Admin" : "客户账户"}</span></div>
+          <div><strong>{name}</strong><span>{role === "master" ? "Master Admin" : role === "ops" ? "Operations Admin" : "Cont client"}</span></div>
         </div>
       </div>
     </header>
@@ -508,31 +522,31 @@ function Dashboard({
     return (
       <div className={styles.contentStack}>
         <div className={styles.pageHeader}>
-          <div><h1>账户首页</h1><p>欢迎回来，{name}</p></div>
-          <button className={styles.primarySmall} onClick={onOpenMarket}>查看行情 <ChevronRight size={15} /></button>
+          <div><h1>Panou de control</h1><p>O perspectivă completă asupra portofoliului dumneavoastră, {name}</p></div>
+          <button className={styles.primarySmall} onClick={onOpenMarket}>Vezi piețele <ChevronRight size={15} /></button>
         </div>
         <section className={styles.heroBalance}>
-          <div><span>账户总资产</span><strong>MXN 248,630.80</strong><small>可用 MXN 186,240.00 · USD 3,471.20</small></div>
+          <div><span>Valoarea totală a portofoliului</span><strong>RON 248,630.80</strong><small>Disponibil RON 186,240.00 · EUR 3,471.20</small></div>
           <div className={styles.heroStats}>
-            <div><span>今日变动</span><strong className={styles.green}>+2,418.70</strong></div>
-            <div><span>持仓数量</span><strong>8</strong></div>
-            <div><span>账户等级</span><strong>VIP3</strong></div>
+            <div><span>Variația de azi</span><strong className={styles.green}>+2,418.70</strong></div>
+            <div><span>Poziții</span><strong>8</strong></div>
+            <div><span>Nivel cont</span><strong>VIP3</strong></div>
           </div>
         </section>
         <div className={styles.metricGrid}>
-          <Metric icon={WalletCards} title="可用资金" value="MXN 186,240" sub="当前可用" />
-          <Metric icon={LineChart} title="持仓市值" value="MXN 62,390" sub="8 项持仓" />
-          <Metric icon={Heart} title="自选股票" value="12" sub="US / MX" />
-          <Metric icon={ShieldCheck} title="实名认证" value="已完成" sub="账户状态正常" />
+          <Metric icon={WalletCards} title="Sold disponibil" value="RON 186,240" sub="Disponibil acum" />
+          <Metric icon={LineChart} title="Valoarea pozițiilor" value="RON 62,390" sub="8 poziții" />
+          <Metric icon={Heart} title="Lista de urmărire" value="12" sub="US / EU" />
+          <Metric icon={ShieldCheck} title="Identitate verificată" value="Finalizat" sub="Cont în stare normală" />
         </div>
         <div className={styles.twoColumns}>
           <section className={styles.panel}>
-            <div className={styles.panelTitle}><div><h3>关注证券</h3><p>最新价格</p></div><button onClick={onOpenMarket}>全部行情</button></div>
-            <StockRows compact />
+            <div className={styles.panelTitle}><div><h3>Piețe principale</h3><p>Ultimele prețuri</p></div><button onClick={onOpenMarket}>Vezi toate</button></div>
+            <StockRows compact clientLocale />
           </section>
           <section className={styles.panel}>
-            <div className={styles.panelTitle}><div><h3>最近订单</h3><p>账户订单记录</p></div></div>
-            <OrderRows />
+            <div className={styles.panelTitle}><div><h3>Ordine recente</h3><p>Activitatea contului</p></div></div>
+            <OrderRows clientLocale />
           </section>
         </div>
       </div>
@@ -650,7 +664,7 @@ function CustomersPage({
       </section>
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>用户ID</th><th>客户</th><th>VIP</th><th>实名认证</th><th>登录</th><th>交易</th><th>提现</th><th>余额</th><th>邀请码</th><th>操作</th></tr></thead>
+          <thead><tr><th>用户ID</th><th>客户</th><th>VIP</th><th>实名认证</th><th>登录</th><th>Tranzacții</th><th>提现</th><th>余额</th><th>邀请码</th><th>操作</th></tr></thead>
           <tbody>
             {filtered.map((c)=>(
               <tr key={c.id}>
@@ -730,7 +744,7 @@ function CustomersPage({
   );
 }
 
-function StockRows({ compact = false }: { compact?: boolean }) {
+function StockRows({ compact = false, clientLocale = false }: { compact?: boolean; clientLocale?: boolean }) {
   const securitiesQuery = useQuery({
     queryKey: ["project4-client-securities"],
     queryFn: project4Api.listClientSecurities,
@@ -742,7 +756,7 @@ function StockRows({ compact = false }: { compact?: boolean }) {
       symbol: item.symbol,
       name: item.name,
       price: item.quote?.lastPrice == null ? "—" : String(item.quote.lastPrice),
-      change: item.quote ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "暂无行情",
+      change: item.quote ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : (clientLocale ? "Fără cotație" : "暂无行情"),
       up: pct >= 0,
     };
   });
@@ -756,7 +770,8 @@ function StockRows({ compact = false }: { compact?: boolean }) {
   );
 }
 
-function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
+function MarketPage({ riskControls, role }: { riskControls: RiskControl[]; role: Role }) {
+  const clientLocale = role === "client";
   const [symbol, setSymbol] = useState("AAPL");
   const [side, setSide] = useState<"buy"|"sell">("buy");
   const [interval, setInterval] = useState("分时");
@@ -776,7 +791,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
       symbol: item.symbol,
       name: item.name,
       price: item.quote?.lastPrice == null ? "0" : String(item.quote.lastPrice),
-      change: item.quote ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "暂无行情",
+      change: item.quote ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : (clientLocale ? "Fără cotație" : "暂无行情"),
       up: pct >= 0,
       market: item.market,
       tradable: item.tradable,
@@ -784,9 +799,9 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
   });
   const selected = liveStocks.find((s)=>s.symbol===symbol) ?? liveStocks[0] ?? {
     symbol: "",
-    name: "暂无已上架证券",
+    name: clientLocale ? "Nu există instrumente listate" : "暂无已上架证券",
     price: "0",
-    change: "暂无行情",
+    change: clientLocale ? "Fără cotație" : "暂无行情",
     up: true,
     market: "US" as const,
     tradable: false,
@@ -816,18 +831,18 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
   return (
     <div className={styles.marketTerminal}>
       <section className={styles.marketList}>
-        <div className={styles.marketListHeader}><strong>证券行情</strong><div className={styles.miniSearch}><Search size={14}/><input value={searchText} onChange={(event)=>setSearchText(event.target.value)} placeholder="搜索代码 / 名称"/></div></div>
-        <div className={styles.marketTabs}>{(["US","MX","自选"] as const).map((item)=><button key={item} className={marketTab===item?styles.marketTabActive:""} onClick={()=>setMarketTab(item)}>{item}</button>)}</div>
+        <div className={styles.marketListHeader}><strong>{clientLocale ? "Piețe" : "证券行情"}</strong><div className={styles.miniSearch}><Search size={14}/><input value={searchText} onChange={(event)=>setSearchText(event.target.value)} placeholder={clientLocale ? "Caută simbol / nume" : "搜索代码 / 名称"}/></div></div>
+        <div className={styles.marketTabs}>{(["US","MX","自选"] as const).map((item)=><button key={item} className={marketTab===item?styles.marketTabActive:""} onClick={()=>setMarketTab(item)}>{clientLocale && item === "自选" ? "Urmărite" : item}</button>)}</div>
         {visibleStocks.map((s)=>(
           <button key={s.symbol} className={symbol===s.symbol?styles.stockItemActive:styles.stockItem} onClick={()=>setSymbol(s.symbol)}>
             <div><strong>{s.symbol}</strong><span>{s.name}</span></div><div><strong>{s.price}</strong><span className={s.up?styles.green:styles.red}>{s.change}</span></div>
           </button>
         ))}
-        {securitiesQuery.isFetching?<div className={enh.emptyMarket}>正在同步后台证券…</div>:null}
-        {visibleStocks.length===0?<div className={enh.emptyMarket}>没有匹配的证券</div>:null}
+        {securitiesQuery.isFetching?<div className={enh.emptyMarket}>{clientLocale ? "Se sincronizează instrumentele…" : "正在同步后台证券…"}</div>:null}
+        {visibleStocks.length===0?<div className={enh.emptyMarket}>{clientLocale ? "Nu există instrumente potrivite" : "没有匹配的证券"}</div>:null}
       </section>
       <section className={styles.marketCenter}>
-        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"已自选":"加入自选"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>最高 <b>231.44</b></span><span>最低 <b>223.98</b></span><span>成交量 <b>42.8M</b></span><span>市场 <b>{selected.market}</b></span></div></div>
+        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?(clientLocale?"Urmărit":"已自选"):(clientLocale?"Adaugă la urmărite":"加入自选")}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>{clientLocale?"Max.":"最高"} <b>231.44</b></span><span>{clientLocale?"Min.":"最低"} <b>223.98</b></span><span>{clientLocale?"Volum":"成交量"} <b>42.8M</b></span><span>{clientLocale?"Piață":"市场"} <b>{selected.market}</b></span></div></div>
         <div className={styles.chartToolbar}>
           {["分时","1分","5分","15分","1小时","日K"].map((item) => (
             <button
@@ -835,36 +850,36 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
               className={interval === item ? styles.chartActive : ""}
               onClick={() => setInterval(item)}
             >
-              {item}
+              {clientLocale ? ({"分时":"Intraday","1分":"1m","5分":"5m","15分":"15m","1小时":"1h","日K":"1D"} as Record<string,string>)[item] : item}
             </button>
           ))}
         </div>
         <div className={styles.candleChart}>
           <InteractiveCandleChart symbol={selected.symbol} interval={interval} />
         </div>
-        <div className={styles.marketBottom}><section><h3>盘口</h3>{[1,2,3,4,5].map(i=><div key={i}><span>买 {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>最近成交</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
+        <div className={styles.marketBottom}><section><h3>{clientLocale?"Registru ordine":"盘口"}</h3>{[1,2,3,4,5].map(i=><div key={i}><span>{clientLocale?"Cump.":"买"} {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>{clientLocale?"Tranzacții recente":"最近成交"}</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
       </section>
       <section className={styles.orderPanel}>
-        <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>买入</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>卖出</button></div>
-        <div className={styles.orderSummary}><span>可用资金</span><strong>MXN 186,240.00</strong></div>
-        <label><span>证券</span><input value={selected.symbol} readOnly/></label>
-        <label><span>价格</span><input value={selected.price} readOnly/></label>
-        <label><span>数量</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
+        <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>{clientLocale?"Cumpărare":"买入"}</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>{clientLocale?"Vânzare":"卖出"}</button></div>
+        <div className={styles.orderSummary}><span>{clientLocale?"Sold disponibil":"可用资金"}</span><strong>{clientLocale?"RON":"MXN"} 186,240.00</strong></div>
+        <label><span>{clientLocale?"Instrument":"证券"}</span><input value={selected.symbol} readOnly/></label>
+        <label><span>{clientLocale?"Preț":"价格"}</span><input value={selected.price} readOnly/></label>
+        <label><span>{clientLocale?"Cantitate":"数量"}</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
         <div className={styles.quickQty}>{[["25%",.25],["50%",.5],["75%",.75],["100%",1]].map(([label,ratio])=><button key={String(label)} onClick={()=>choosePercent(Number(ratio))}>{label}</button>)}</div>
-        <div className={styles.orderEstimate}><span>预计金额</span><strong>{(Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
-        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled={!orderEnabled || !selected.tradable} onClick={()=>orderEnabled&&selected.tradable&&setNotice(`${side==="buy"?"买入":"卖出"}订单已记录：${selected.symbol} × ${qty}`)}>{!selected.symbol?"暂无可交易证券":!selected.tradable?"该证券未开放内部下单":orderEnabled?(side==="buy"?"提交买单":"提交卖单"):"当前市场下单受限"}</button>
-        <p className={styles.brokerNote}>外部券商交易未接入，提交内容仅记录于当前系统。</p>
-        {!orderEnabled?<div className={enh.riskHint}>该入口已被总账户风控关闭。</div>:null}
+        <div className={styles.orderEstimate}><span>{clientLocale?"Valoare estimată":"预计金额"}</span><strong>{(Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
+        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled={!orderEnabled || !selected.tradable} onClick={()=>orderEnabled&&selected.tradable&&setNotice(clientLocale ? `${side==="buy"?"Ordin de cumpărare":"Ordin de vânzare"} înregistrat: ${selected.symbol} × ${qty}` : `${side==="buy"?"买入":"卖出"}订单已记录：${selected.symbol} × ${qty}`)}>{clientLocale ? (!selected.symbol?"Niciun instrument disponibil":!selected.tradable?"Instrument indisponibil pentru ordine":orderEnabled?(side==="buy"?"Trimite ordin de cumpărare":"Trimite ordin de vânzare"):"Ordinele sunt restricționate") : (!selected.symbol?"暂无可交易证券":!selected.tradable?"该证券未开放内部下单":orderEnabled?(side==="buy"?"提交买单":"提交卖单"):"当前市场下单受限")}</button>
+        <p className={styles.brokerNote}>{clientLocale ? "Tranzacționarea prin broker extern nu este conectată; ordinele sunt înregistrate doar în sistem." : "外部券商交易未接入，提交内容仅记录于当前系统。"}</p>
+        {!orderEnabled?<div className={enh.riskHint}>{clientLocale ? "Această funcție este dezactivată de controlul de risc." : "该入口已被总账户风控关闭。"}</div>:null}
         {notice?<div className={styles.orderNotice}>{notice}</div>:null}
       </section>
     </div>
   );
 }
 
-function OrderRows() {
+function OrderRows({ clientLocale = false }: { clientLocale?: boolean }) {
   return (
     <div className={styles.orderRows}>
-      {[["AAPL","BUY","100","227.19","已记录"],["WALMEX","BUY","500","58.73","处理中"],["NVDA","SELL","40","184.41","已记录"],["AMXL","BUY","800","18.94","已记录"]].map((o)=>(
+      {[["AAPL","BUY","100","227.19",clientLocale?"Înregistrat":"已记录"],["WALMEX","BUY","500","58.73",clientLocale?"În procesare":"处理中"],["NVDA","SELL","40","184.41",clientLocale?"Înregistrat":"已记录"],["AMXL","BUY","800","18.94",clientLocale?"Înregistrat":"已记录"]].map((o)=>(
         <div key={o.join("-")}><strong>{o[0]}</strong><span>{o[1]}</span><span>{o[2]}</span><span>{o[3]}</span><em>{o[4]}</em></div>
       ))}
     </div>
@@ -876,7 +891,7 @@ function GenericPage({ view }: { view: View }) {
   return (
     <div className={styles.contentStack}>
       <div className={styles.pageHeader}><div><h1>{title}</h1><p>查看和处理当前业务数据</p></div><button className={styles.secondaryButton}><ListFilter size={15}/> 筛选</button></div>
-      {view==="orders"?<section className={styles.tablePanel}><table><thead><tr><th>订单号</th><th>客户</th><th>产品</th><th>方向</th><th>金额</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>{["ORD-902181","ORD-902176","ORD-902168","ORD-902149","ORD-902133"].map((id,i)=><tr key={id}><td className={styles.mono}>{id}</td><td>{initialCustomers[i%initialCustomers.length].name}</td><td>{["AAPL","WALMEX","NVDA","FUND-08","IPO-24"][i]}</td><td>{i%2?"卖出":"买入"}</td><td className={styles.mono}>MXN {(8640+i*12970).toLocaleString()}</td><td><span className={i===1?styles.pendingBadge:styles.okBadge}>{i===1?"处理中":"已记录"}</span></td><td>2026-09-26 1{i}:2{i}</td><td><button className={styles.tableLink}>查看</button></td></tr>)}</tbody></table></section>:null}
+      {view==="orders"?<section className={styles.tablePanel}><table><thead><tr><th>订单号</th><th>客户</th><th>Produse</th><th>方向</th><th>金额</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>{["ORD-902181","ORD-902176","ORD-902168","ORD-902149","ORD-902133"].map((id,i)=><tr key={id}><td className={styles.mono}>{id}</td><td>{initialCustomers[i%initialCustomers.length].name}</td><td>{["AAPL","WALMEX","NVDA","FUND-08","IPO-24"][i]}</td><td>{i%2?"卖出":"买入"}</td><td className={styles.mono}>MXN {(8640+i*12970).toLocaleString()}</td><td><span className={i===1?styles.pendingBadge:styles.okBadge}>{i===1?"处理中":"已记录"}</span></td><td>2026-09-26 1{i}:2{i}</td><td><button className={styles.tableLink}>查看</button></td></tr>)}</tbody></table></section>:null}
       {view==="cash"?<><div className={styles.metricGrid}><Metric icon={Banknote} title="可用资金" value="MXN 18.62M" sub="全平台"/><Metric icon={CreditCard} title="冻结资金" value="MXN 1.84M" sub="订单与提现"/><Metric icon={Activity} title="今日入金" value="MXN 386,200" sub="12 笔"/><Metric icon={WalletCards} title="今日提现" value="MXN 94,700" sub="7 笔"/></div><section className={styles.panel}><div className={styles.panelTitle}><div><h3>资金申请</h3><p>充值与提现审核</p></div></div><OrderRows/></section></>:null}
       {view==="positions"?<section className={styles.tablePanel}><table><thead><tr><th>客户</th><th>证券</th><th>市场</th><th>数量</th><th>成本</th><th>现价</th><th>市值</th><th>浮动</th></tr></thead><tbody>{stocks.slice(0,5).map((s,i)=><tr key={s.symbol}><td>{initialCustomers[i%4].name}</td><td><strong>{s.symbol}</strong><span>{s.name}</span></td><td>{s.symbol==="WALMEX"||s.symbol==="AMXL"?"MX":"US"}</td><td className={styles.mono}>{[120,80,50,240,600][i]}</td><td className={styles.mono}>{(Number(s.price)*.93).toFixed(2)}</td><td className={styles.mono}>{s.price}</td><td className={styles.mono}>{(Number(s.price)*[120,80,50,240,600][i]).toLocaleString()}</td><td className={s.up?styles.green:styles.red}>{s.change}</td></tr>)}</tbody></table></section>:null}
       {view==="settings"?<div className={styles.settingsGrid}>{[["登录与安全",ShieldCheck,"管理后台账户、2FA 与会话"],["权限管理",UserCog,"管理客户与运营权限"],["银行配置",CreditCard,"维护资金账户信息"],["系统通知",Bell,"管理站内通知规则"],["品牌设置",CircleUserRound,"Logo 与界面基础信息"],["市场设置",LineChart,"US / MX 证券信息配置"]].map(([t,Icon,d]:any)=><button key={t}><Icon size={20}/><div><strong>{t}</strong><span>{d}</span></div><ChevronRight size={16}/></button>)}</div>:null}
@@ -900,16 +915,16 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
 
   const productRows = {
     funds: [
-      { title: "Fondo Estrategia MX", meta: "90 días · Riesgo moderado", value: "8.2%–11.6%" },
-      { title: "Fondo Liquidez USD", meta: "Abierto · USD", value: "NAV 1.0842" },
+      { title: "Fond Strategie România", meta: "90 zile · Risc moderat", value: "8.2%–11.6%" },
+      { title: "Fond Lichiditate EUR", meta: "Deschis · EUR", value: "NAV 1.0842" },
     ],
     block: [
-      { title: "WALMEX", meta: "Mercado 58.73 · Mín. 500", value: "-8.0%" },
-      { title: "AMXL", meta: "Mercado 18.94 · Mín. 800", value: "-6.5%" },
+      { title: "WALMEX", meta: "Piață 58.73 · Min. 500", value: "-8.0%" },
+      { title: "AMXL", meta: "Piață 18.94 · Min. 800", value: "-6.5%" },
     ],
     ipo: [
-      { title: "TMX Energía", meta: "Rango 1,000–20,000", value: "MXN 24.60" },
-      { title: "Nova Infra", meta: "Listado estimado 10/08", value: "MXN 18.20" },
+      { title: "Energie România", meta: "Interval 1.000–20.000", value: "MXN 24.60" },
+      { title: "Nova Infra", meta: "Listare estimată 10/08", value: "MXN 18.20" },
     ],
   };
 
@@ -918,28 +933,28 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
   return (
     <div className={styles.mirrorShade} onMouseDown={onClose}>
       <div className={styles.phone} onMouseDown={(e)=>e.stopPropagation()}>
-        <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Cerrar espejo"><X size={15}/></button></div>
+        <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Închide previzualizarea"><X size={15}/></button></div>
 
         <div className={styles.phoneHeader}>
-          <img src={logoUrl} alt="Visionary Studio"/>
-          <div><strong>Visionary Trading</strong><span>{customer.name} · {customer.vip}</span></div>
-          <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Soporte"><MessageSquareText size={16}/></button>
+          <img src={logoUrl} alt="Brantone Veylor"/>
+          <div><strong>Brantone Veylor</strong><span>{customer.name} · {customer.vip}</span></div>
+          <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Asistență"><MessageSquareText size={16}/></button>
         </div>
 
         {nested ? (
           <div className={styles.phoneSubHeader}>
             <button onClick={() => ["funds","block","ipo","support"].includes(tab) ? setTab("home") : goAccount()}>‹</button>
             <strong>{
-              tab==="funds"?"基金":
-              tab==="block"?"Operaciones en bloque":
+              tab==="funds"?"Fonduri":
+              tab==="block"?"Tranzacții în bloc":
               tab==="ipo"?"IPO":
-              tab==="support"?"客服":
-              tab==="settings"?"设置":
-              tab==="cash"?"资金记录":
-              tab==="positions"?"持仓":
-              tab==="orders"?"订单":
-              tab==="bank"?"银行账户":
-              tab==="kyc"?"身份认证":"安全"
+              tab==="support"?"Asistență":
+              tab==="settings"?"Setări":
+              tab==="cash"?"Fonduri":
+              tab==="positions"?"Portofoliu":
+              tab==="orders"?"Ordine":
+              tab==="bank"?"Conturi bancare":
+              tab==="kyc"?"Verificare identitate":"Securitate"
             }</strong>
             <span/>
           </div>
@@ -947,18 +962,18 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
 
         {tab==="home" ? (
           <div className={styles.phoneContent}>
-            <div className={styles.mirrorNotice}>中文客户APP镜像 · 后台授权操作将记录审计。</div>
-            <div className={styles.phoneSearch}><Search size={14}/>搜索股票代码或名称</div>
+            <div className={styles.mirrorNotice}>Previzualizare aplicație client · operațiunile autorizate sunt înregistrate pentru audit.</div>
+            <div className={styles.phoneSearch}><Search size={14}/>Caută simbol sau denumire</div>
             <div className={styles.phoneBalance}>
-              <span>账户总资产</span>
+              <span>Valoarea totală a portofoliului</span>
               <strong>{customer.balance}</strong>
-              <small>可用资金与涨跌数据以正式客户账户为准</small>
+              <small>Soldul și variațiile sunt afișate conform contului client.</small>
             </div>
 
             <div className={styles.mirrorProductGrid}>
-              <button onClick={()=>setTab("funds")}><Landmark size={18}/><strong>基金</strong><span>产品</span></button>
-              <button onClick={()=>setTab("block")}><BadgeDollarSign size={18}/><strong>大宗交易</strong><span>折扣项目</span></button>
-              <button onClick={()=>setTab("ipo")}><FileCheck2 size={18}/><strong>IPO</strong><span>申购</span></button>
+              <button onClick={()=>setTab("funds")}><Landmark size={18}/><strong>Fonduri</strong><span>Produse</span></button>
+              <button onClick={()=>setTab("block")}><BadgeDollarSign size={18}/><strong>Tranzacții în bloc</strong><span>Oportunități</span></button>
+              <button onClick={()=>setTab("ipo")}><FileCheck2 size={18}/><strong>IPO</strong><span>Subscriere</span></button>
             </div>
 
             <div className={styles.mirrorIndexGrid}>
@@ -973,12 +988,12 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
             </div>
 
             <div className={styles.phoneSection}>
-              <div className={styles.mirrorSectionTitle}><h3>关注行情</h3><button onClick={()=>setTab("market")}>查看全部</button></div>
+              <div className={styles.mirrorSectionTitle}><h3>Piețe urmărite</h3><button onClick={()=>setTab("market")}>Vezi toate</button></div>
               <StockRows compact/>
             </div>
 
             <div className={styles.mirrorNews}>
-              <div><strong>通知与提醒</strong><span>正式系统消息同步</span></div>
+              <div><strong>Notificări și alerte</strong><span>Mesaje sincronizate din sistem</span></div>
               <ChevronRight size={15}/>
             </div>
           </div>
@@ -986,10 +1001,10 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
 
         {tab==="market" ? (
           <div className={styles.phoneContent}>
-            <div className={styles.phoneSearch}><Search size={14}/>搜索证券</div>
+            <div className={styles.phoneSearch}><Search size={14}/>Caută instrumente</div>
             <div className={styles.mirrorSegment}>
-              <button className={market==="US"?styles.mirrorSegmentActive:""} onClick={()=>setMarket("US")}>美股</button>
-              <button className={market==="MX"?styles.mirrorSegmentActive:""} onClick={()=>setMarket("MX")}>México</button>
+              <button className={market==="US"?styles.mirrorSegmentActive:""} onClick={()=>setMarket("US")}>SUA</button>
+              <button className={market==="MX"?styles.mirrorSegmentActive:""} onClick={()=>setMarket("MX")}>Europa</button>
             </div>
             <div className={styles.mirrorQuoteHero}>
               <div><span>{selected.symbol}</span><small>{selected.name}</small></div>
@@ -998,7 +1013,7 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
             <div className={styles.mirrorSpark}>
               {[24,36,30,49,42,57,52,66,60,74,69,82].map((h,i)=><i key={i} style={{height:`${h}%`}}/> )}
             </div>
-            <div className={styles.mirrorMarketFacts}><span>Máx.<b>231.44</b></span><span>Mín.<b>223.98</b></span><span>Vol.<b>42.8M</b></span></div>
+            <div className={styles.mirrorMarketFacts}><span>Max.<b>231.44</b></span><span>Min.<b>223.98</b></span><span>Vol.<b>42.8M</b></span></div>
             <div className={styles.mirrorStockList}>
               {marketStocks.map((item)=>(
                 <button key={item.symbol} className={selected.symbol===item.symbol?styles.mirrorStockActive:""} onClick={()=>setSelectedSymbol(item.symbol)}>
@@ -1012,7 +1027,7 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
 
         {tab==="favorites" ? (
           <div className={styles.phoneContent}>
-            <div className={styles.phoneSearch}><Search size={14}/>Buscar en favoritos</div>
+            <div className={styles.phoneSearch}><Search size={14}/>Caută în lista de urmărire</div>
             <div className={styles.mirrorIndexGrid}>
               {stocks.slice(0,3).map((item)=><button key={item.symbol}><span>{item.symbol}</span><strong>{item.price}</strong><small className={item.up?styles.green:styles.red}>{item.change}</small></button>)}
             </div>
@@ -1030,19 +1045,19 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
         {tab==="operate" ? (
           <div className={styles.phoneContent}>
             <div className={styles.mirrorPortfolioGrid}>
-              <div><span>Valor MX</span><strong>MXN 62,390</strong><small className={styles.green}>+2.18%</small></div>
-              <div><span>Ganancia MX</span><strong>+1,324.80</strong><small>Hoy</small></div>
-              <div><span>Valor US</span><strong>USD 3,471</strong><small className={styles.green}>+0.82%</small></div>
-              <div><span>Ganancia US</span><strong>+84.30</strong><small>Hoy</small></div>
+              <div><span>Valoare RON</span><strong>MXN 62,390</strong><small className={styles.green}>+2.18%</small></div>
+              <div><span>Profit RON</span><strong>+1,324.80</strong><small>Astăzi</small></div>
+              <div><span>Valoare EUR</span><strong>USD 3,471</strong><small className={styles.green}>+0.82%</small></div>
+              <div><span>Profit EUR</span><strong>+84.30</strong><small>Astăzi</small></div>
             </div>
-            <div className={styles.mirrorSectionTitle}><h3>Posiciones</h3><button onClick={()=>setTab("positions")}>Detalle</button></div>
+            <div className={styles.mirrorSectionTitle}><h3>Poziții</h3><button onClick={()=>setTab("positions")}>Detalii</button></div>
             {stocks.slice(0,4).map((item,i)=>(
               <div className={enh.phoneRecord} key={item.symbol}>
-                <div><strong>{item.symbol}</strong><span>{[120,600,80,50][i]} acciones · Costo {(Number(item.price)*.93).toFixed(2)}</span></div>
+                <div><strong>{item.symbol}</strong><span>{[120,600,80,50][i]} acțiuni · Cost {(Number(item.price)*.93).toFixed(2)}</span></div>
                 <b className={item.up?styles.green:styles.red}>{item.change}</b>
               </div>
             ))}
-            <button className={styles.mirrorWideAction} onClick={()=>setTab("orders")}><ListFilter size={15}/> Historial de órdenes <ChevronRight size={14}/></button>
+            <button className={styles.mirrorWideAction} onClick={()=>setTab("orders")}><ListFilter size={15}/> Istoric ordine <ChevronRight size={14}/></button>
           </div>
         ) : null}
 
@@ -1053,73 +1068,73 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
               <div><strong>{customer.name}</strong><span>ID {customer.id} · {customer.kyc}</span><small>{customer.vip}</small></div>
               <button onClick={()=>setTab("settings")}><Settings size={16}/></button>
             </div>
-            <div className={styles.mirrorAccountBalance}><span>Portafolio total</span><strong>{customer.balance}</strong><small>Disponible MXN 186,240 · Pendiente MXN 48,500</small></div>
+            <div className={styles.mirrorAccountBalance}><span>Portofoliu total</span><strong>{customer.balance}</strong><small>Disponibil RON 186,240 · În așteptare RON 48,500</small></div>
             <div className={styles.phoneMenu}>
-              <button onClick={()=>setTab("cash")}><Banknote size={18}/><span>Depositar</span></button>
-              <button onClick={()=>setTab("cash")}><CreditCard size={18}/><span>Retirar</span></button>
-              <button onClick={()=>setTab("orders")}><ListFilter size={18}/><span>Historial</span></button>
-              <button onClick={()=>setTab("positions")}><WalletCards size={18}/><span>Posiciones</span></button>
+              <button onClick={()=>setTab("cash")}><Banknote size={18}/><span>Depozit</span></button>
+              <button onClick={()=>setTab("cash")}><CreditCard size={18}/><span>Retragere</span></button>
+              <button onClick={()=>setTab("orders")}><ListFilter size={18}/><span>Istoric</span></button>
+              <button onClick={()=>setTab("positions")}><WalletCards size={18}/><span>Poziții</span></button>
             </div>
-            <div className={styles.mirrorScoreRow}><span>Crédito <strong>100</strong></span><button>Mi préstamo <ChevronRight size={13}/></button></div>
-            <button className={styles.phoneLine} onClick={()=>setTab("bank")}>Cuenta bancaria<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("kyc")}>Verificación de identidad<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Contraseñas<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("settings")}>Configuración y notificaciones<ChevronRight size={14}/></button>
+            <div className={styles.mirrorScoreRow}><span>Credit <strong>100</strong></span><button>Împrumutul meu <ChevronRight size={13}/></button></div>
+            <button className={styles.phoneLine} onClick={()=>setTab("bank")}>Cont bancar<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine} onClick={()=>setTab("kyc")}>Verificare identitate<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Parole<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine} onClick={()=>setTab("settings")}>Setări și notificări<ChevronRight size={14}/></button>
           </div>
         ) : null}
 
         {(["funds","block","ipo"] as MirrorTab[]).includes(tab) ? (
           <div className={styles.phoneContent}>
             <div className={styles.mirrorProductBanner}>
-              <span>{tab==="funds"?"INVERSIÓN":tab==="block"?"PRECIO ESPECIAL":"OFERTA PÚBLICA"}</span>
-              <strong>{tab==="funds"?"Fondos de inversión":tab==="block"?"Operaciones en bloque":"IPO"}</strong>
-              <small>正式系统数据同步 · 后台授权操作将记录审计</small>
+              <span>{tab==="funds"?"INVESTIȚII":tab==="block"?"OFERTĂ SPECIALĂ":"OFERTĂ PUBLICĂ"}</span>
+              <strong>{tab==="funds"?"Fondos de inversión":tab==="block"?"Tranzacții în bloc":"IPO"}</strong>
+              <small>Date sincronizate din sistem · operațiunile autorizate sunt auditate</small>
             </div>
             {productRows[tab as "funds"|"block"|"ipo"].map((item)=>(
               <div className={styles.mirrorProductCard} key={item.title}>
                 <div><strong>{item.title}</strong><span>{item.meta}</span></div>
                 <b>{item.value}</b>
-                <button onClick={()=>setTab("operate")}>进入操作</button>
+                <button onClick={()=>setTab("operate")}>Continuă</button>
               </div>
             ))}
-            <button className={styles.mirrorWideAction} onClick={()=>setTab("orders")}>Ver historial relacionado <ChevronRight size={14}/></button>
+            <button className={styles.mirrorWideAction} onClick={()=>setTab("orders")}>Vezi istoricul asociat <ChevronRight size={14}/></button>
           </div>
         ) : null}
 
         {tab==="support" ? (
           <div className={styles.phoneContent}>
-            <div className={styles.mirrorSupportWelcome}><MessageSquareText size={24}/><strong>Hola, ¿en qué podemos ayudarle?</strong><span>Soporte de cuenta y operaciones</span></div>
-            <div className={styles.mirrorChatBubble}>Bienvenido a soporte. Seleccione una consulta o escriba un mensaje.</div>
-            <div className={styles.mirrorChatBubbleClient}>Necesito revisar el estado de una orden.</div>
-            <div className={styles.mirrorChatComposer}><span>Escriba un mensaje…</span><button>Enviar</button></div>
+            <div className={styles.mirrorSupportWelcome}><MessageSquareText size={24}/><strong>Bună ziua, cu ce vă putem ajuta?</strong><span>Asistență pentru cont și operațiuni</span></div>
+            <div className={styles.mirrorChatBubble}>Bun venit la asistență. Selectați o solicitare sau scrieți un mesaj.</div>
+            <div className={styles.mirrorChatBubbleClient}>Doresc să verific starea unui ordin.</div>
+            <div className={styles.mirrorChatComposer}><span>Scrieți un mesaj…</span><button>Trimite</button></div>
           </div>
         ) : null}
 
         {tab==="settings" ? (
           <div className={styles.phoneContent}>
-            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Contraseña de acceso<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Contraseña de transacción<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("kyc")}>Verificación de identidad<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("bank")}>Agregar cuenta bancaria<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine}>Notificaciones<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine}>Idioma · Español (México)<ChevronRight size={14}/></button>
-            <button className={styles.mirrorLogout}>Cerrar sesión</button>
+            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Parolă de acces<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Parolă de tranzacționare<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine} onClick={()=>setTab("kyc")}>Verificare identitate<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine} onClick={()=>setTab("bank")}>Adăugați cont bancar<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine}>Notificări<ChevronRight size={14}/></button>
+            <button className={styles.phoneLine}>Limbă · Română<ChevronRight size={14}/></button>
+            <button className={styles.mirrorLogout}>Deconectare</button>
           </div>
         ) : null}
 
-        {tab==="cash" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Movimientos</strong><span>Depósitos / retiros</span></div>{[["Depósito","MXN 120,000","Pendiente"],["Retiro","MXN 48,500","En revisión"],["Depósito","USD 18,000","Aprobado"]].map((row)=><div className={enh.phoneRecord} key={row.join("-")}><div><strong>{row[0]}</strong><span>{row[2]}</span></div><b>{row[1]}</b></div>)}</div> : null}
-        {tab==="positions" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Posiciones</strong><span>Valor y rendimiento</span></div>{stocks.slice(0,4).map((s,i)=><div className={enh.phoneRecord} key={s.symbol}><div><strong>{s.symbol}</strong><span>{[120,600,80,50][i]} acciones · {s.name}</span></div><b className={s.up?styles.green:styles.red}>{s.change}</b></div>)}</div> : null}
-        {tab==="orders" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Historial de órdenes</strong><span>Acciones / bloques / IPO / fondos</span></div>{[["AAPL","Compra","Registrada"],["WALMEX","Bloque","Procesando"],["TMX","IPO","Pendiente de asignación"],["FG-019","Fondo","Pendiente"]].map((row)=><div className={enh.phoneRecord} key={row.join("-")}><div><strong>{row[0]}</strong><span>{row[1]}</span></div><b>{row[2]}</b></div>)}</div> : null}
-        {tab==="bank" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Cuentas bancarias</strong><span>Administración de retiro</span></div><div className={enh.phoneBank}><CreditCard size={20}/><div><strong>BBVA México</strong><span>•••• 7812 · Predeterminada</span></div></div><div className={enh.phoneBank}><CreditCard size={20}/><div><strong>Santander</strong><span>•••• 3097</span></div></div><button className={enh.phonePrimary}>Agregar cuenta bancaria</button></div> : null}
-        {tab==="kyc" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Verificación de identidad</strong><span>Estado de documentación</span></div><div className={enh.phoneStatusCard}><FileCheck2 size={28}/><strong>{customer.kyc}</strong><span>{customer.name}</span><small>CURP / Pasaporte protegido</small></div></div> : null}
-        {tab==="password" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Seguridad</strong><span>Acceso y transacciones</span></div><label className={enh.phoneField}><span>Contraseña actual</span><input type="password"/></label><label className={enh.phoneField}><span>Nueva contraseña</span><input type="password"/></label><label className={enh.phoneField}><span>Confirmar contraseña</span><input type="password"/></label><button className={enh.phonePrimary}>Guardar cambios</button></div> : null}
+        {tab==="cash" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Mișcări de fonduri</strong><span>Depozite / retrageri</span></div>{[["Depozit","RON 120,000","În așteptare"],["Retragere","RON 48,500","În verificare"],["Depozit","EUR 18,000","Aprobat"]].map((row)=><div className={enh.phoneRecord} key={row.join("-")}><div><strong>{row[0]}</strong><span>{row[2]}</span></div><b>{row[1]}</b></div>)}</div> : null}
+        {tab==="positions" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Poziții</strong><span>Valoare și randament</span></div>{stocks.slice(0,4).map((s,i)=><div className={enh.phoneRecord} key={s.symbol}><div><strong>{s.symbol}</strong><span>{[120,600,80,50][i]} acțiuni · {s.name}</span></div><b className={s.up?styles.green:styles.red}>{s.change}</b></div>)}</div> : null}
+        {tab==="orders" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Istoric ordine</strong><span>Acțiuni / blocuri / IPO / fonduri</span></div>{[["AAPL","Cumpărare","Înregistrat"],["WALMEX","Bloc","În procesare"],["TMX","IPO","În așteptarea alocării"],["FG-019","Fond","În așteptare"]].map((row)=><div className={enh.phoneRecord} key={row.join("-")}><div><strong>{row[0]}</strong><span>{row[1]}</span></div><b>{row[2]}</b></div>)}</div> : null}
+        {tab==="bank" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Conturi bancare</strong><span>Administrarea retragerilor</span></div><div className={enh.phoneBank}><CreditCard size={20}/><div><strong>BBVA México</strong><span>•••• 7812 · Implicit</span></div></div><div className={enh.phoneBank}><CreditCard size={20}/><div><strong>Santander</strong><span>•••• 3097</span></div></div><button className={enh.phonePrimary}>Adăugați cont bancar</button></div> : null}
+        {tab==="kyc" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Verificare identitate</strong><span>Starea documentelor</span></div><div className={enh.phoneStatusCard}><FileCheck2 size={28}/><strong>{customer.kyc}</strong><span>{customer.name}</span><small>Document de identitate / Pașaport protejat</small></div></div> : null}
+        {tab==="password" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Securitate</strong><span>Acces și tranzacții</span></div><label className={enh.phoneField}><span>Parola curentă</span><input type="password"/></label><label className={enh.phoneField}><span>Parolă nouă</span><input type="password"/></label><label className={enh.phoneField}><span>Confirmați parola</span><input type="password"/></label><button className={enh.phonePrimary}>Salvați modificările</button></div> : null}
 
         <div className={styles.phoneNav}>
-          <button className={tab==="home"?styles.phoneNavActive:""} onClick={()=>setTab("home")}><LayoutDashboard size={17}/><span>首页</span></button>
-          <button className={tab==="market"?styles.phoneNavActive:""} onClick={()=>setTab("market")}><LineChart size={17}/><span>行情</span></button>
-          <button className={tab==="favorites"?styles.phoneNavActive:""} onClick={()=>setTab("favorites")}><Heart size={17}/><span>自选</span></button>
-          <button className={tab==="operate"?styles.phoneNavActive:""} onClick={()=>setTab("operate")}><Activity size={17}/><span>交易</span></button>
-          <button className={tab==="account"?styles.phoneNavActive:""} onClick={()=>setTab("account")}><CircleUserRound size={17}/><span>账户</span></button>
+          <button className={tab==="home"?styles.phoneNavActive:""} onClick={()=>setTab("home")}><LayoutDashboard size={17}/><span>Acasă</span></button>
+          <button className={tab==="market"?styles.phoneNavActive:""} onClick={()=>setTab("market")}><LineChart size={17}/><span>Piețe</span></button>
+          <button className={tab==="favorites"?styles.phoneNavActive:""} onClick={()=>setTab("favorites")}><Heart size={17}/><span>Urmărite</span></button>
+          <button className={tab==="operate"?styles.phoneNavActive:""} onClick={()=>setTab("operate")}><Activity size={17}/><span>Tranzacții</span></button>
+          <button className={tab==="account"?styles.phoneNavActive:""} onClick={()=>setTab("account")}><CircleUserRound size={17}/><span>Cont</span></button>
         </div>
       </div>
     </div>
@@ -1152,7 +1167,7 @@ export default function App() {
     ) : view === "customers" && role !== "client" ? (
       <CustomersPage customers={customers} setCustomers={setCustomers} onMirror={setMirrorCustomer} />
     ) : view === "market" ? (
-      <MarketPage riskControls={riskControls} />
+      <MarketPage riskControls={riskControls} role={role} />
     ) : ["products", "loans", "notifications", "opsAccounts", "audit"].includes(view) ? (
       <OperationsPage view={view as OperationsView} role={role} />
     ) : ["securities", "purchaseAccess", "risk", "support"].includes(view) ? (
