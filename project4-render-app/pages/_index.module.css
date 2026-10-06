@@ -41,3 +41,212 @@
 
 @media(max-width:1000px){.loginPage{grid-template-columns:1fr}.loginVisual{display:none}.loginPanel{min-height:100vh}.mobileLogo{display:block;margin-bottom:30px}.metricGrid{grid-template-columns:repeat(2,1fr)}.twoColumns,.twoColumnsWide{grid-template-columns:1fr}.marketTerminal{grid-template-columns:180px 1fr}.orderPanel{grid-column:1/-1;border-left:0;border-top:1px solid #dce3ec}.appShell{grid-template-columns:74px minmax(0,1fr)}}
 @media(max-width:720px){.loginPanel{padding:28px 20px}.roleTabs{margin-bottom:22px}.appShell{display:block}.sidebar{position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;height:64px;z-index:60;display:grid;grid-template-columns:repeat(6,1fr);background:#071d3c}.sidebarLogo,.sidebarRole,.logout{display:none}.nav{display:contents}.navItem,.navActive{padding:8px 2px;border-radius:0}.topbar{padding:0 12px}.profile>div:last-child{display:none}.workspaceBody{padding:10px 10px 76px}.metricGrid,.fourStats{grid-template-columns:1fr 1fr}.filterBar{grid-template-columns:1fr}.marketTerminal{height:auto;min-height:0;display:block}.marketList{max-height:260px;border-right:0}.marketCenter{min-height:650px}.orderPanel{padding:14px}.visualText h1{font-size:32px}.settingsGrid{grid-template-columns:1fr}.heroBalance{align-items:flex-start;flex-direction:column;gap:20px}.heroStats{width:100%;justify-content:space-between}.drawer{width:100%}.modal,.modalWide{width:calc(100% - 24px)}.kycGrid{grid-template-columns:1fr}.phone{width:310px}}
+
+
+/* BRANTONE_16_9_UI */
+.loginPage,.appShell{
+  width:100vw;
+  height:100dvh;
+  min-height:0;
+  max-height:100dvh;
+  overflow:hidden;
+  color:#000;
+}
+.loginPage{
+  grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr);
+  background:linear-gradient(135deg,#fff 0%,#f7f7f8 48%,#eef0f2 100%);
+}
+.loginVisual{
+  padding:clamp(28px,3.1vw,52px) clamp(34px,4vw,68px);
+  background:
+    radial-gradient(circle at 78% 22%,rgba(180,0,20,.08),transparent 34%),
+    linear-gradient(145deg,#fff 0%,#f7f7f8 58%,#eceeef 100%);
+  color:#000;
+}
+.loginVisual:after{
+  background-image:linear-gradient(rgba(0,0,0,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.035) 1px,transparent 1px);
+  opacity:.5;
+}
+.logoBlock,.logoCompact{
+  display:flex;
+  align-items:center;
+}
+.logoBlock img{
+  width:min(290px,34vw);
+  height:auto;
+  max-height:118px;
+  object-fit:contain;
+  filter:drop-shadow(0 8px 16px rgba(0,0,0,.12));
+}
+.logoCompact img{
+  width:148px;
+  height:auto;
+  max-height:72px;
+  object-fit:contain;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.10));
+}
+.logoBlock div{display:none}
+.eyebrow{color:#a60012!important;font-weight:400!important}
+.visualText{max-width:680px}
+.visualText h1{color:#000!important;font-weight:700!important}
+.visualText p{color:#000!important;font-weight:700!important}
+.visualGrid div{
+  border:1px solid #d7d9dc;
+  background:rgba(255,255,255,.86);
+  box-shadow:0 8px 24px rgba(18,23,31,.04);
+}
+.visualGrid strong,.visualGrid span{color:#000!important;font-weight:400!important}
+.loginPanel{
+  padding:clamp(28px,3.5vw,58px);
+  background:rgba(255,255,255,.96);
+}
+.formTitle h2,.formTitle p{color:#000!important;font-weight:700!important}
+.roleLabel{font-weight:400!important;color:#000!important;background:#fff;border-color:#cfd3d8}
+.loginForm label span{color:#000!important;font-weight:400!important}
+.loginForm input{color:#000!important}
+.primaryButton,.primarySmall{
+  background:#ad0b17;
+  border-color:#ad0b17;
+  color:#fff!important;
+  font-weight:400!important;
+}
+.textButton{color:#ad0b17!important;font-weight:400!important}
+
+.appShell{
+  grid-template-columns:176px minmax(0,1fr);
+  background:linear-gradient(135deg,#fff 0%,#f5f6f7 60%,#eef0f2 100%);
+}
+.sidebar{
+  position:relative;
+  top:auto;
+  height:100dvh;
+  overflow:hidden;
+  background:#fff;
+  color:#000;
+  border-right:1px solid #d9dce0;
+}
+.sidebarLogo{
+  height:92px;
+  padding:10px 12px;
+  border-bottom:1px solid #e2e4e7;
+}
+.sidebarRole{padding:8px 10px}
+.sidebarRole .roleLabel{border-color:#d4d7db;background:#f6f7f8;color:#000!important}
+.nav{
+  display:grid;
+  gap:2px;
+  padding:5px 10px;
+  min-height:0;
+  overflow:hidden;
+}
+.navItem,.navActive,.logout{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  min-height:38px;
+  padding:8px 10px;
+  border-radius:6px;
+  color:#000!important;
+  font-size:10px;
+  font-weight:400!important;
+}
+.navItem:hover{background:#f3f4f5;color:#000!important}
+.navActive{
+  background:#fbecef;
+  color:#ad0b17!important;
+  border-left:3px solid #ad0b17;
+}
+.logout{
+  margin:auto 10px 14px;
+  color:#ad0b17!important;
+}
+.workspace{
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+.topbar{
+  flex:0 0 62px;
+  height:62px;
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid #dfe2e5;
+}
+.topbar>div:first-child strong,
+.topbar>div:first-child span,
+.profile strong,.profile span{
+  color:#000!important;
+  font-weight:400!important;
+}
+.topbar>div:first-child strong{font-weight:700!important}
+.topbarActions>button{color:#000!important}
+.avatar{background:#eceeef;color:#000!important;font-weight:400!important}
+.workspaceBody{
+  height:calc(100dvh - 62px);
+  min-height:0;
+  overflow:hidden;
+  padding:clamp(10px,1.15vw,18px);
+}
+.contentStack{
+  height:100%;
+  min-height:0;
+  max-height:100%;
+  overflow:hidden;
+  gap:clamp(8px,1vw,14px);
+}
+.pageHeader h1,.pageHeader p,
+.panelTitle h3,.panelTitle p{
+  color:#000!important;
+  font-weight:700!important;
+}
+.headerPills span,
+.metricCard span,.metricCard strong,.metricCard small,
+.fourStats span,.fourStats strong,.fourStats small,
+.todoList button,.todoList button>span,
+.tablePanel th,.tablePanel td,.tablePanel td>span,
+.stockRows strong,.stockRows span,
+.orderRows,.orderRows strong,
+.settingsGrid strong,.settingsGrid span,
+.marketListHeader>strong,.stockItem strong,.stockItem span,
+.stockItemActive strong,.stockItemActive span,
+.quoteHeader h2,.quoteHeader span,.quoteFacts b,
+.chartToolbar button,.marketBottom h3,.marketBottom section div,
+.drawerHeader span,.modalHeader span,.drawerSection label span,
+.permissionRow,.drawerAction,.vipOption strong,.vipOption span,
+.vipOptionActive span,.idCard span,.idCard small{
+  color:#000!important;
+  font-weight:400!important;
+}
+.tablePanel th{font-weight:400!important}
+.metricCard strong,.fourStats strong,.stockRows strong,.orderRows strong{font-weight:400!important}
+.green,.positive,.okBadge{color:#118a54!important}
+.red,.negative,.pendingBadge{color:#c91f2b!important}
+.vipBadge{color:#a46500!important}
+.rowActions button,.tableLink,.panelTitle>button,.textButton{color:#ad0b17!important}
+.segment .segmentActive,.marketTabs .marketTabActive,.chartToolbar .chartActive{color:#ad0b17!important}
+.metricIcon,.settingsGrid button>svg:first-child{color:#ad0b17!important;background:#fbecef}
+.heroBalance{
+  background:#fff;
+  color:#000;
+  border:1px solid #dce0e4;
+  box-shadow:0 8px 22px rgba(20,24,30,.04);
+}
+.heroBalance span,.heroBalance small,.heroBalance strong,.heroStats strong{color:#000!important;font-weight:400!important}
+.tablePanel{
+  max-height:calc(100dvh - 178px);
+  overflow:auto;
+}
+.marketTerminal{
+  height:100%;
+  min-height:0;
+  max-height:100%;
+}
+.marketList,.chatBody{overscroll-behavior:contain}
+@media(max-width:1180px){
+  .appShell{grid-template-columns:76px minmax(0,1fr)}
+  .sidebarLogo{height:76px;padding:8px 5px}
+  .logoCompact img{width:66px}
+  .navItem,.navActive,.logout{justify-content:center;padding:8px 4px}
+  .navItem span,.navActive span,.logout span,.sidebarRole{display:none}
+}
