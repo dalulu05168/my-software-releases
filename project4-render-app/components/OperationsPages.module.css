@@ -211,3 +211,45 @@
   font-size:var(--ui-tag-size)!important;
   font-weight:var(--ui-medium-weight)!important;
 }
+
+
+/* FINAL_TYPOGRAPHY_LOCK_V7 */
+.stack .header h1,
+.drawerHeader h2{
+  color:var(--text-title)!important;
+  font-size:var(--typo-page)!important;
+  font-weight:700!important;
+}
+.stack :where(.drawerSection h3,.noticeGrid h3){
+  color:var(--text-title)!important;
+  font-size:var(--typo-section)!important;
+  font-weight:700!important;
+}
+.stack :where(.header p,.noticeMeta span,.noticeMeta small,.noticeGrid p,.form label span,.checks label,.resultBox p,.resultBox span,.resultBox strong,.auditSearch input,.drawerHeader span,.detailGrid span,.detailGrid strong,.drawerSection label span,.drawerSection input){
+  color:var(--text-main)!important;
+  font-size:var(--typo-body)!important;
+  font-weight:400!important;
+}
+.stack .tablePanel th{
+  color:var(--text-title)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:500!important;
+}
+.stack .tablePanel td,
+.stack .tablePanel td span{
+  color:var(--text-main)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:400!important;
+}
+.stack :where(.primary,.secondary,.actions button,.auditButton){
+  font-size:var(--typo-button)!important;
+  font-weight:500!important;
+}
+.stack :where(.good,.bad,.wait){
+  font-size:var(--typo-label)!important;
+  font-weight:500!important;
+}
+.stack .good{color:var(--text-success)!important}
+.stack .wait{color:var(--text-warning)!important}
+.stack .bad{color:var(--text-danger)!important}
+.stack :where(.actions button,.auditButton){color:var(--text-action)!important}
