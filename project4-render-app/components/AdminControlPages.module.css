@@ -2,3 +2,27 @@
 @media(min-width:1900px){.tablePanel th{font-size:10px}.tablePanel td{font-size:11px}.supportLayout{grid-template-columns:360px 1fr;min-height:760px}.thread strong,.threadActive strong,.chatHeader strong{font-size:12px}.clientMessage p,.staffMessage p{font-size:11px}.riskGrid article{min-height:96px}.riskGrid strong{font-size:11px}}
 @media(max-width:900px){.searchRow{grid-template-columns:1fr}.riskGrid{grid-template-columns:1fr}.supportLayout{grid-template-columns:230px 1fr}.providerResults>div{grid-template-columns:80px 1fr auto}.providerResults>div span:nth-of-type(2){display:none}}
 @media(max-width:720px){.header{align-items:flex-start;flex-direction:column}.supportLayout{height:auto;display:block}.threadList{max-height:280px;border-right:0;border-bottom:1px solid #e0e5ec}.chat{min-height:540px}.drawer{width:100%}.modal{width:calc(100% - 20px)}.riskGrid{grid-template-columns:1fr}.detailGrid{grid-template-columns:1fr}}
+
+
+/* BRANTONE_FIXED_VIEW */
+.stack{height:100%;min-height:0;max-height:100%;overflow:hidden;gap:10px}
+.header h1,.header p,.drawerHeader h2,.drawerSection h3,.providerTitle strong{color:#000!important;font-weight:700!important}
+.header p,.providerTitle span,.providerResults span,.tablePanel th,.tablePanel td,
+.detailGrid span,.detailGrid strong,.controlRow,.form label span,.codeResult p,
+.codeResult div span,.codeResult div strong,.riskGrid strong,.riskGrid span,
+.thread strong,.threadActive strong,.thread span,.threadActive span,.thread small,.threadActive small,
+.thread p,.threadActive p,.chatHeader strong,.chatHeader span,.clientMessage p,.staffMessage p,
+.clientMessage span,.staffMessage span{
+  color:#000!important;
+  font-weight:400!important;
+}
+.good,.bad,.wait{font-weight:400!important}
+.good{color:#118a54!important}
+.bad{color:#c91f2b!important}
+.wait{color:#a46500!important}
+.primary{background:#ad0b17;border-color:#ad0b17;color:#fff!important;font-weight:400!important}
+.providerTitle{color:#ad0b17!important}
+.providerResults button,.link,.actions button{color:#ad0b17!important;font-weight:400!important}
+.tablePanel{min-height:0;max-height:calc(100dvh - 190px);overflow:auto}
+.supportLayout{height:calc(100dvh - 138px);min-height:0}
+.modal{max-height:82dvh}
