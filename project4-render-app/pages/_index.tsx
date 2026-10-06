@@ -296,33 +296,32 @@ function LoginScreen({
           </span>
           <h1>
             {isClient
-              ? "Capital privat, administrat cu precizie"
+              ? "Tradiție românească. Capital pentru generațiile viitoare."
               : "私人资本运营管理中心"}
           </h1>
           <p>
             {isClient
-              ? "Acces securizat la portofoliu, piețe, ordine și servicii de cont într-un mediu financiar european clar și controlat."
+              ? "Disciplină. Încredere. Viziune pe termen lung. Acces securizat la portofoliu, piețe, ordine și servicii de consultanță într-un mediu financiar european clar și controlat."
               : "客户、资金、订单、持仓、证券与风险控制统一管理。安全认证、权限分级与全流程审计集中于同一工作台。"}
           </p>
         </div>
 
         <div className={styles.visualGrid}>
-          <div>
-            <strong>SECURITY</strong>
-            <span>{isClient ? "Acces securizat" : "安全认证"}</span>
-          </div>
-          <div>
-            <strong>2FA</strong>
-            <span>{isClient ? "Verificare dinamică" : "动态验证"}</span>
-          </div>
-          <div>
-            <strong>VIP 1–5</strong>
-            <span>{isClient ? "Niveluri de cont" : "客户等级"}</span>
-          </div>
-          <div>
-            <strong>AUDIT</strong>
-            <span>{isClient ? "Trasabilitate operațională" : "操作审计"}</span>
-          </div>
+          {isClient ? (
+            <>
+              <div><ShieldCheck size={20}/><strong>ACCES SECURIZAT</strong><span>Protecție pentru accesul la cont</span></div>
+              <div><WalletCards size={20}/><strong>VIZUALIZARE PORTOFOLIU</strong><span>Poziții și valoare într-o singură vedere</span></div>
+              <div><Activity size={20}/><strong>ORDINE ȘI TRANZACȚII</strong><span>Flux operațional clar și controlat</span></div>
+              <div><MessageSquareText size={20}/><strong>SUPORT DEDICAT</strong><span>Asistență în limba română</span></div>
+            </>
+          ) : (
+            <>
+              <div><strong>SECURITY</strong><span>安全认证</span></div>
+              <div><strong>2FA</strong><span>动态验证</span></div>
+              <div><strong>VIP 1–5</strong><span>客户等级</span></div>
+              <div><strong>AUDIT</strong><span>操作审计</span></div>
+            </>
+          )}
         </div>
 
         <div className={styles.romanianSignature}>
@@ -449,6 +448,13 @@ function LoginScreen({
             {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
             {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
 
+            {isClient && mode === "login" ? (
+              <div className={styles.rememberRow}>
+                <label className={styles.rememberCheck}><input type="checkbox" /><span>Ține-mă minte</span></label>
+                <button type="button" className={styles.inlineForgot} onClick={() => { setMode("forgot"); setResetMessage(""); }}>Ai uitat parola?</button>
+              </div>
+            ) : null}
+
             <button className={styles.primaryButton} type="submit">
               {isClient
                 ? mode === "register"
@@ -460,15 +466,6 @@ function LoginScreen({
               <ChevronRight size={17} />
             </button>
 
-            {isClient && mode === "login" ? (
-              <button
-                type="button"
-                className={styles.textButton}
-                onClick={() => { setMode("forgot"); setResetMessage(""); }}
-              >
-                Ați uitat parola?
-              </button>
-            ) : null}
 
             {isClient ? (
               <button
@@ -1254,7 +1251,7 @@ export default function App() {
     );
 
   return (
-    <main className={styles.appShell}>
+    <main className={`${styles.appShell} ${role === "client" ? styles.clientShell : styles.adminShell}`}>
       <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutMaster();setRole(null);setName("");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
