@@ -47,3 +47,57 @@
 .tablePanel th{background:#fbf6ed;border-bottom-color:rgba(188,139,56,.26)}
 .activeSegment{background:#fff3df!important;color:#b20d1b!important;border-color:#e8cb98!important}
 .modal,.drawer{background:#fffdf9;border:1px solid rgba(188,139,56,.26)}
+
+/* ROMANIA_CASTLE_CLIENT_V4 */
+.stack{
+  grid-template-rows:max-content minmax(0,1fr);
+}
+.header{
+  min-height:58px;
+  padding:2px 2px 7px;
+}
+.tablePanel{
+  min-height:0;
+  height:100%;
+  max-height:none!important;
+}
+.clientStack{
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+  gap:10px;
+}
+.clientStack .header h1{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#071b42!important;
+  font-size:22px;
+}
+.clientStack .header p{
+  color:#111!important;
+  font-weight:400!important;
+}
+.clientStack .primary{
+  background:linear-gradient(135deg,#790d29,#971232);
+  border-color:#790d29;
+}
+.clientStack .supportLayout{
+  height:calc(100% - 68px);
+  min-height:0;
+  border:1px solid rgba(177,124,44,.28);
+  border-radius:10px;
+  overflow:hidden;
+  background:rgba(255,255,255,.95);
+  box-shadow:0 9px 24px rgba(72,49,16,.03);
+}
+.clientStack .threadList,
+.clientStack .chatPanel{
+  background:#fffdf9;
+}
+.clientStack .threadActive{
+  background:#fff0dc!important;
+  border-color:#dec08c!important;
+}
+.clientStack .chatHeader{
+  background:#fbf4e8;
+  border-bottom-color:rgba(177,124,44,.26);
+}
