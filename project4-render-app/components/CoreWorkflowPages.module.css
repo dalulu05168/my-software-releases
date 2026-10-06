@@ -316,3 +316,50 @@
   font-size:var(--ui-tag-size)!important;
   font-weight:var(--ui-medium-weight)!important;
 }
+
+
+/* FINAL_TYPOGRAPHY_LOCK_V7 */
+.stack .header h1,
+.drawerHeader h2{
+  color:var(--text-title)!important;
+  font-size:var(--typo-page)!important;
+  font-weight:700!important;
+}
+.stack :where(.drawerSection h3){
+  color:var(--text-title)!important;
+  font-size:var(--typo-section)!important;
+  font-weight:700!important;
+}
+.stack :where(.header p,.detailGrid span,.detailGrid strong,.summaryGrid span,.proof span,.form label span,.doneBox p,.positionHero span,.miniTimeline,.settingsGrid span,.bankList span,.identityPanel span,.permissionList label){
+  color:var(--text-main)!important;
+  font-size:var(--typo-body)!important;
+  font-weight:400!important;
+}
+.stack :where(.summaryGrid strong,.settingsGrid strong,.bankList strong,.identityPanel strong){
+  color:var(--text-title)!important;
+  font-size:var(--typo-card-value)!important;
+  font-weight:600!important;
+}
+.stack .tablePanel th{
+  color:var(--text-title)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:500!important;
+}
+.stack .tablePanel td,
+.stack .tablePanel td span{
+  color:var(--text-main)!important;
+  font-size:var(--typo-table)!important;
+  font-weight:400!important;
+}
+.stack :where(.primary,.secondary,.actions button,.linkButton,.proof button,.addBank){
+  font-size:var(--typo-button)!important;
+  font-weight:500!important;
+}
+.stack :where(.good,.bad,.wait,.positive,.negative){
+  font-size:var(--typo-label)!important;
+  font-weight:500!important;
+}
+.stack :where(.good,.positive){color:var(--text-success)!important}
+.stack .wait{color:var(--text-warning)!important}
+.stack :where(.bad,.negative){color:var(--text-danger)!important}
+.stack :where(.actions button,.linkButton,.proof button,.addBank){color:var(--text-action)!important}
