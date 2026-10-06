@@ -127,7 +127,7 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
     setProducts(products.map((item) => (item.id === id ? { ...item, status } : item)));
 
   return (
-    <div className={styles.stack}>
+    <div className={`${styles.stack} ${role === "client" ? styles.clientStack : ""}`}>
       <div className={styles.header}>
         <div>
           <h1>{role === "master" ? "产品管理" : role === "ops" ? "产品运营" : "Produse de investiții"}</h1>
@@ -138,7 +138,7 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
       <div className={styles.tabs}>
         {(["大宗", "IPO", "基金"] as const).map((item) => (
           <button key={item} className={type === item ? styles.tabActive : ""} onClick={() => setType(item)}>
-            {item}
+            {role === "client" ? roProductType(item) : item}
             <span>{products.filter((p) => p.type === item).length}</span>
           </button>
         ))}
@@ -274,7 +274,7 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
     setRows(rows.map((row) => (row.id === id ? { ...row, status } : row)));
 
   return (
-    <div className={styles.stack}>
+    <div className={`${styles.stack} ${role === "client" ? styles.clientStack : ""}`}>
       <div className={styles.header}><div><h1>{role === "client" ? "Împrumuturi" : "贷款申请"}</h1><p>{role === "client" ? "Consultați cererile de împrumut și progresul evaluării" : "审核客户贷款申请和查看处理记录"}</p></div>{role === "client" ? <button className={styles.primary} onClick={() => setCreating(true)}><Landmark size={15}/> Cerere nouă</button> : null}</div>
       <section className={styles.tablePanel}>
         <table>
@@ -332,7 +332,7 @@ function NotificationsPage({ role }: { role: "client" | "ops" | "master" }) {
   const [rows, setRows] = useState(noticesSeed);
   const move = (id: string, status: string) => setRows(rows.map((row) => row.id === id ? { ...row, status } : row));
   return (
-    <div className={styles.stack}>
+    <div className={`${styles.stack} ${role === "client" ? styles.clientStack : ""}`}>
       <div className={styles.header}><div><h1>{role === "client" ? "Notificări" : "人工通知任务"}</h1><p>{role === "client" ? "Consultați notificările privind contul și operațiunile" : "跟踪客户联系、确认和后续处理状态"}</p></div><button className={styles.secondary} onClick={() => setRows(rows.map((row) => ({ ...row, status: "已确认" })))}><Bell size={15}/> {role === "client" ? "Marchează toate" : "全部确认"}</button></div>
       <div className={styles.noticeGrid}>
         {rows.map((row) => (
