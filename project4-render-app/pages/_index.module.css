@@ -2001,3 +2001,43 @@
     transform:none!important;
   }
 }
+
+
+/* ACCESSIBILITY_AND_DISABLED_QA_V11 */
+.appShell.appShell.appShell button:focus-visible,
+.appShell.appShell.appShell a:focus-visible,
+.appShell.appShell.appShell input:focus-visible,
+.appShell.appShell.appShell select:focus-visible,
+.appShell.appShell.appShell textarea:focus-visible{
+  outline:2px solid #b07a2b!important;
+  outline-offset:2px!important;
+}
+.loginPage button:focus-visible,
+.loginPage input:focus-visible,
+.loginPage select:focus-visible{
+  outline:2px solid #b07a2b!important;
+  outline-offset:2px!important;
+}
+.appShell.appShell.appShell button:disabled{
+  opacity:.52!important;
+  cursor:not-allowed!important;
+  transform:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+.appShell.appShell.appShell .quickQty button{
+  border:1px solid rgba(177,124,44,.30)!important;
+  background:#fffdf8!important;
+  color:#071b42!important;
+}
+.appShell.appShell.appShell .quickQty button:hover{
+  border-color:#8b1029!important;
+  color:#8b1029!important;
+}
+.appShell.appShell.appShell .brokerNote,
+.appShell.appShell.appShell [class*="riskHint"]{
+  color:#5e6470!important;
+  font-size:10px!important;
+  font-weight:400!important;
+  line-height:1.5!important;
+}
