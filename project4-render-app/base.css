@@ -234,3 +234,39 @@ body :where(input,select,textarea){
   font-size:var(--typo-body)!important;
   font-weight:400!important;
 }
+
+/* BRANTONE VEYLOR BRAND TOKENS */
+:root{
+  --background:#f4f2ef;
+  --foreground:#172033;
+  --surface:#ffffff;
+  --surface-foreground:#172033;
+  --sidebar:#071b42;
+  --sidebar-foreground:#f3f6fb;
+  --card:#ffffff;
+  --card-foreground:#172033;
+  --primary:#8b1029;
+  --primary-foreground:#ffffff;
+  --secondary:#f3f1ed;
+  --secondary-foreground:#273244;
+  --accent:#8b1029;
+  --accent-foreground:#ffffff;
+  --muted:#f6f4f1;
+  --muted-foreground:#747d89;
+  --success:#168654;
+  --error:#b91c2b;
+  --warning:#9a650f;
+  --border:#dfe3e8;
+  --chart-color-1:#8b1029;
+  --chart-color-2:#168654;
+  --chart-color-3:#b91c2b;
+  --chart-color-4:#b4873d;
+  --chart-color-5:#071b42;
+  --text-main:#273244;
+  --text-title:#071b42;
+  --text-action:#8b1029;
+}
+html,body,#root{background:#f4f2ef!important;color:#273244!important}
+body{background:linear-gradient(135deg,#fbfaf8 0%,#f4f2ef 55%,#ece9e5 100%)!important;color:#273244!important}
+body :where(p,span,small,label,td,th,input,select,textarea,a,em,b,strong){color:inherit!important}
+body :where(h1,h2,h3,h4,h5,h6){color:#071b42!important}
