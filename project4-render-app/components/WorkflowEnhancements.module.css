@@ -112,5 +112,10 @@
 }
 
 
-/* dark workflow helpers */
-.proofDetail{border-color:#292930;background:#292930}.proofDetail>div{background:#19191f}.proofDetail span{color:#777b84}.proofDetail strong{color:#eff1ed}.marketFilter{border-color:#303038;background:#19191f}.marketFilter button{color:#858991}.marketFilterActive{background:#00e676!important;color:#071009!important}.savedMessage,.successMessage{border-color:#25513a;background:#153226;color:#00e676}.inlineBankForm input{border-color:#303038;background:#1a1a20;color:#eff1ed}.riskNotice{border-color:#5b482b;background:#2a2117;color:#f0aa59}
+
+/* BRANTONE VEYLOR WORKFLOW HELPERS */
+.proofDetail{border-color:#e1e4e9!important;background:#e8ebef!important}.proofDetail>div{background:#fff!important}.proofDetail span{color:#7b8490!important}.proofDetail strong{color:#071b42!important}
+.marketFilter{border-color:#dfe3e8!important;background:#fff!important}.marketFilter button{color:#687382!important}.marketFilterActive{background:#8b1029!important;color:#fff!important}
+.savedMessage,.successMessage{border-color:#d8e9df!important;background:#edf7f1!important;color:#168654!important}
+.inlineBankForm input{border-color:#d9dee6!important;background:#fff!important;color:#273244!important}
+.riskNotice{border-color:#edd9b8!important;background:#fff8ec!important;color:#9a650f!important}
