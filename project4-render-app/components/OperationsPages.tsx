@@ -1,5 +1,4 @@
 import { FormEvent, useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bell,
   Building2,
@@ -15,7 +14,6 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import { project4Api } from "../helpers/project4Api";
 import styles from "./OperationsPages.module.css";
 import extra from "./WorkflowEnhancements.module.css";
 
@@ -74,28 +72,27 @@ const opsAccountsSeed = [
   { id: "OPS-MIX-03", name: "Cross Market 03", manager: "Lucía Torres", markets: "US + MX", clients: 198, status: "暂停", invite: "MX2L7D" },
 ];
 
-
-function roOpsStatus(value: string) {
-  const map: Record<string,string> = {
-    "已上架":"Activ","已暂停":"Suspendat","已结束":"Închis","待审核":"În așteptarea verificării",
-    "已通过":"Aprobat","已拒绝":"Respins","待分配":"În așteptarea alocării","已分配":"Alocat",
-    "已联系":"Contactat","已确认":"Confirmat"
-  };
-  return map[value] || value;
-}
-function roProductType(value: string) {
-  const map: Record<string,string> = {"大宗":"Tranzacții în bloc","IPO":"IPO","基金":"Fonduri"};
-  return map[value] || value;
-}
-
-function Status({ value }: { value: string }) {
+function Status({ value, client = false }: { value: string; client?: boolean }) {
   const tone =
     value.includes("通过") || value.includes("确认") || value.includes("上架") || value === "启用"
       ? styles.good
       : value.includes("拒绝") || value.includes("结束")
         ? styles.bad
         : styles.wait;
-  return <span className={tone}>{value}</span>;
+  const ro: Record<string, string> = {
+    "已上架": "Disponibil",
+    "已暂停": "Suspendat",
+    "已结束": "Încheiat",
+    "待审核": "În verificare",
+    "审核中": "În analiză",
+    "已通过": "Aprobat",
+    "已拒绝": "Respins",
+    "待分配": "În așteptare",
+    "已分配": "Atribuit",
+    "已联系": "Contactat",
+    "已确认": "Confirmat",
+  };
+  return <span className={tone}>{client ? (ro[value] || value) : value}</span>;
 }
 
 export function OperationsPage({
@@ -127,35 +124,35 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
     setProducts(products.map((item) => (item.id === id ? { ...item, status } : item)));
 
   return (
-    <div className={`${styles.stack} ${role === "client" ? styles.clientStack : ""}`}>
+    <div className={styles.stack}>
       <div className={styles.header}>
         <div>
-          <h1>{role === "master" ? "产品管理" : role === "ops" ? "产品运营" : "Produse de investiții"}</h1>
-          <p>{role === "master" ? "大宗、IPO 与基金项目统一配置和状态管理" : role === "ops" ? "查看当前开放项目、客户范围与运营状态" : "Consultați oportunitățile disponibile pentru tranzacții în bloc, IPO și fonduri"}</p>
+          <h1>{role === "master" ? "产品管理" : role === "ops" ? "产品运营" : "Produse"}</h1>
+          <p>{role === "master" ? "大宗、IPO 与基金项目统一配置和状态管理" : role === "ops" ? "查看当前开放项目、客户范围与运营状态" : "Consultați produsele disponibile pentru participare."}</p>
         </div>
         {role === "master" ? <button className={styles.primary} onClick={() => setCreatingProduct(true)}><Layers3 size={15} /> 创建产品</button> : null}
       </div>
       <div className={styles.tabs}>
         {(["大宗", "IPO", "基金"] as const).map((item) => (
           <button key={item} className={type === item ? styles.tabActive : ""} onClick={() => setType(item)}>
-            {role === "client" ? roProductType(item) : item}
+            {item}
             <span>{products.filter((p) => p.type === item).length}</span>
           </button>
         ))}
       </div>
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>{role === "client" ? "Nr. produs" : "产品编号"}</th><th>{role === "client" ? "Produs" : "产品"}</th><th>{role === "client" ? "Instrument" : "证券"}</th><th>{role === "client" ? "Piață" : "市场"}</th><th>{role === "client" ? "Condiții" : "核心参数"}</th><th>{role === "client" ? "Perioadă" : "开放时间"}</th><th>{role === "client" ? "Stare" : "状态"}</th><th>{role === "client" ? "Acțiune" : "操作"}</th></tr></thead>
+          <thead><tr><th>产品编号</th><th>产品</th><th>证券</th><th>市场</th><th>核心参数</th><th>开放时间</th><th>状态</th><th>操作</th></tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id}>
                 <td className={styles.mono}>{row.id}</td>
-                <td><strong>{row.title}</strong><span>{role === "client" ? roProductType(row.type) : `${row.type}产品`}</span></td>
+                <td><strong>{row.title}</strong><span>{row.type}产品</span></td>
                 <td className={styles.mono}>{row.symbol}</td>
                 <td>{row.market}</td>
                 <td>{row.value}</td>
                 <td>{row.window}</td>
-                <td><Status value={role === "client" ? roOpsStatus(row.status) : row.status} /></td>
+                <td><Status value={row.status} client={role === "client"} /></td>
                 <td>
                   <div className={styles.actions}>
                     <button onClick={() => setSelected(row)}>{role === "client" ? "Detalii" : "详情"}</button>
@@ -163,7 +160,7 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
                     {role === "master" && row.status === "已暂停" ? <button onClick={() => updateStatus(row.id, "已上架")}>恢复</button> : null}
                     {role === "master" && row.status !== "已结束" ? <button onClick={() => updateStatus(row.id, "已结束")}>结束</button> : null}
                     {role === "client" && row.status === "已上架" ? (
-                      <button onClick={() => { setClientProduct(row); setSubmitMessage(""); }}>Participă</button>
+                      <button onClick={() => { setClientProduct(row); setSubmitMessage(""); }}>Deschide</button>
                     ) : null}
                   </div>
                 </td>
@@ -190,7 +187,7 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
               <label><span>单客户额度</span><input defaultValue={selected.type === "大宗" ? "MXN 2,000,000" : "MXN 500,000"}/></label>
               <label><span>开放窗口</span><input defaultValue={selected.window}/></label>
             </section>
-            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>{role === "client" ? "Închide" : "关闭"}</button><button className={styles.primary} onClick={() => setSelected(null)}>保存配置</button></div>
+            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button><button className={styles.primary} onClick={() => setSelected(null)}>保存配置</button></div>
           </aside>
         </div>
       ) : null}
@@ -202,24 +199,24 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
               <button onClick={() => setClientProduct(null)}><X size={18}/></button>
             </div>
             <div className={styles.detailGrid}>
-              <div><span>Instrument / produs</span><strong>{clientProduct.symbol}</strong></div>
-              <div><span>Piață</span><strong>{clientProduct.market}</strong></div>
-              <div><span>Condiții</span><strong>{clientProduct.value}</strong></div>
-              <div><span>Perioadă disponibilă</span><strong>{clientProduct.window}</strong></div>
+              <div><span>证券 / 产品</span><strong>{clientProduct.symbol}</strong></div>
+              <div><span>市场</span><strong>{clientProduct.market}</strong></div>
+              <div><span>项目条件</span><strong>{clientProduct.value}</strong></div>
+              <div><span>开放时间</span><strong>{clientProduct.window}</strong></div>
             </div>
             <section className={styles.drawerSection}>
-              <h3>{clientProduct.type === "IPO" ? "Detalii subscriere" : "Detalii participare"}</h3>
-              <label><span>Valoare</span><input value={amount} onChange={(event) => setAmount(event.target.value)} /></label>
-              <label><span>Parolă de confirmare</span><input type="password" placeholder="Introduceți parola de tranzacționare" /></label>
+              <h3>{clientProduct.type === "IPO" ? "申购信息" : "参与信息"}</h3>
+              <label><span>提交金额</span><input value={amount} onChange={(event) => setAmount(event.target.value)} /></label>
+              <label><span>确认密码</span><input type="password" placeholder="请输入交易确认密码" /></label>
               {submitMessage ? <div className={extra.successMessage}>{submitMessage}</div> : null}
             </section>
             <div className={styles.drawerFooter}>
-              <button className={styles.secondary} onClick={() => setClientProduct(null)}>Anulează</button>
+              <button className={styles.secondary} onClick={() => setClientProduct(null)}>取消</button>
               <button
                 className={styles.primary}
-                onClick={() => setSubmitMessage(`${clientProduct.type === "IPO" ? "Subscrierea" : "Ordinul"} a fost trimis: ${clientProduct.symbol} · ${amount}`)}
+                onClick={() => setSubmitMessage(`${clientProduct.type === "IPO" ? "申购" : "订单"}已提交：${clientProduct.symbol} · ${amount}`)}
               >
-                {clientProduct.type === "IPO" ? "Trimite subscrierea" : "Trimite ordinul"}
+                {clientProduct.type === "IPO" ? "提交申购" : "提交订单"}
               </button>
             </div>
           </div>
@@ -274,20 +271,20 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
     setRows(rows.map((row) => (row.id === id ? { ...row, status } : row)));
 
   return (
-    <div className={`${styles.stack} ${role === "client" ? styles.clientStack : ""}`}>
-      <div className={styles.header}><div><h1>{role === "client" ? "Împrumuturi" : "贷款申请"}</h1><p>{role === "client" ? "Consultați cererile de împrumut și progresul evaluării" : "审核客户贷款申请和查看处理记录"}</p></div>{role === "client" ? <button className={styles.primary} onClick={() => setCreating(true)}><Landmark size={15}/> Cerere nouă</button> : null}</div>
+    <div className={styles.stack}>
+      <div className={styles.header}><div><h1>{role === "client" ? "Credit" : "贷款申请"}</h1><p>{role === "client" ? "Urmăriți solicitările de credit și starea lor." : "审核客户贷款申请和查看处理记录"}</p></div>{role === "client" ? <button className={styles.primary} onClick={() => setCreating(true)}><Landmark size={15}/> Solicitare nouă</button> : null}</div>
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>{role === "client" ? "Nr. cerere" : "申请编号"}</th>{role !== "client" ? <th>客户</th> : null}<th>{role === "client" ? "Valoare" : "申请金额"}</th><th>{role === "client" ? "Stare" : "状态"}</th><th>{role === "client" ? "Data cererii" : "申请时间"}</th><th>{role === "client" ? "Acțiune" : "操作"}</th></tr></thead>
+          <thead><tr><th>申请编号</th>{role !== "client" ? <th>客户</th> : null}<th>申请金额</th><th>状态</th><th>申请时间</th><th>操作</th></tr></thead>
           <tbody>
             {rows.slice(0, role === "client" ? 2 : rows.length).map((row) => (
               <tr key={row.id}>
                 <td className={styles.mono}>{row.id}</td>
                 {role !== "client" ? <td>{row.name}</td> : null}
                 <td className={styles.mono}>{row.amount}</td>
-                <td><Status value={role === "client" ? roOpsStatus(row.status) : row.status}/></td>
+                <td><Status value={row.status}/></td>
                 <td>{row.date}</td>
-                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>{role === "client" ? "Vezi" : "查看"}</button>{role !== "client" && row.status !== "已通过" && row.status !== "已拒绝" ? <><button onClick={() => update(row.id, "已通过")}>通过</button><button onClick={() => update(row.id, "已拒绝")}>拒绝</button></> : null}</div></td>
+                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>查看</button>{role !== "client" && row.status !== "已通过" && row.status !== "已拒绝" ? <><button onClick={() => update(row.id, "已通过")}>通过</button><button onClick={() => update(row.id, "已拒绝")}>拒绝</button></> : null}</div></td>
               </tr>
             ))}
           </tbody>
@@ -296,9 +293,9 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
       {selected ? (
         <div className={styles.shade} onMouseDown={() => setSelected(null)}>
           <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
-            <div className={styles.drawerHeader}><div><span>{role === "client" ? "Cerere de împrumut" : "贷款申请"}</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
-            <div className={styles.detailGrid}><div><span>{role === "client" ? "Client" : "客户"}</span><strong>{selected.name}</strong></div><div><span>{role === "client" ? "Valoare" : "申请金额"}</span><strong>{selected.amount}</strong></div><div><span>{role === "client" ? "Data cererii" : "申请时间"}</span><strong>{selected.date}</strong></div><div><span>{role === "client" ? "Stare" : "当前状态"}</span><Status value={role === "client" ? roOpsStatus(selected.status) : selected.status}/></div></div>
-            <section className={styles.drawerSection}><h3>{role === "client" ? "Observații" : "审核说明"}</h3><textarea placeholder={role === "client" ? "Observații privind cererea" : "输入审核备注或说明"} /></section>
+            <div className={styles.drawerHeader}><div><span>贷款申请</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
+            <div className={styles.detailGrid}><div><span>客户</span><strong>{selected.name}</strong></div><div><span>申请金额</span><strong>{selected.amount}</strong></div><div><span>申请时间</span><strong>{selected.date}</strong></div><div><span>当前状态</span><Status value={selected.status}/></div></div>
+            <section className={styles.drawerSection}><h3>审核说明</h3><textarea placeholder="输入审核备注或说明" /></section>
             <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button>{role !== "client" ? <button className={styles.primary} onClick={() => { update(selected.id, "已通过"); setSelected(null); }}>确认通过</button> : null}</div>
           </div>
         </div>
@@ -314,12 +311,12 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
               setCreating(false);
             }}
           >
-            <div className={styles.drawerHeader}><div><span>Cerere client</span><h2>Cerere nouă de împrumut</h2></div><button type="button" onClick={() => setCreating(false)}><X size={18}/></button></div>
+            <div className={styles.drawerHeader}><div><span>客户申请</span><h2>新建贷款申请</h2></div><button type="button" onClick={() => setCreating(false)}><X size={18}/></button></div>
             <div className={styles.form}>
-              <label><span>Monedă</span><select><option>MXN</option><option>USD</option></select></label>
-              <label><span>Valoare solicitată</span><input value={loanAmount} onChange={(event) => setLoanAmount(event.target.value)}/></label>
-              <label><span>Scop</span><input placeholder="Descrieți utilizarea fondurilor"/></label>
-              <button className={styles.primary} type="submit">Trimite cererea</button>
+              <label><span>申请币种</span><select><option>MXN</option><option>USD</option></select></label>
+              <label><span>申请金额</span><input value={loanAmount} onChange={(event) => setLoanAmount(event.target.value)}/></label>
+              <label><span>用途说明</span><input placeholder="输入资金用途"/></label>
+              <button className={styles.primary} type="submit">提交申请</button>
             </div>
           </form>
         </div>
@@ -332,14 +329,14 @@ function NotificationsPage({ role }: { role: "client" | "ops" | "master" }) {
   const [rows, setRows] = useState(noticesSeed);
   const move = (id: string, status: string) => setRows(rows.map((row) => row.id === id ? { ...row, status } : row));
   return (
-    <div className={`${styles.stack} ${role === "client" ? styles.clientStack : ""}`}>
-      <div className={styles.header}><div><h1>{role === "client" ? "Notificări" : "人工通知任务"}</h1><p>{role === "client" ? "Consultați notificările privind contul și operațiunile" : "跟踪客户联系、确认和后续处理状态"}</p></div><button className={styles.secondary} onClick={() => setRows(rows.map((row) => ({ ...row, status: "已确认" })))}><Bell size={15}/> {role === "client" ? "Marchează toate" : "全部确认"}</button></div>
+    <div className={styles.stack}>
+      <div className={styles.header}><div><h1>{role === "client" ? "Notificări" : "人工通知任务"}</h1><p>{role === "client" ? "Mesaje și notificări pentru contul dumneavoastră." : "跟踪客户联系、确认和后续处理状态"}</p></div><button className={styles.secondary} onClick={() => setRows(rows.map((row) => ({ ...row, status: "已确认" })))}><Bell size={15}/> 全部确认</button></div>
       <div className={styles.noticeGrid}>
         {rows.map((row) => (
           <article key={row.id}>
             <div className={styles.noticeIcon}><Bell size={17}/></div>
-            <div><div className={styles.noticeMeta}><span>{row.type}</span><small>{row.time}</small></div><h3>{row.subject}</h3>{role !== "client" ? <p>{row.name} · {row.id}</p> : <p>Notificare cont · {row.id}</p>}</div>
-            <div className={styles.noticeRight}><Status value={role === "client" ? roOpsStatus(row.status) : row.status}/>{role !== "client" ? <button onClick={() => move(row.id, row.status === "已确认" ? "已确认" : row.status === "已联系" ? "已确认" : "已联系")}>{row.status === "已确认" ? "查看" : row.status === "已联系" ? "确认完成" : "标记已联系"}</button> : <button onClick={() => move(row.id, "已确认")}>Vezi</button>}</div>
+            <div><div className={styles.noticeMeta}><span>{row.type}</span><small>{row.time}</small></div><h3>{row.subject}</h3>{role !== "client" ? <p>{row.name} · {row.id}</p> : <p>账户通知 · {row.id}</p>}</div>
+            <div className={styles.noticeRight}><Status value={row.status} client={role === "client"}/>{role !== "client" ? <button onClick={() => move(row.id, row.status === "已确认" ? "已确认" : row.status === "已联系" ? "已确认" : "已联系")}>{row.status === "已确认" ? "查看" : row.status === "已联系" ? "确认完成" : "标记已联系"}</button> : <button onClick={() => move(row.id, "已确认")}>查看</button>}</div>
           </article>
         ))}
       </div>
@@ -348,286 +345,70 @@ function NotificationsPage({ role }: { role: "client" | "ops" | "master" }) {
 }
 
 function OpsAccountsPage() {
-  const queryClient = useQueryClient();
-  const accountsQuery = useQuery({
-    queryKey: ["project4-ops-accounts"],
-    queryFn: project4Api.listOpsAccounts,
-  });
-
-  const rows = accountsQuery.data || [];
+  const [rows, setRows] = useState(opsAccountsSeed);
   const [creating, setCreating] = useState(false);
-  const [result, setResult] = useState<{
-    invite: string;
-    totpSecret: string;
-    otpauthUri: string;
-  } | null>(null);
+  const [result, setResult] = useState<{ invite: string; secret: string } | null>(null);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [markets, setMarkets] = useState<Array<"US" | "MX">>(["US", "MX"]);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<(typeof opsAccountsSeed)[number] | null>(null);
   const [resetSecret, setResetSecret] = useState("");
-  const [resetOtpUri, setResetOtpUri] = useState("");
-  const [formError, setFormError] = useState("");
-
-  const refresh = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["project4-ops-accounts"] });
-  };
-
-  const createMutation = useMutation({
-    mutationFn: () =>
-      project4Api.createOpsAccount({
-        name: name.trim(),
-        username: username.trim(),
-        password,
-        markets,
-      }),
-    onSuccess: async (data) => {
-      setResult({
-        invite: data.account.invite,
-        totpSecret: data.totpSecret,
-        otpauthUri: data.otpauthUri,
-      });
-      setFormError("");
-      await refresh();
-    },
-    onError: (error) => {
-      const code = error instanceof Error ? error.message : "CREATE_FAILED";
-      setFormError(
-        code === "OPS_PASSWORD_LENGTH_INVALID"
-          ? "初始密码必须为 12–128 位"
-          : code === "USERNAME_ALREADY_EXISTS"
-            ? "管理员账户已存在，请更换账户名"
-            : code === "INVALID_OPS_USERNAME"
-              ? "管理员账户只能使用字母、数字、点、下划线或短横线"
-              : "子账户创建失败，请检查输入后重试",
-      );
-    },
-  });
-
-  const resetMutation = useMutation({
-    mutationFn: (identityId: string) => project4Api.resetOpsTotp(identityId),
-    onSuccess: (data) => {
-      setResetSecret(data.totpSecret);
-      setResetOtpUri(data.otpauthUri);
-    },
-  });
-
-  const statusMutation = useMutation({
-    mutationFn: ({
-      id,
-      status,
-    }: {
-      id: string;
-      status: "ACTIVE" | "SUSPENDED";
-    }) => project4Api.setOpsStatus(id, status),
-    onSuccess: refresh,
-  });
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    setFormError("");
-    if (!name.trim() || !username.trim() || password.length < 12 || !markets.length) {
-      setFormError("请填写名称、管理员账户，并设置至少 12 位密码和至少一个市场权限");
-      return;
-    }
-    createMutation.mutate();
-  };
-
-  const toggleMarket = (market: "US" | "MX") => {
-    setMarkets((current) =>
-      current.includes(market)
-        ? current.filter((item) => item !== market)
-        : [...current, market],
-    );
+    const next = rows.length + 1;
+    const id = `OPS-MX-0${next}`;
+    const invite = `MX${String(6800 + next * 97)}K`;
+    setRows([{ id, name: name || `Operations ${next}`, manager: username || "New Admin", markets: "US + MX", clients: 0, status: "启用", invite }, ...rows]);
+    setResult({ invite, secret: `VS${id.replaceAll("-", "")}2FA${Date.now().toString().slice(-6)}` });
   };
 
   return (
     <div className={styles.stack}>
-      <div className={styles.header}>
-        <div>
-          <h1>子账户管理</h1>
-          <p>真实创建子账户、生成 Google Authenticator 2FA，并管理登录状态</p>
-        </div>
-        <button
-          className={styles.primary}
-          onClick={() => {
-            setCreating(true);
-            setResult(null);
-            setFormError("");
-            setName("");
-            setUsername("");
-            setPassword("");
-            setMarkets(["US", "MX"]);
-          }}
-        >
-          <UserPlus size={15}/> 创建子账户
-        </button>
-      </div>
-
-      {accountsQuery.isLoading ? (
-        <section className={styles.tablePanel}><p>正在读取子账户…</p></section>
-      ) : accountsQuery.isError ? (
-        <section className={styles.tablePanel}><p>子账户读取失败，请重新登录总账户后再试。</p></section>
-      ) : (
-        <section className={styles.tablePanel}>
-          <table>
-            <thead>
-              <tr>
-                <th>管理员账户</th>
-                <th>名称</th>
-                <th>市场</th>
-                <th>客户数</th>
-                <th>邀请码</th>
-                <th>2FA</th>
-                <th>状态</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.length ? rows.map((row) => (
-                <tr key={row.id}>
-                  <td className={styles.mono}>{row.username || "—"}</td>
-                  <td>{row.name}</td>
-                  <td>{row.markets?.length ? row.markets.join(" + ") : "—"}</td>
-                  <td>{row.clients ?? 0}</td>
-                  <td className={styles.mono}>{row.invite || "—"}</td>
-                  <td><span className={styles.good}>{row.identityId ? "已启用" : "未配置"}</span></td>
-                  <td><Status value={row.status === "ACTIVE" ? "启用" : "暂停"}/></td>
-                  <td>
-                    <div className={styles.actions}>
-                      <button onClick={() => {
-                        setEditing(row);
-                        setResetSecret("");
-                        setResetOtpUri("");
-                      }}>权限查看</button>
-                      <button
-                        disabled={!row.identityId || resetMutation.isPending}
-                        onClick={() => {
-                          if (!row.identityId) return;
-                          setEditing(row);
-                          setResetSecret("");
-                          setResetOtpUri("");
-                          resetMutation.mutate(row.identityId);
-                        }}
-                      >
-                        重置2FA
-                      </button>
-                      <button
-                        disabled={statusMutation.isPending}
-                        onClick={() =>
-                          statusMutation.mutate({
-                            id: row.id,
-                            status: row.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE",
-                          })
-                        }
-                      >
-                        {row.status === "ACTIVE" ? "暂停" : "恢复"}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan={8}>当前还没有真实子账户，请点击“创建子账户”。</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </section>
-      )}
-
+      <div className={styles.header}><div><h1>子账户管理</h1><p>创建子账户并管理邀请码、2FA 与市场权限</p></div><button className={styles.primary} onClick={() => { setCreating(true); setResult(null); }}><UserPlus size={15}/> 创建子账户</button></div>
+      <section className={styles.tablePanel}>
+        <table>
+          <thead><tr><th>子账户</th><th>名称</th><th>管理员</th><th>市场</th><th>客户数</th><th>邀请码</th><th>2FA</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>{rows.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td><td>{row.name}</td><td>{row.manager}</td><td>{row.markets}</td><td>{row.clients}</td><td className={styles.mono}>{row.invite}</td><td><span className={styles.good}>已启用</span></td><td><Status value={row.status}/></td><td><div className={styles.actions}><button onClick={() => { setEditing(row); setResetSecret(""); }}>权限</button><button onClick={() => { setEditing(row); setResetSecret(`VS${row.id.replaceAll("-", "")}${Date.now().toString().slice(-6)}`); }}>重置2FA</button><button onClick={() => setRows(rows.map((item) => item.id === row.id ? { ...item, status: item.status === "启用" ? "暂停" : "启用" } : item))}>{row.status === "启用" ? "暂停" : "恢复"}</button></div></td></tr>)}</tbody>
+        </table>
+      </section>
       {creating ? (
         <div className={styles.shade}>
           <div className={styles.modal}>
-            <div className={styles.drawerHeader}>
-              <div><span>总账户操作</span><h2>创建真实子账户</h2></div>
-              <button onClick={() => setCreating(false)}><X size={18}/></button>
-            </div>
+            <div className={styles.drawerHeader}><div><span>总账户操作</span><h2>创建子账户</h2></div><button onClick={() => setCreating(false)}><X size={18}/></button></div>
             {!result ? (
               <form className={styles.form} onSubmit={submit}>
-                <label>
-                  <span>子账户名称</span>
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="例如 Mexico Operations 04"
-                  />
-                </label>
-                <label>
-                  <span>管理员账户</span>
-                  <input
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="例如 ops.mx04"
-                  />
-                </label>
-                <label>
-                  <span>初始密码</span>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="至少 12 位"
-                  />
-                </label>
-                <div className={styles.checks}>
-                  <label><input type="checkbox" checked={markets.includes("US")} onChange={() => toggleMarket("US")}/> US 市场</label>
-                  <label><input type="checkbox" checked={markets.includes("MX")} onChange={() => toggleMarket("MX")}/> MX 市场</label>
-                </div>
-                {formError ? <p>{formError}</p> : null}
-                <button className={styles.primary} type="submit" disabled={createMutation.isPending}>
-                  {createMutation.isPending ? "创建中…" : "创建并生成真实2FA"}
-                </button>
+                <label><span>子账户名称</span><input value={name} onChange={(e) => setName(e.target.value)} placeholder="例如 Mexico Operations 04"/></label>
+                <label><span>管理员账户</span><input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="输入管理员账户"/></label>
+                <label><span>初始密码</span><input type="password" defaultValue="ChangeMe2026!"/></label>
+                <div className={styles.checks}><label><input type="checkbox" defaultChecked/> US 市场</label><label><input type="checkbox" defaultChecked/> MX 市场</label><label><input type="checkbox" defaultChecked/> 股票</label><label><input type="checkbox" defaultChecked/> 大宗 / IPO / 基金</label></div>
+                <button className={styles.primary} type="submit">创建并生成登录资料</button>
               </form>
             ) : (
               <div className={styles.resultBox}>
                 <CircleCheck size={34}/>
                 <h3>子账户创建完成</h3>
-                <p>下面的 2FA 密钥由服务器随机生成并已保存到 Supabase Vault，只在当前创建流程展示，请立即加入 Google Authenticator。</p>
+                <p>以下资料只在当前创建流程展示，请交给对应管理员保存。</p>
                 <div><span>专属邀请码</span><strong>{result.invite}</strong></div>
-                <div><span>2FA 密钥</span><strong>{result.totpSecret}</strong></div>
-                <div><span>Authenticator URI</span><strong>{result.otpauthUri}</strong></div>
-                <button className={styles.primary} onClick={() => setCreating(false)}>我已保存，完成</button>
+                <div><span>2FA 密钥</span><strong>{result.secret}</strong></div>
+                <button className={styles.primary} onClick={() => setCreating(false)}>完成</button>
               </div>
             )}
           </div>
         </div>
       ) : null}
-
       {editing ? (
         <div className={styles.shade} onMouseDown={() => setEditing(null)}>
           <div className={styles.modal} onMouseDown={(event) => event.stopPropagation()}>
-            <div className={styles.drawerHeader}>
-              <div><span>子账户安全与权限</span><h2>{editing.username || editing.name}</h2></div>
-              <button onClick={() => setEditing(null)}><X size={18}/></button>
-            </div>
-            {resetMutation.isPending && !resetSecret ? (
-              <div className={styles.resultBox}>
-                <ShieldCheck size={32}/>
-                <h3>正在生成新的2FA密钥…</h3>
-              </div>
-            ) : resetSecret ? (
-              <div className={styles.resultBox}>
-                <ShieldCheck size={32}/>
-                <h3>新的2FA密钥已生成</h3>
-                <div><span>2FA密钥</span><strong>{resetSecret}</strong></div>
-                <div><span>Authenticator URI</span><strong>{resetOtpUri}</strong></div>
-                <p>旧密钥和旧登录会话已经失效，请立即在 Google Authenticator 中更新。</p>
-              </div>
+            <div className={styles.drawerHeader}><div><span>子账户安全与权限</span><h2>{editing.id}</h2></div><button onClick={() => setEditing(null)}><X size={18}/></button></div>
+            {resetSecret ? (
+              <div className={styles.resultBox}><ShieldCheck size={32}/><h3>新的2FA密钥已生成</h3><div><span>2FA密钥</span><strong>{resetSecret}</strong></div><p>保存后旧密钥不再使用。</p></div>
             ) : (
               <div className={styles.form}>
-                <label><span>子账户名称</span><input value={editing.name || ""} readOnly/></label>
-                <label><span>管理员账户</span><input value={editing.username || ""} readOnly/></label>
-                <div className={styles.checks}>
-                  <label><input type="checkbox" checked={editing.markets?.includes("US")} readOnly/> US 市场</label>
-                  <label><input type="checkbox" checked={editing.markets?.includes("MX")} readOnly/> MX 市场</label>
-                </div>
+                <label><span>子账户名称</span><input defaultValue={editing.name}/></label>
+                <div className={styles.checks}><label><input type="checkbox" defaultChecked={editing.markets.includes("US")}/> US 市场</label><label><input type="checkbox" defaultChecked={editing.markets.includes("MX")}/> MX 市场</label><label><input type="checkbox" defaultChecked/> 股票</label><label><input type="checkbox" defaultChecked/> 大宗 / IPO / 基金</label></div>
               </div>
             )}
-            <div className={styles.drawerFooter}>
-              <button className={styles.secondary} onClick={() => setEditing(null)}>关闭</button>
-            </div>
+            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setEditing(null)}>关闭</button>{!resetSecret ? <button className={styles.primary} onClick={() => setEditing(null)}>保存权限</button> : null}</div>
           </div>
         </div>
       ) : null}
