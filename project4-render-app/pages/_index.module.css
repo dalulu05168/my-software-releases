@@ -46,3 +46,230 @@
 .brandMark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#00e676;color:#071009;font-weight:900;font-size:18px;letter-spacing:-.04em;box-shadow:0 8px 26px rgba(0,230,118,.18)}
 .brandWords{display:grid;gap:2px}.brandWords strong{font-size:13px;letter-spacing:.13em;color:#f5f7f2}.brandWords span{font-size:8px;letter-spacing:.08em;color:#747881;text-transform:uppercase}
 .logoCompact .brandMark{width:38px;height:38px}
+
+
+/* ===== Unified dark trading terminal shell ===== */
+.appShell{
+  background:#0d0d12!important;
+  color:#f2f4f0!important;
+  grid-template-columns:76px minmax(0,1fr)!important;
+}
+.sidebar{
+  background:#0a0a0f!important;
+  color:#8f939d!important;
+  border-right:1px solid #24242c!important;
+  box-shadow:8px 0 28px rgba(0,0,0,.14)!important;
+}
+.sidebarLogo{
+  height:66px!important;
+  border-bottom:1px solid #222229!important;
+  background:#0d0d12!important;
+}
+.sidebarRole{display:none!important}
+.nav{padding:10px 6px!important;gap:5px!important}
+.navItem,.navActive,.logout{
+  color:#7d818a!important;
+  border-radius:10px!important;
+  min-height:48px!important;
+  transition:background .18s ease,color .18s ease,transform .18s ease,border-color .18s ease!important;
+}
+.navItem:hover{
+  background:#17171d!important;
+  color:#f0f2ee!important;
+  transform:translateY(-1px)!important;
+}
+.navActive{
+  background:#00e676!important;
+  color:#071009!important;
+  box-shadow:0 8px 26px rgba(0,230,118,.15)!important;
+}
+.logout{
+  color:#686c75!important;
+  border-top:1px solid #202027!important;
+  margin-top:auto!important;
+}
+.workspace{
+  background:#0d0d12!important;
+  color:#f2f4f0!important;
+}
+.topbar{
+  height:62px!important;
+  background:#111116!important;
+  border-bottom:1px solid #25252d!important;
+  padding:0 18px!important;
+  color:#f2f4f0!important;
+}
+.topbar>div:first-child strong{color:#f2f4f0!important}
+.topbar>div:first-child span{color:#7c8089!important}
+.topbarActions>button{
+  background:#18181e!important;
+  border:1px solid #2a2a32!important;
+  color:#b5b8bf!important;
+  border-radius:9px!important;
+}
+.topbarActions>button:hover{
+  border-color:#00e676!important;
+  color:#00e676!important;
+}
+.profile{border-left:1px solid #2a2a32!important}
+.avatar{
+  background:#18291f!important;
+  color:#00e676!important;
+  border:1px solid #2b503a!important;
+}
+.profile strong{color:#f0f2ee!important}
+.profile span{color:#7c8089!important}
+.topSearch{
+  background:#18181e!important;
+  border:1px solid #2a2a32!important;
+  color:#777b84!important;
+}
+.workspaceBody{
+  background:#0d0d12!important;
+  color:#f2f4f0!important;
+  min-height:calc(100vh - 62px)!important;
+  padding:18px!important;
+}
+.contentStack,.pageHeader,.panel,.tablePanel,.filterBar,.metricCard,.fourStats,.settingsGrid{
+  color:#f2f4f0;
+}
+.pageHeader h1{color:#f4f6f2!important}
+.pageHeader p{color:#7d818a!important}
+.headerPills span{
+  background:#17171d!important;
+  border-color:#2b2b33!important;
+  color:#a3a6ae!important;
+}
+.metricCard,.panel,.tablePanel,.fourStats{
+  background:#15151b!important;
+  border-color:#292930!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.13)!important;
+}
+.metricIcon{
+  background:#18291f!important;
+  color:#00e676!important;
+  border:1px solid #294d38!important;
+}
+.metricCard span,.metricCard small,.fourStats span{color:#7d818a!important}
+.metricCard strong,.fourStats strong{color:#f2f4f0!important}
+.fourStats div{border-right-color:#292930!important}
+.fourStats small{color:#00e676!important}
+.panelTitle h3{color:#f1f3ef!important}
+.panelTitle p{color:#777b84!important}
+.panelTitle>button{color:#00e676!important}
+.filterBar{
+  background:#15151b!important;
+  border-color:#292930!important;
+}
+.searchBox,.filterBar select{
+  background:#1a1a20!important;
+  border-color:#303038!important;
+  color:#a6a9b0!important;
+}
+.searchBox input{
+  background:transparent!important;
+  color:#f0f2ee!important;
+}
+.secondaryButton{
+  background:#1a1a20!important;
+  border-color:#303038!important;
+  color:#b5b8bf!important;
+}
+.secondaryButton:hover{
+  color:#00e676!important;
+  border-color:#00e676!important;
+}
+.tablePanel th{
+  background:#1c1c23!important;
+  border-bottom-color:#2a2a31!important;
+  color:#858993!important;
+}
+.tablePanel td{
+  color:#d7d9d5!important;
+  border-bottom-color:#26262d!important;
+}
+.tablePanel tbody tr:hover{background:#1a1d1b!important}
+.tablePanel td>span{color:#777b84!important}
+.rowActions button,.tableLink{color:#00e676!important}
+.okBadge{background:#153226!important;color:#00e676!important}
+.pendingBadge{background:#32271a!important;color:#f4aa5f!important}
+.vipBadge{background:#2e281a!important;color:#f3c45f!important}
+.toggleOn{background:#00e676!important}
+.toggleOff{background:#3a3b42!important}
+.drawerShade,.modalShade,.mirrorShade{
+  background:rgba(0,0,0,.7)!important;
+  backdrop-filter:blur(6px)!important;
+}
+.drawer,.modal,.modalWide{
+  background:#141419!important;
+  color:#f0f2ee!important;
+  border:1px solid #2c2c33!important;
+}
+.drawerHeader,.modalHeader,.drawerSection,.drawerFooter,.modalFooter{
+  border-color:#292930!important;
+}
+.drawerHeader span,.modalHeader span{color:#777b84!important}
+.drawerSection input,.loginForm input,.orderPanel input,.kycGrid input{
+  background:#1a1a20!important;
+  color:#eff1ed!important;
+  border-color:#303038!important;
+}
+.settingsGrid button{
+  background:#15151b!important;
+  border-color:#292930!important;
+  color:#a9acb4!important;
+}
+.settingsGrid button:hover{
+  border-color:#365443!important;
+  transform:translateY(-2px)!important;
+}
+.settingsGrid button strong{color:#f0f2ee!important}
+.settingsGrid button>svg:first-child{color:#00e676!important}
+
+/* login: dark on both Romanian client and Chinese admin */
+.loginPage{
+  background:#0a0a0f!important;
+  color:#f5f7f2!important;
+}
+.loginVisual{
+  background:
+    radial-gradient(circle at 72% 24%,rgba(0,230,118,.13),transparent 30%),
+    radial-gradient(circle at 18% 82%,rgba(0,230,118,.07),transparent 32%),
+    linear-gradient(145deg,#0b0b10 0%,#121218 58%,#0b0b10 100%)!important;
+  border-right:1px solid #25252d!important;
+}
+.loginPanel{
+  background:#101015!important;
+  color:#f4f6f2!important;
+}
+.roleLabel{
+  background:#19191f!important;
+  border-color:#303039!important;
+  color:#a7abb4!important;
+}
+.formTitle h2{color:#f7f8f4!important}
+.formTitle p{color:#858993!important}
+.loginForm label span{color:#a3a6af!important}
+.loginForm input{
+  background:#18181e!important;
+  border-color:#303038!important;
+  color:#f5f7f2!important;
+}
+.loginForm input:focus{
+  border-color:#00e676!important;
+  box-shadow:0 0 0 3px rgba(0,230,118,.09)!important;
+}
+.primaryButton,.primarySmall{
+  background:#00e676!important;
+  color:#071009!important;
+  box-shadow:0 8px 26px rgba(0,230,118,.13)!important;
+}
+.textButton{color:#00e676!important}
+
+@media(max-width:720px){
+  .sidebar{
+    background:#0a0a0f!important;
+    border-top:1px solid #24242c!important;
+  }
+  .workspaceBody{background:#0d0d12!important}
+}
