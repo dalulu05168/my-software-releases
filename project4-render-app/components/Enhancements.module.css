@@ -13,5 +13,13 @@
 @media(min-width:1900px){.formNotice{font-size:10px}.phoneRecord strong{font-size:10px}.phoneRecord span,.phoneBank span,.phoneStatusCard span,.phoneStatusCard small,.phoneField span{font-size:8px}.favoriteOn,.favoriteOff,.emptyMarket{font-size:9px}}
 
 
-/* dark terminal helpers */
-.formNotice{border-color:#25513a;background:#153226;color:#00e676}.phoneBack{border-color:#292930;background:#15151b;color:#00e676}.phonePageTitle{border-color:#292930}.phonePageTitle span,.phoneRecord span,.phoneBank span,.phoneStatusCard span,.phoneStatusCard small,.phoneField span{color:#777b84}.phoneRecord{border-color:#292930}.phoneRecord b{color:#b4b7be}.phonePrimary{background:#00e676;color:#071009}.phoneBank,.phoneStatusCard{border-color:#292930;background:#19191f}.phoneBank strong,.phoneStatusCard strong{color:#eff1ed}.phoneField input{border-color:#303038;background:#1a1a20;color:#eff1ed}.emptyMarket{color:#777b84}.favoriteOn{border-color:#315943;background:#17281e;color:#00e676}.favoriteOff{border-color:#303038;background:#1a1a20;color:#8b8f98}.riskHint{border-color:#5b482b;background:#2a2117;color:#f0aa59}
+
+/* BRANTONE VEYLOR HELPERS */
+.formNotice{border-color:#d8e9df!important;background:#edf7f1!important;color:#168654!important}
+.phoneBack{border-color:#dfe3e8!important;background:#fff!important;color:#8b1029!important}
+.phonePageTitle{border-color:#e2e5e9!important}.phonePageTitle span,.phoneRecord span,.phoneBank span,.phoneStatusCard span,.phoneStatusCard small,.phoneField span{color:#7b8490!important}
+.phoneRecord{border-color:#e5e8ec!important}.phoneRecord b{color:#273244!important}.phonePrimary{background:#8b1029!important;color:#fff!important}
+.phoneBank,.phoneStatusCard{border-color:#e0e3e7!important;background:#fff!important}.phoneBank strong,.phoneStatusCard strong{color:#071b42!important}
+.phoneField input{border-color:#d9dee6!important;background:#fff!important;color:#273244!important}
+.emptyMarket{color:#7b8490!important}.favoriteOn{border-color:#e5cfd4!important;background:#f8edef!important;color:#8b1029!important}.favoriteOff{border-color:#dfe3e8!important;background:#fff!important;color:#687382!important}
+.riskHint{border-color:#edd9b8!important;background:#fff8ec!important;color:#9a650f!important}
