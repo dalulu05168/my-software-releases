@@ -48,297 +48,223 @@
 .logoCompact .brandMark{width:38px;height:38px}
 
 
-/* ===== Unified dark trading terminal shell ===== */
+
+/* ===== BRANTONE VEYLOR / CANVA UI V2 ===== */
+.loginPage{
+  min-height:100vh;
+  grid-template-columns:minmax(520px,1.12fr) minmax(440px,.88fr)!important;
+  background:#f7f5f2!important;
+  color:#273244!important;
+}
+.loginVisual{
+  padding:64px 72px!important;
+  background:
+    radial-gradient(circle at 8% 4%,rgba(7,27,66,.045) 0 90px,transparent 92px),
+    radial-gradient(circle at 92% 96%,rgba(139,16,41,.05) 0 130px,transparent 132px),
+    #f1efeb!important;
+  color:#071b42!important;
+  border-right:1px solid #dedad4!important;
+}
+.loginVisual:after{
+  opacity:.28!important;
+  background-image:radial-gradient(circle,rgba(7,27,66,.16) 1px,transparent 1px)!important;
+  background-size:22px 22px!important;
+  mask-image:linear-gradient(to bottom,black,transparent 78%)!important;
+}
+.logoBlock{gap:16px!important}
+.logoBlock img{width:92px!important;height:68px!important;object-fit:contain!important;filter:none!important}
+.logoCompact img{width:66px!important;height:48px!important;object-fit:contain!important}
+.brandWords{gap:1px!important}
+.brandWords strong{
+  color:#071b42!important;
+  font-family:var(--font-family-display)!important;
+  font-size:16px!important;
+  letter-spacing:.08em!important;
+  font-weight:800!important;
+}
+.brandWords span{color:#8b1029!important;font-size:10px!important;letter-spacing:.09em!important}
+.eyebrow{
+  color:#8b1029!important;
+  font-family:var(--font-family-display)!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  letter-spacing:.16em!important;
+}
+.visualText{max-width:720px!important}
+.visualText h1{
+  margin:18px 0 20px!important;
+  color:#071b42!important;
+  font-family:var(--font-family-display)!important;
+  font-size:64px!important;
+  line-height:.94!important;
+  font-weight:800!important;
+  letter-spacing:-.035em!important;
+  max-width:700px!important;
+}
+.visualText p{max-width:620px!important;color:#5c6573!important;font-size:15px!important;line-height:1.75!important}
+.visualGrid{gap:14px!important}
+.visualGrid div{
+  min-height:92px!important;
+  padding:18px 20px!important;
+  background:rgba(255,255,255,.8)!important;
+  border:1px solid #ddd9d3!important;
+  border-radius:14px!important;
+  box-shadow:0 16px 38px rgba(7,27,66,.045)!important;
+}
+.visualGrid strong{color:#071b42!important;font-size:20px!important}
+.visualGrid span{color:#6f7783!important;font-size:11px!important}
+.loginPanel{padding:64px 74px!important;background:#fff!important;color:#273244!important}
+.loginForm{max-width:460px!important}
+.formTitle{margin-bottom:34px!important}
+.roleLabel{
+  background:#f7eeee!important;border-color:#ead6da!important;color:#8b1029!important;
+  padding:5px 9px!important;border-radius:999px!important;font-size:11px!important
+}
+.formTitle h2{margin:14px 0 7px!important;color:#071b42!important;font-family:var(--font-family-display)!important;font-size:34px!important}
+.formTitle p{color:#747d89!important;font-size:13px!important}
+.loginForm label{gap:8px!important;margin-bottom:17px!important}
+.loginForm label span{color:#445061!important;font-size:12px!important;font-weight:600!important}
+.loginForm input{
+  height:48px!important;background:#fff!important;border:1px solid #d7dce3!important;border-radius:9px!important;
+  color:#273244!important;font-size:14px!important;padding:0 14px!important
+}
+.loginForm input:focus{border-color:#8b1029!important;box-shadow:0 0 0 4px rgba(139,16,41,.08)!important}
+.primaryButton,.primarySmall{
+  background:#8b1029!important;color:#fff!important;border-radius:9px!important;
+  box-shadow:0 10px 24px rgba(139,16,41,.16)!important;font-weight:700!important
+}
+.primaryButton{height:48px!important}.textButton{color:#8b1029!important;font-size:12px!important}
+
 .appShell{
-  background:#0d0d12!important;
-  color:#f2f4f0!important;
-  grid-template-columns:76px minmax(0,1fr)!important;
+  min-height:100vh!important;
+  grid-template-columns:224px minmax(0,1fr)!important;
+  background:#f7f5f2!important;color:#273244!important
 }
 .sidebar{
-  background:#0a0a0f!important;
-  color:#8f939d!important;
-  border-right:1px solid #24242c!important;
-  box-shadow:8px 0 28px rgba(0,0,0,.14)!important;
+  position:sticky!important;top:0!important;height:100vh!important;
+  background:#fff!important;color:#536071!important;
+  border-right:1px solid #e1e4e8!important;
+  box-shadow:6px 0 24px rgba(7,27,66,.035)!important;
 }
 .sidebarLogo{
-  height:66px!important;
-  border-bottom:1px solid #222229!important;
-  background:#0d0d12!important;
+  height:104px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  padding:0 22px!important;border-bottom:1px solid #eceef1!important;background:#fff!important
 }
-.sidebarRole{display:none!important}
-.nav{padding:10px 6px!important;gap:5px!important}
+.sidebarLogo .logoBlock img{width:58px!important;height:44px!important}
+.sidebarLogo .brandWords strong{font-size:12px!important;color:#071b42!important}
+.sidebarLogo .brandWords span{font-size:8px!important;color:#8b1029!important}
+.sidebarRole{display:flex!important;justify-content:flex-start!important;padding:14px 18px 4px!important}
+.sidebarRole .roleLabel{background:#f7eeee!important;border-color:#ead6da!important;color:#8b1029!important}
+.nav{display:grid!important;gap:4px!important;padding:10px 12px!important}
 .navItem,.navActive,.logout{
-  color:#7d818a!important;
-  border-radius:10px!important;
-  min-height:48px!important;
-  transition:background .18s ease,color .18s ease,transform .18s ease,border-color .18s ease!important;
+  min-height:42px!important;
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:11px!important;padding:0 12px!important;border-radius:8px!important;
+  color:#66717f!important;font-size:12px!important;transition:.16s ease!important
 }
-.navItem:hover{
-  background:#17171d!important;
-  color:#f0f2ee!important;
-  transform:translateY(-1px)!important;
-}
+.navItem:hover{background:#f6f4f1!important;color:#071b42!important;transform:none!important}
 .navActive{
-  background:#00e676!important;
-  color:#071009!important;
-  box-shadow:0 8px 26px rgba(0,230,118,.15)!important;
+  position:relative!important;background:#f7ecee!important;color:#8b1029!important;
+  box-shadow:none!important;font-weight:700!important
 }
-.logout{
-  color:#686c75!important;
-  border-top:1px solid #202027!important;
-  margin-top:auto!important;
+.navActive:before{
+  content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:#8b1029
 }
-.workspace{
-  background:#0d0d12!important;
-  color:#f2f4f0!important;
-}
+.logout{margin:auto 12px 16px!important;border-top:1px solid #eceef1!important;padding-top:14px!important;color:#89919c!important}
+.workspace{background:#f7f5f2!important;color:#273244!important}
 .topbar{
-  height:62px!important;
-  background:#111116!important;
-  border-bottom:1px solid #25252d!important;
-  padding:0 18px!important;
-  color:#f2f4f0!important;
+  height:76px!important;padding:0 28px!important;background:rgba(255,255,255,.94)!important;
+  border-bottom:1px solid #e2e5e9!important;backdrop-filter:blur(14px)!important
 }
-.topbar>div:first-child strong{color:#f2f4f0!important}
-.topbar>div:first-child span{color:#7c8089!important}
-.topbarActions>button{
-  background:#18181e!important;
-  border:1px solid #2a2a32!important;
-  color:#b5b8bf!important;
-  border-radius:9px!important;
-}
-.topbarActions>button:hover{
-  border-color:#00e676!important;
-  color:#00e676!important;
-}
-.profile{border-left:1px solid #2a2a32!important}
-.avatar{
-  background:#18291f!important;
-  color:#00e676!important;
-  border:1px solid #2b503a!important;
-}
-.profile strong{color:#f0f2ee!important}
-.profile span{color:#7c8089!important}
 .topSearch{
-  background:#18181e!important;
-  border:1px solid #2a2a32!important;
-  color:#777b84!important;
+  min-width:360px!important;background:#fafafa!important;border:1px solid #dfe3e8!important;
+  color:#8a929d!important;border-radius:9px!important
 }
-.workspaceBody{
-  background:#0d0d12!important;
-  color:#f2f4f0!important;
-  min-height:calc(100vh - 62px)!important;
-  padding:18px!important;
+.topbarMarket strong,.topbar>div:first-child strong{color:#071b42!important;font-size:13px!important}
+.topbar>div:first-child span{color:#808895!important;font-size:11px!important}
+.topbarActions>button{
+  width:38px!important;height:38px!important;background:#fff!important;border:1px solid #dde2e8!important;
+  color:#566171!important;border-radius:9px!important
 }
-.contentStack,.pageHeader,.panel,.tablePanel,.filterBar,.metricCard,.fourStats,.settingsGrid{
-  color:#f2f4f0;
-}
-.pageHeader h1{color:#f4f6f2!important}
-.pageHeader p{color:#7d818a!important}
-.headerPills span{
-  background:#17171d!important;
-  border-color:#2b2b33!important;
-  color:#a3a6ae!important;
-}
-.metricCard,.panel,.tablePanel,.fourStats{
-  background:#15151b!important;
-  border-color:#292930!important;
-  box-shadow:0 12px 30px rgba(0,0,0,.13)!important;
-}
-.metricIcon{
-  background:#18291f!important;
-  color:#00e676!important;
-  border:1px solid #294d38!important;
-}
-.metricCard span,.metricCard small,.fourStats span{color:#7d818a!important}
-.metricCard strong,.fourStats strong{color:#f2f4f0!important}
-.fourStats div{border-right-color:#292930!important}
-.fourStats small{color:#00e676!important}
-.panelTitle h3{color:#f1f3ef!important}
-.panelTitle p{color:#777b84!important}
-.panelTitle>button{color:#00e676!important}
-.filterBar{
-  background:#15151b!important;
-  border-color:#292930!important;
-}
-.searchBox,.filterBar select{
-  background:#1a1a20!important;
-  border-color:#303038!important;
-  color:#a6a9b0!important;
-}
-.searchBox input{
-  background:transparent!important;
-  color:#f0f2ee!important;
-}
-.secondaryButton{
-  background:#1a1a20!important;
-  border-color:#303038!important;
-  color:#b5b8bf!important;
-}
-.secondaryButton:hover{
-  color:#00e676!important;
-  border-color:#00e676!important;
-}
-.tablePanel th{
-  background:#1c1c23!important;
-  border-bottom-color:#2a2a31!important;
-  color:#858993!important;
-}
-.tablePanel td{
-  color:#d7d9d5!important;
-  border-bottom-color:#26262d!important;
-}
-.tablePanel tbody tr:hover{background:#1a1d1b!important}
-.tablePanel td>span{color:#777b84!important}
-.rowActions button,.tableLink{color:#00e676!important}
-.okBadge{background:#153226!important;color:#00e676!important}
-.pendingBadge{background:#32271a!important;color:#f4aa5f!important}
-.vipBadge{background:#2e281a!important;color:#f3c45f!important}
-.toggleOn{background:#00e676!important}
-.toggleOff{background:#3a3b42!important}
-.drawerShade,.modalShade,.mirrorShade{
-  background:rgba(0,0,0,.7)!important;
-  backdrop-filter:blur(6px)!important;
-}
-.drawer,.modal,.modalWide{
-  background:#141419!important;
-  color:#f0f2ee!important;
-  border:1px solid #2c2c33!important;
-}
-.drawerHeader,.modalHeader,.drawerSection,.drawerFooter,.modalFooter{
-  border-color:#292930!important;
-}
-.drawerHeader span,.modalHeader span{color:#777b84!important}
-.drawerSection input,.loginForm input,.orderPanel input,.kycGrid input{
-  background:#1a1a20!important;
-  color:#eff1ed!important;
-  border-color:#303038!important;
-}
-.settingsGrid button{
-  background:#15151b!important;
-  border-color:#292930!important;
-  color:#a9acb4!important;
-}
-.settingsGrid button:hover{
-  border-color:#365443!important;
-  transform:translateY(-2px)!important;
-}
-.settingsGrid button strong{color:#f0f2ee!important}
-.settingsGrid button>svg:first-child{color:#00e676!important}
-
-/* login: dark on both Romanian client and Chinese admin */
-.loginPage{
-  background:#0a0a0f!important;
-  color:#f5f7f2!important;
-}
-.loginVisual{
-  background:
-    radial-gradient(circle at 72% 24%,rgba(0,230,118,.13),transparent 30%),
-    radial-gradient(circle at 18% 82%,rgba(0,230,118,.07),transparent 32%),
-    linear-gradient(145deg,#0b0b10 0%,#121218 58%,#0b0b10 100%)!important;
-  border-right:1px solid #25252d!important;
-}
-.loginPanel{
-  background:#101015!important;
-  color:#f4f6f2!important;
-}
-.roleLabel{
-  background:#19191f!important;
-  border-color:#303039!important;
-  color:#a7abb4!important;
-}
-.formTitle h2{color:#f7f8f4!important}
-.formTitle p{color:#858993!important}
-.loginForm label span{color:#a3a6af!important}
-.loginForm input{
-  background:#18181e!important;
-  border-color:#303038!important;
-  color:#f5f7f2!important;
-}
-.loginForm input:focus{
-  border-color:#00e676!important;
-  box-shadow:0 0 0 3px rgba(0,230,118,.09)!important;
-}
-.primaryButton,.primarySmall{
-  background:#00e676!important;
-  color:#071009!important;
-  box-shadow:0 8px 26px rgba(0,230,118,.13)!important;
-}
-.textButton{color:#00e676!important}
-
-@media(max-width:720px){
-  .sidebar{
-    background:#0a0a0f!important;
-    border-top:1px solid #24242c!important;
-  }
-  .workspaceBody{background:#0d0d12!important}
-}
-
-
-/* ===== BRANTONE VEYLOR LIGHT SYSTEM V1 ===== */
-.loginPage{background:#f7f5f2!important;color:#172033!important}
-.loginVisual{
-  background:
-    radial-gradient(circle at 72% 24%,rgba(139,16,41,.08),transparent 30%),
-    radial-gradient(circle at 18% 82%,rgba(7,27,66,.07),transparent 32%),
-    linear-gradient(145deg,#fbfaf8 0%,#f3f1ed 58%,#ece8e3 100%)!important;
-  color:#071b42!important;border-right:1px solid #ded8d1!important
-}
-.loginPanel{background:#fff!important;color:#172033!important}
-.logoBlock img{width:76px!important;height:58px!important;object-fit:contain!important;filter:none!important}
-.logoCompact img{width:52px!important;height:40px!important;object-fit:contain!important}
-.brandWords strong{color:#071b42!important;font-size:13px!important;letter-spacing:.12em!important}
-.brandWords span{color:#8b1029!important;font-size:9px!important;letter-spacing:.08em!important}
-.eyebrow{color:#8b1029!important}
-.visualText h1{color:#071b42!important}
-.visualText p{color:#566274!important}
-.visualGrid div{background:rgba(255,255,255,.72)!important;border-color:#ddd5cc!important;box-shadow:0 10px 30px rgba(7,27,66,.05)!important}
-.visualGrid strong{color:#071b42!important}.visualGrid span{color:#6d7480!important}
-.roleLabel{background:#f7f3f0!important;border-color:#e2d7d0!important;color:#8b1029!important}
-.formTitle h2{color:#071b42!important}.formTitle p{color:#6f7784!important}
-.loginForm label span{color:#4d5868!important}
-.loginForm input{background:#fff!important;border-color:#d9dfe7!important;color:#172033!important}
-.loginForm input:focus{border-color:#8b1029!important;box-shadow:0 0 0 3px rgba(139,16,41,.09)!important}
-.primaryButton,.primarySmall{background:#8b1029!important;color:#fff!important;box-shadow:0 8px 26px rgba(139,16,41,.12)!important}
-.textButton{color:#8b1029!important}
-.appShell{background:#f4f2ef!important;color:#172033!important;grid-template-columns:84px minmax(0,1fr)!important}
-.sidebar{background:#071b42!important;color:#c9d2df!important;border-right:1px solid #122b59!important;box-shadow:none!important}
-.sidebarLogo{height:72px!important;background:#071b42!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
-.navItem,.logout{color:#aab8cb!important}.navItem:hover{background:#10295a!important;color:#fff!important;transform:none!important}
-.navActive{background:#8b1029!important;color:#fff!important;box-shadow:none!important}
-.topbar{background:#fff!important;border-bottom:1px solid #e0e3e8!important;color:#172033!important}
-.topbar>div:first-child strong{color:#071b42!important}.topbar>div:first-child span{color:#7a8390!important}
-.topbarActions>button{background:#fff!important;border-color:#dfe3e9!important;color:#556274!important}
 .topbarActions>button:hover{border-color:#8b1029!important;color:#8b1029!important}
-.avatar{background:#f4e9e9!important;color:#8b1029!important;border:1px solid #e2caca!important}
-.profile{border-left-color:#e2e5ea!important}.profile strong{color:#071b42!important}.profile span{color:#7c8592!important}
-.topSearch{background:#f8f9fb!important;border-color:#dde2e8!important;color:#87909c!important}
-.workspaceBody{background:#f4f2ef!important;color:#172033!important}
-.pageHeader h1{color:#071b42!important}.pageHeader p{color:#747d89!important}
-.headerPills span{background:#fff!important;border-color:#dde1e7!important;color:#5f6977!important}
-.metricCard,.panel,.tablePanel,.fourStats{background:#fff!important;border-color:#dfe3e8!important;box-shadow:0 10px 28px rgba(7,27,66,.05)!important}
-.metricIcon{background:#f7eeee!important;color:#8b1029!important;border:1px solid #ead5d9!important}
-.metricCard span,.metricCard small,.fourStats span{color:#7b8491!important}
-.metricCard strong,.fourStats strong{color:#071b42!important}
-.fourStats div{border-right-color:#e6e8ec!important}.fourStats small{color:#168654!important}
-.panelTitle h3{color:#071b42!important}.panelTitle p{color:#838b97!important}.panelTitle>button{color:#8b1029!important}
-.filterBar{background:#fff!important;border-color:#dfe3e8!important}
-.searchBox,.filterBar select{background:#fbfbfc!important;border-color:#dce1e7!important;color:#697381!important}
-.searchBox input{background:transparent!important;color:#172033!important}
-.secondaryButton{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}
-.secondaryButton:hover{color:#8b1029!important;border-color:#8b1029!important}
-.tablePanel th{background:#f7f8fa!important;border-bottom-color:#e2e5ea!important;color:#66717f!important}
-.tablePanel td{color:#273244!important;border-bottom-color:#eceef2!important}
-.tablePanel tbody tr:hover{background:#fbf7f6!important}
-.tablePanel td>span{color:#7f8894!important}
-.rowActions button,.tableLink{color:#8b1029!important}
-.okBadge{background:#e9f6ef!important;color:#168654!important}
-.pendingBadge{background:#fff4e3!important;color:#9a650f!important}
-.vipBadge{background:#f7ecee!important;color:#8b1029!important}
-.toggleOn{background:#168654!important}.toggleOff{background:#c5cbd3!important}
-.drawer,.modal,.modalWide{background:#fff!important;color:#172033!important;border:1px solid #dfe3e8!important}
-.drawerHeader,.modalHeader,.drawerSection,.drawerFooter,.modalFooter{border-color:#e5e8ed!important}
-.drawerHeader span,.modalHeader span{color:#7c8591!important}
-.drawerSection input,.orderPanel input,.kycGrid input{background:#fff!important;color:#172033!important;border-color:#d9dee6!important}
-.heroBalance{background:linear-gradient(125deg,#071b42,#102f63)!important;color:#fff!important}
+.profile{border-left:1px solid #e3e6ea!important;padding-left:16px!important}
+.avatar{width:36px!important;height:36px!important;background:#f7ecee!important;color:#8b1029!important;border:1px solid #e8d2d6!important}
+.profile strong{color:#071b42!important;font-size:12px!important}.profile span{color:#7f8793!important;font-size:10px!important}
+.workspaceBody{padding:28px 30px!important;background:#f7f5f2!important;color:#273244!important}
+.contentStack{gap:18px!important}
+.pageHeader{min-height:70px!important}
+.pageHeader h1{
+  margin:0!important;color:#071b42!important;font-family:var(--font-family-display)!important;
+  font-size:30px!important;line-height:1!important;font-weight:800!important
+}
+.pageHeader p{margin:7px 0 0!important;color:#7b8490!important;font-size:12px!important}
+.headerPills{gap:8px!important}.headerPills span{padding:7px 10px!important;background:#fff!important;border-color:#dfe3e8!important;border-radius:999px!important;color:#596575!important;font-size:11px!important}
 
+.metricGrid{gap:14px!important}
+.metricCard{
+  min-height:112px!important;padding:18px!important;background:#fff!important;border:1px solid #e0e3e7!important;
+  border-radius:14px!important;box-shadow:0 10px 28px rgba(7,27,66,.045)!important
+}
+.metricIcon{width:42px!important;height:42px!important;border-radius:12px!important;background:#f7eeee!important;color:#8b1029!important;border:1px solid #ead7db!important}
+.metricCard span{color:#7a8390!important;font-size:11px!important}
+.metricCard strong{color:#071b42!important;font-size:21px!important;font-weight:600!important}
+.metricCard small{color:#8b929c!important;font-size:10px!important}
+.fourStats{background:#fff!important;border-color:#e0e3e7!important;border-radius:14px!important;overflow:hidden!important}
+.fourStats div{padding:18px!important;border-right-color:#e8eaed!important}.fourStats span{font-size:11px!important;color:#7b8490!important}.fourStats strong{font-size:19px!important;color:#071b42!important}
+
+.twoColumns,.twoColumnsWide{gap:16px!important}
+.panel,.tablePanel{
+  background:#fff!important;border:1px solid #e0e3e7!important;border-radius:14px!important;
+  box-shadow:0 12px 30px rgba(7,27,66,.045)!important
+}
+.panel{padding:18px!important}
+.panelTitle{margin-bottom:14px!important}.panelTitle h3{color:#071b42!important;font-size:16px!important}.panelTitle p{color:#838b96!important;font-size:10px!important}.panelTitle>button{color:#8b1029!important;font-weight:600!important}
+.heroBalance{padding:24px 26px!important;border-radius:16px!important;background:linear-gradient(125deg,#071b42,#102f63)!important;box-shadow:0 18px 44px rgba(7,27,66,.16)!important}
+.heroBalance span,.heroBalance small{color:#c2ccda!important}.heroBalance>div:first-child strong{font-size:34px!important;color:#fff!important}
+.heroStats strong{color:#fff!important}
+
+.filterBar{padding:12px!important;background:#fff!important;border:1px solid #e0e3e7!important;border-radius:12px!important}
+.searchBox,.filterBar select{height:38px!important;background:#fafafa!important;border-color:#dce1e7!important;color:#687382!important;border-radius:8px!important}
+.searchBox input{background:transparent!important;color:#273244!important}
+.secondaryButton{background:#fff!important;border:1px solid #d9dee6!important;color:#4d5868!important;border-radius:8px!important}
+.secondaryButton:hover{color:#8b1029!important;border-color:#8b1029!important}
+
+.tablePanel{overflow:auto!important}
+.tablePanel table{font-size:12px!important}
+.tablePanel th{
+  height:44px!important;background:#f7f7f8!important;border-bottom-color:#e2e5e9!important;color:#65717f!important;
+  font-size:11px!important;font-weight:700!important;letter-spacing:.01em!important
+}
+.tablePanel td{height:58px!important;color:#273244!important;border-bottom-color:#eceef1!important;font-size:12px!important}
+.tablePanel tbody tr:hover{background:#fbf7f6!important}
+.tablePanel td>span{color:#7c8591!important}
+.rowActions button,.tableLink{color:#8b1029!important;font-weight:600!important}
+.okBadge{background:#e9f6ef!important;color:#168654!important}.pendingBadge{background:#fff4e3!important;color:#9a650f!important}.vipBadge{background:#f7ecee!important;color:#8b1029!important}
+.toggleOn{background:#168654!important}.toggleOff{background:#c5cbd3!important}
+
+.drawerShade,.modalShade,.mirrorShade{background:rgba(7,27,66,.22)!important;backdrop-filter:blur(5px)!important}
+.drawer,.modal,.modalWide{
+  background:#fff!important;color:#273244!important;border:1px solid #e0e3e7!important;
+  box-shadow:0 30px 90px rgba(7,27,66,.18)!important
+}
+.drawerHeader,.modalHeader,.drawerSection,.drawerFooter,.modalFooter{border-color:#e5e8ec!important}
+.drawerHeader h2,.modalHeader h2{color:#071b42!important}
+.drawerHeader span,.modalHeader span{color:#7c8591!important}
+.drawerSection input,.orderPanel input,.kycGrid input{background:#fff!important;color:#273244!important;border-color:#d9dee6!important}
+
+@media(max-width:1100px){
+  .appShell{grid-template-columns:88px minmax(0,1fr)!important}
+  .sidebarLogo{justify-content:center!important;padding:0!important}
+  .sidebarLogo .brandWords,.sidebarRole,.navItem span,.navActive span,.logout span{display:none!important}
+  .navItem,.navActive,.logout{justify-content:center!important;padding:0!important}
+  .visualText h1{font-size:48px!important}
+}
+@media(max-width:720px){
+  .loginPage{grid-template-columns:1fr!important}
+  .loginVisual{display:none!important}.loginPanel{padding:34px 22px!important}
+  .appShell{display:block!important}
+  .sidebar{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;height:68px!important;z-index:60!important;display:grid!important;grid-template-columns:repeat(6,1fr)!important;background:#fff!important;border-top:1px solid #e0e3e7!important}
+  .sidebarLogo,.sidebarRole,.logout{display:none!important}.nav{display:contents!important}.navItem,.navActive{border-radius:0!important}
+  .workspaceBody{padding:14px 12px 82px!important}.topbar{padding:0 14px!important}.topSearch{min-width:0!important}
+  .pageHeader h1{font-size:25px!important}.metricGrid,.fourStats{grid-template-columns:1fr 1fr!important}
+}
