@@ -208,11 +208,11 @@ function RomaniaClock() {
 function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? styles.logoCompact : styles.logoBlock}>
-      <img src={logoUrl} alt="Visionary Studio" />
+      <div className={styles.brandMark}>V</div>
       {!compact ? (
-        <div>
-          <strong>VISIONARY STUDIO</strong>
-          <span>Financial Operations</span>
+        <div className={styles.brandWords}>
+          <strong>VISIONARY TRADE</strong>
+          <span>Capital Markets</span>
         </div>
       ) : null}
     </div>
