@@ -464,7 +464,7 @@ function Sidebar({
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.sidebarLogo}><Logo compact /></div>
+      <div className={styles.sidebarLogo}><Logo /></div>
       <div className={styles.sidebarRole}><RoleLabel role={role} /></div>
       <nav className={`${styles.nav} ${enh.scrollNav}`}>
         {allowed.map((item) => {
@@ -1175,7 +1175,7 @@ export default function App() {
   const portal: Portal =
     typeof window !== "undefined" &&
     (
-      window.location.hostname.toLowerCase() === "admin.nuvexapro.com" ||
+      (window.location.hostname.toLowerCase() === "admin.sasakic.cc" || window.location.hostname.toLowerCase() === "admin.nuvexapro.com") ||
       new URLSearchParams(window.location.search).get("portal") === "admin"
     )
       ? "admin"
