@@ -6,3 +6,53 @@
 .stack{color:#eff1ed}.header h1{color:#f2f4f0}.header p{color:#777b84}.primary{border-color:#00e676;background:#00e676;color:#071009}.secondary{border-color:#303038;background:#1a1a20;color:#b3b6bd}.tabs{border-color:#292930}.tabs button{color:#777b84}.tabs button span{background:#24242b}.tabs .tabActive{border-color:#00e676;color:#00e676}
 .tablePanel{background:#15151b;border-color:#292930}.tablePanel th{background:#1c1c23;border-color:#2a2a31;color:#838791}.tablePanel td{border-color:#26262d;color:#d5d7d3}.tablePanel tbody tr:hover{background:#1a1d1b}.tablePanel td>span:not(.good):not(.bad):not(.wait){color:#777b84}.good{background:#153226;color:#00e676}.bad{background:#371b1d;color:#ff5c5c}.wait{background:#32271a;color:#f4aa5f}.actions button,.auditButton{color:#00e676}
 .shade{background:rgba(0,0,0,.68);backdrop-filter:blur(5px)}.drawer,.modal{background:#141419;color:#eff1ed;border:1px solid #2c2c33}.drawerHeader,.drawerSection,.drawerFooter{border-color:#292930}.drawerHeader span{color:#777b84}.detailGrid{background:#292930;border-color:#292930}.detailGrid>div{background:#19191f}.detailGrid span{color:#777b84}.drawerSection label span,.form label span{color:#92969f}.drawerSection input,.form input,.drawerSection textarea{border-color:#303038;background:#1a1a20;color:#eff1ed}.noticeGrid article{background:#15151b;border-color:#292930}.noticeIcon{background:#18291f;color:#00e676;border:1px solid #294d38}.noticeMeta span{color:#00e676}.noticeMeta small,.noticeGrid p{color:#777b84}.noticeRight button{border-color:#303038;background:#1a1a20;color:#b3b6bd}.resultBox p{color:#777b84}.resultBox div{background:#1a1a20;border-color:#2c2c34}.resultBox span{color:#777b84}.auditSearch{border-color:#303038;background:#1a1a20;color:#777b84}.auditSearch input{background:transparent;color:#eff1ed}
+
+
+/* notification/task readability hardening */
+.noticeGrid article{
+  background:#15151b!important;
+  border:1px solid #292930!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.12)!important;
+}
+.noticeGrid article:hover{
+  background:#19191f!important;
+  border-color:#34343c!important;
+  transform:translateY(-1px)!important;
+}
+.noticeGrid h3{
+  color:#f2f4f0!important;
+  font-weight:700!important;
+}
+.noticeGrid p{
+  color:#7d818a!important;
+}
+.noticeMeta span{
+  color:#aeb2ba!important;
+}
+.noticeMeta small{
+  color:#686c75!important;
+}
+.noticeIcon{
+  background:#18291f!important;
+  color:#00e676!important;
+  border:1px solid #294d38!important;
+}
+.noticeRight button{
+  background:#1a1a20!important;
+  border:1px solid #303038!important;
+  color:#d7d9d5!important;
+}
+.noticeRight button:hover{
+  border-color:#00e676!important;
+  color:#00e676!important;
+}
+.good{background:#153226!important;color:#00e676!important}
+.wait{background:#32271a!important;color:#f4aa5f!important}
+.bad{background:#371b1d!important;color:#ff5c5c!important}
+.header h1{color:#f4f6f2!important}
+.header p{color:#7d818a!important}
+.primary{
+  background:#00e676!important;
+  border-color:#00e676!important;
+  color:#071009!important;
+}
