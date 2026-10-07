@@ -110,3 +110,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* dark workflow helpers */
+.proofDetail{border-color:#292930;background:#292930}.proofDetail>div{background:#19191f}.proofDetail span{color:#777b84}.proofDetail strong{color:#eff1ed}.marketFilter{border-color:#303038;background:#19191f}.marketFilter button{color:#858991}.marketFilterActive{background:#00e676!important;color:#071009!important}.savedMessage,.successMessage{border-color:#25513a;background:#153226;color:#00e676}.inlineBankForm input{border-color:#303038;background:#1a1a20;color:#eff1ed}.riskNotice{border-color:#5b482b;background:#2a2117;color:#f0aa59}
+
+  118
