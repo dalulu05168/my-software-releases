@@ -4,23 +4,29 @@
 @media(max-width:720px){.header{align-items:flex-start;flex-direction:column}.supportLayout{height:auto;display:block}.threadList{max-height:280px;border-right:0;border-bottom:1px solid #e0e5ec}.chat{min-height:540px}.drawer{width:100%}.modal{width:calc(100% - 20px)}.riskGrid{grid-template-columns:1fr}.detailGrid{grid-template-columns:1fr}}
 
 
-/* dark terminal overrides */
-.stack{color:#eff1ed}.header h1{color:#f2f4f0}.header p{color:#777b84}.boundary{border-color:#2d2d34;background:#1a1a20;color:#9ca0a8}.primary{border-color:#00e676;background:#00e676;color:#071009;border-radius:7px}
-.providerBox,.tablePanel,.riskGrid article,.supportLayout{background:#15151b;border-color:#292930;color:#d7d9d5}.providerTitle{color:#00e676}.providerTitle strong{color:#f1f3ef}.providerTitle span{color:#777b84}.searchRow select,.search{border-color:#303038;background:#1a1a20;color:#a1a4ac}.search input,.threadSearch input,.chatForm input{background:transparent;color:#f0f2ee}.providerResults>div{background:#1a1a20;border-color:#2b2b33}.providerResults span{color:#777b84}.providerResults button,.link,.actions button{color:#00e676}
-.tablePanel th{background:#1c1c23;border-color:#2a2a31;color:#838791}.tablePanel td{border-color:#26262d;color:#d5d7d3}.tablePanel tbody tr:hover{background:#1a1d1b}.switchOn{background:#00e676}.switchOff{background:#3a3b42}.good{background:#153226;color:#00e676}.bad{background:#371b1d;color:#ff5c5c}.wait{background:#32271a;color:#f4aa5f}
-.shade{background:rgba(0,0,0,.68);backdrop-filter:blur(5px)}.drawer,.modal{background:#141419;color:#f0f2ee;border:1px solid #2c2c33}.drawerHeader,.drawerSection,.drawerFooter{border-color:#292930}.drawerHeader span{color:#777b84}.drawerHeader button{color:#b5b8bf}.detailGrid{background:#292930;border-color:#292930}.detailGrid>div{background:#19191f}.detailGrid span{color:#777b84}.form label span{color:#92969f}.form input{border-color:#303038;background:#1a1a20;color:#eff1ed}.codeResult p{color:#777b84}.codeResult div{background:#1a1a20;border-color:#2c2c34}.riskIcon,.noticeIcon{background:#18291f;color:#00e676;border:1px solid #294d38}.riskGrid span{color:#777b84}
-.threadList{border-color:#292930}.threadSearch{border-color:#292930;color:#777b84}.thread,.threadActive{background:#15151b;border-color:#292930}.threadActive{background:#18231d;box-shadow:inset 3px 0 #00e676}.thread span,.threadActive span,.thread small,.threadActive small{color:#777b84}.thread p,.threadActive p{color:#a2a5ad}.chatHeader{border-color:#292930}.chatHeader span{color:#777b84}.chatBody{background:#111116}.clientMessage{background:#1b1b21;border-color:#2e2e36}.staffMessage{background:#153226;border-color:#24553c}.clientMessage span,.staffMessage span{color:#777b84}.chatForm{border-color:#292930}.chatForm input{border-color:#303038;background:#1a1a20}
 
-
-/* BRANTONE VEYLOR LIGHT OVERRIDE */
-.stack{color:#172033!important}.header h1{color:#071b42!important}.header p{color:#747d89!important}
-.primary{background:#8b1029!important;border-color:#8b1029!important;color:#fff!important}.secondary{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}
-.filters,.tablePanel{background:#fff!important;border-color:#dfe3e8!important}.search{background:#fbfbfc!important;border-color:#dce1e7!important;color:#747d89!important}.search input{background:transparent!important;color:#172033!important}
-.tabs button{color:#6f7885!important}.tabs .tabActive{border-color:#8b1029!important;color:#8b1029!important}
-.tablePanel th{background:#f7f8fa!important;border-color:#e2e5ea!important;color:#66717f!important}.tablePanel td{border-color:#eceef2!important;color:#273244!important}.tablePanel tbody tr:hover{background:#fbf7f6!important}
-.good{background:#e9f6ef!important;color:#168654!important}.bad{background:#fdecef!important;color:#b91c2b!important}.wait{background:#fff4e3!important;color:#9a650f!important}.actions button,.auditButton{color:#8b1029!important}
-.drawer,.modal{background:#fff!important;color:#172033!important;border-color:#dfe3e8!important}.detailGrid{background:#e8ebef!important;border-color:#e4e7eb!important}.detailGrid>div{background:#fafbfc!important}.detailGrid span{color:#7a8390!important}
-.drawerSection input,.form input,.drawerSection textarea{background:#fff!important;border-color:#d9dee6!important;color:#172033!important}
-.noticeGrid article{background:#fff!important;border-color:#e1e4e9!important}.noticeGrid h3{color:#071b42!important}.noticeGrid p,.noticeMeta small{color:#7b8491!important}.noticeMeta span{color:#8b1029!important}
+/* BRANTONE VEYLOR / CANVA UI */
+.stack{color:#273244!important;gap:18px!important}
+.header{min-height:66px!important}.header h1{color:#071b42!important;font-family:var(--font-family-display)!important;font-size:28px!important;font-weight:800!important}.header p{color:#7b8490!important;font-size:12px!important}
+.primary{background:#8b1029!important;border-color:#8b1029!important;color:#fff!important;border-radius:8px!important;font-size:12px!important;font-weight:700!important;padding:9px 14px!important}.primary:hover{background:#741023!important}
+.secondary{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important;border-radius:8px!important}
+.filters,.providerBox,.tablePanel,.summaryGrid>div,.settingsGrid>button{background:#fff!important;border-color:#e0e3e7!important;border-radius:12px!important;box-shadow:0 10px 28px rgba(7,27,66,.04)!important}
+.search,.searchRow select,.auditSearch{background:#fafafa!important;border-color:#dce1e7!important;color:#6f7987!important;border-radius:8px!important}.search input,.auditSearch input{background:transparent!important;color:#273244!important}
+.tabs,.segmentWide{border-color:#e0e3e7!important}.tabs button,.segment button,.segmentWide button{color:#687382!important;font-size:11px!important}.tabs .tabActive,.activeSegment{color:#8b1029!important;border-color:#8b1029!important;background:#f9eff1!important}
+.tablePanel th{height:44px!important;background:#f7f7f8!important;border-color:#e2e5e9!important;color:#65717f!important;font-size:11px!important;font-weight:700!important}
+.tablePanel td{height:58px!important;border-color:#eceef1!important;color:#273244!important;font-size:12px!important}.tablePanel tbody tr:hover{background:#fbf7f6!important}
+.tablePanel td>span:not(.good):not(.bad):not(.wait){color:#7b8490!important}
+.good{background:#e9f6ef!important;color:#168654!important}.bad{background:#fdecef!important;color:#b91c2b!important}.wait{background:#fff4e3!important;color:#9a650f!important}
+.actions button,.link,.linkButton,.auditButton,.providerResults button{color:#8b1029!important;font-weight:600!important}
+.switchOn{background:#168654!important}.switchOff{background:#c8cdd4!important}
+.shade{background:rgba(7,27,66,.22)!important;backdrop-filter:blur(5px)!important}
+.drawer,.modal{background:#fff!important;color:#273244!important;border-color:#e0e3e7!important;box-shadow:0 30px 90px rgba(7,27,66,.18)!important}
+.drawerHeader,.drawerSection,.drawerFooter,.timeline{border-color:#e5e8ec!important}.drawerHeader h2{color:#071b42!important}.drawerHeader span,.detailGrid span,.timeline small,.drawerSection label span,.form label span{color:#7b8490!important}
+.detailGrid{background:#e7eaee!important;border-color:#e1e4e8!important}.detailGrid>div{background:#fafafa!important}.detailGrid strong{color:#071b42!important}
+.drawerSection input,.drawerSection textarea,.form input,.form select{background:#fff!important;border-color:#d9dee6!important;color:#273244!important;border-radius:8px!important}
+.summaryGrid span{color:#7b8490!important}.summaryGrid strong{color:#071b42!important}.positive{color:#168654!important}.negative{color:#b91c2b!important}
+.positionHero{background:linear-gradient(125deg,#071b42,#102f63)!important;border-bottom-color:#1a3b71!important}.positionHero strong{color:#fff!important}.positionHero span{color:#c4ceda!important}
+.settingsGrid>button{color:#536071!important}.settingsGrid strong{color:#071b42!important}.settingsIcon,.bankIcon,.riskIcon{background:#f7eeee!important;color:#8b1029!important;border:1px solid #ead7db!important}
+.bankList article,.noticeGrid article,.permissionList label{background:#fff!important;border-color:#e1e4e9!important}.addBank{background:#fff!important;border-color:#cbd1d8!important;color:#8b1029!important}
+.noticeGrid h3{color:#071b42!important}.noticeGrid p,.noticeMeta small{color:#7b8490!important}.noticeMeta span{color:#8b1029!important}
 .noticeRight button{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}.noticeRight button:hover{border-color:#8b1029!important;color:#8b1029!important}
-
