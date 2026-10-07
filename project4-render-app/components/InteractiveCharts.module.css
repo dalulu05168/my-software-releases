@@ -130,5 +130,3 @@
 
 /* dark trading charts */
 .dataStrip,.ohlc{border-color:#292930;background:#292930}.dataStrip>div,.ohlc>div{background:linear-gradient(180deg,#19191f,#15151b)}.dataStrip span,.ohlc span{color:#777b84}.dataStrip strong,.ohlc strong{color:#eef0ec}.svgBox{background:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),#111116;background-size:30px 30px}.axisText{fill:#71757e}.chartHint{color:#686c75}.up{color:#00e676!important}.down{color:#ff5c5c!important}
-
-  134
