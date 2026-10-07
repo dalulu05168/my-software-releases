@@ -268,3 +268,75 @@
   .workspaceBody{padding:14px 12px 82px!important}.topbar{padding:0 14px!important}.topSearch{min-width:0!important}
   .pageHeader h1{font-size:25px!important}.metricGrid,.fourStats{grid-template-columns:1fr 1fr!important}
 }
+
+/* ===== LOGO SCALE & LOGIN COMPOSITION V3 ===== */
+.loginBrand{display:flex!important;align-items:flex-start!important;justify-content:flex-start!important}
+.loginBrand .logoBlock{display:block!important;width:100%!important}
+.loginBrand .logoBlock img{
+  display:block!important;
+  width:min(340px,72%)!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:left center!important;
+  filter:none!important;
+}
+.mobileLogo .logoBlock img{
+  width:min(280px,82vw)!important;
+  height:auto!important;
+  object-fit:contain!important;
+  filter:none!important;
+}
+.sidebarLogo .logoBlock{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.sidebarLogo .logoBlock img{
+  width:164px!important;
+  max-width:calc(100% - 24px)!important;
+  height:auto!important;
+  max-height:72px!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  filter:none!important;
+}
+.loginVisual{gap:36px!important}
+.visualText{margin-top:auto!important;margin-bottom:auto!important}
+.loginPanel:before{
+  content:"PRIVATE CLIENT ACCESS";
+  display:block;
+  margin:0 auto 34px;
+  max-width:460px;
+  color:#8b1029;
+  font-family:var(--font-family-display);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.18em;
+}
+.loginForm{
+  padding:34px 34px 30px!important;
+  background:#fff!important;
+  border:1px solid #e4e1dd!important;
+  border-radius:18px!important;
+  box-shadow:0 24px 70px rgba(7,27,66,.08)!important;
+}
+.formTitle h2{
+  font-family:var(--font-family-display)!important;
+  font-size:38px!important;
+  letter-spacing:-.025em!important;
+}
+.loginPage:has(.loginForm) .loginPanel{
+  background:
+    radial-gradient(circle at 100% 0%,rgba(139,16,41,.035),transparent 220px),
+    #fff!important;
+}
+@media(max-width:1100px){
+  .sidebarLogo .logoBlock img{width:54px!important;max-height:48px!important}
+}
+@media(max-width:720px){
+  .loginPanel:before{margin-bottom:24px!important}
+  .loginForm{padding:26px 20px!important;border-radius:14px!important}
+  .mobileLogo{display:flex!important;justify-content:flex-start!important}
+}
