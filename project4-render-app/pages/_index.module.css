@@ -79,3 +79,8 @@ linear-gradient(145deg,#0b0b10 0%,#121218 58%,#0b0b10 100%);border-right:1px sol
 .marketList{border-right:1px solid #27272e;background:#121217}.marketListHeader{border-bottom-color:#292930;padding:12px}.marketListHeader>strong{color:#f2f4f0}.miniSearch{border-color:#2d2d34;background:#1b1b21;color:#747881}.miniSearch input{background:transparent;color:#efefec}.marketTabs{border-bottom-color:#292930}.marketTabs button{background:#121217;color:#747881}.marketTabs .marketTabActive{color:#00e676;border-bottom-color:#00e676;background:#171a18}.stockItem,.stockItemActive{background:#121217;border-bottom-color:#24242b}.stockItem:hover{background:#18181e}.stockItemActive{background:#18231d;box-shadow:inset 3px 0 #00e676}.stockItem strong,.stockItemActive strong{color:#f2f4f0}.stockItem span,.stockItemActive span{color:#737780}
 .marketCenter{background:#111116}.quoteHeader{border-bottom-color:#292930;background:#141419}.quoteHeader h2{font-size:18px;color:#f4f6f2}.quoteHeader span{color:#767a
 ... (output capped at 40000 chars — re-read with offset/limit)
+
+/* Canva brand lockup */
+.brandMark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#00e676;color:#071009;font-weight:900;font-size:18px;letter-spacing:-.04em;box-shadow:0 8px 26px rgba(0,230,118,.18)}
+.brandWords{display:grid;gap:2px}.brandWords strong{font-size:13px;letter-spacing:.13em;color:#f5f7f2}.brandWords span{font-size:8px;letter-spacing:.08em;color:#747881;text-transform:uppercase}
+.logoCompact .brandMark{width:38px;height:38px}
