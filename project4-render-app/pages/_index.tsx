@@ -208,11 +208,11 @@ function RomaniaClock() {
 function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? styles.logoCompact : styles.logoBlock}>
-      <div className={styles.brandMark}>V</div>
+      <img src="/brantone-veyor-logo.webp" alt="Brantone Veylor" />
       {!compact ? (
         <div className={styles.brandWords}>
-          <strong>VISIONARY TRADE</strong>
-          <span>Capital Markets</span>
+          <strong>BRANTONE VEYLOR</strong>
+          <span>Private Capital Advisory · Since 1996</span>
         </div>
       ) : null}
     </div>
@@ -300,16 +300,16 @@ function LoginScreen({
           <Logo />
         </div>
         <div className={styles.visualText}>
-          <span className={styles.eyebrow}>VISIONARY FINANCIAL SYSTEM</span>
+          <span className={styles.eyebrow}>BRANTONE VEYLOR CAPITAL PLATFORM</span>
           <h1>
             {isClient
-              ? "Piețe, ordine și portofoliu într-un singur loc"
-              : "清晰、精准、可控的证券运营工作台"}
+              ? "Piețe, portofoliu și ordine într-un singur centru privat"
+              : "专业、清晰、可审计的私人资本交易工作台"}
           </h1>
           <p>
             {isClient
-              ? "Urmăriți piețele, pozițiile și ordinele dintr-un terminal construit pentru decizii rapide."
-              : "统一管理客户、资金、订单、持仓与证券行情。系统接入真实证券信息，外部券商交易未接入。"}
+              ? "Urmăriți piețele, pozițiile, ordinele și fondurile într-o experiență Brantone Veylor construită pentru decizii disciplinate."
+              : "统一管理客户、资金、订单、持仓、证券与风险控制，核心数据来自真实后台，不再使用页面临时状态作为业务真源。"}
           </p>
         </div>
         <div className={styles.visualGrid}>
