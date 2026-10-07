@@ -209,7 +209,7 @@ function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? styles.logoCompact : styles.logoBlock}>
       <img
-        src="/brantone-veyor-logo.webp"
+        src="/brantone-veyor-logo-clean.webp"
         alt="Brantone Veylor Private Capital Advisory"
       />
     </div>
