@@ -208,13 +208,10 @@ function RomaniaClock() {
 function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? styles.logoCompact : styles.logoBlock}>
-      <img src="/brantone-veyor-logo.webp" alt="Brantone Veylor" />
-      {!compact ? (
-        <div className={styles.brandWords}>
-          <strong>BRANTONE VEYLOR</strong>
-          <span>Private Capital Advisory · Since 1996</span>
-        </div>
-      ) : null}
+      <img
+        src="/brantone-veyor-logo.webp"
+        alt="Brantone Veylor Private Capital Advisory"
+      />
     </div>
   );
 }
