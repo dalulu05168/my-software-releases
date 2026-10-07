@@ -700,7 +700,7 @@ function SupportPage({
       {
         from: role === "client" ? "client" : "staff",
         text: message.trim(),
-        time: role === "client" ? "Acum" : "刚刚",
+        time: "刚刚",
       },
     ]);
     setThreads(
@@ -714,11 +714,11 @@ function SupportPage({
   };
 
   return (
-    <div className={`${styles.stack} ${role === "client" ? styles.clientStack : ""}`}>
+    <div className={styles.stack}>
       <div className={styles.header}>
         <div>
-          <h1>{role === "client" ? "Asistență dedicată" : "客户服务"}</h1>
-          <p>{role === "client" ? "Consultați și continuați conversațiile privind contul și serviciile" : "处理客户咨询与业务跟进"}</p>
+          <h1>{role === "client" ? "客服支持" : "客户服务"}</h1>
+          <p>{role === "client" ? "查看并继续账户服务会话" : "处理客户咨询与业务跟进"}</p>
         </div>
         <button
           className={styles.primary}
@@ -728,9 +728,9 @@ function SupportPage({
               {
                 id,
                 customer: role === "client" ? accountName : "新客户",
-                subject: role === "client" ? "Conversație nouă" : "新服务会话",
-                status: role === "client" ? "În așteptarea răspunsului" : "待回复",
-                last: role === "client" ? "Conversația a fost creată" : "新会话已创建",
+                subject: "新服务会话",
+                status: "待回复",
+                last: "新会话已创建",
                 time: "刚刚",
               },
               ...threads,
@@ -740,14 +740,14 @@ function SupportPage({
           }}
         >
           <MessageSquareText size={15} />
-          {role === "client" ? "Conversație nouă" : "新建会话"}
+          新建会话
         </button>
       </div>
       <div className={styles.supportLayout}>
         <aside className={styles.threadList}>
           <div className={styles.threadSearch}>
             <Search size={14} />
-            <input placeholder={role === "client" ? "Caută conversații" : "搜索客户 / 会话"} />
+            <input placeholder="搜索客户 / 会话" />
           </div>
           {visible.map((thread) => (
             <button
