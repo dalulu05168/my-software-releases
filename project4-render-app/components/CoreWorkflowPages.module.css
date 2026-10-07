@@ -4,26 +4,29 @@
 @media(max-width:720px){.header{align-items:flex-start;flex-direction:column}.summaryGrid,.settingsGrid{grid-template-columns:1fr}.drawer{width:100%}.modal{width:calc(100% - 20px)}.detailGrid{grid-template-columns:1fr}.permissionList{grid-template-columns:1fr}.permissionList>button{grid-column:auto}}
 
 
-/* dark terminal overrides */
-.stack{color:#eff1ed}.header h1{color:#f2f4f0}.header p{color:#777b84}.primary{border-color:#00e676;background:#00e676;color:#071009}.secondary{border-color:#303038;background:#1a1a20;color:#b3b6bd}
-.filters,.tablePanel,.summaryGrid>div,.settingsGrid>button{background:#15151b;border-color:#292930}.search{border-color:#303038;background:#1a1a20;color:#777b84}.search input{background:transparent;color:#f0f2ee}.segment button,.segmentWide button{color:#7f838c}.segmentWide{border-color:#292930}.activeSegment{background:#18291f!important;color:#00e676!important;border-color:#28543a!important}
-.tablePanel th{background:#1c1c23;border-color:#2a2a31;color:#838791}.tablePanel td{border-color:#26262d;color:#d5d7d3}.tablePanel tbody tr:hover{background:#1a1d1b}.tablePanel td>span:not(.good):not(.bad):not(.wait){color:#777b84}.good{background:#153226;color:#00e676}.bad{background:#371b1d;color:#ff5c5c}.wait{background:#32271a;color:#f4aa5f}.actions button,.linkButton{color:#00e676}
-.shade{background:rgba(0,0,0,.68);backdrop-filter:blur(5px)}.drawer,.modal{background:#141419;color:#eff1ed;border:1px solid #2c2c33}.drawerHeader,.timeline,.drawerSection,.drawerFooter{border-color:#292930}.drawerHeader span{color:#777b84}.detailGrid{background:#292930;border-color:#292930}.detailGrid>div{background:#19191f}.detailGrid span{color:#777b84}.timeline>div:before{border-color:#34343c}.timeline i{background:#3b3c43}.timeline .timelineDone{background:#00e676}.timeline small{color:#777b84}.summaryGrid span{color:#777b84}.summaryGrid strong{color:#f2f4f0}.positive{color:#00e676!important}.negative{color:#ff5c5c!important}
-.proof{border-color:#2c2c34;background:#19191f;color:#a7abb3}.proof span{color:#777b84}.proof button{border-color:#303038;background:#1b1b21;color:#00e676}.form label span{color:#92969f}.form input,.form select{border-color:#303038;background:#1a1a20;color:#eff1ed}.doneBox p{color:#777b84}.positionHero{background:linear-gradient(135deg,#15171b,#12251b);border-bottom:1px solid #294533}.positionHero span{color:#8a8e96}.miniTimeline>div{border-color:#292930}.miniTimeline i{background:#00e676}.miniTimeline span,.miniTimeline small{color:#777b84}
-.settingsGrid>button{color:#a9acb4}.settingsGrid>button:hover{border-color:#365443;transform:translateY(-2px)}.settingsIcon,.bankIcon{background:#18291f;color:#00e676;border:1px solid #294d38}.settingsGrid strong{color:#f0f2ee}.bankList article{border-color:#2c2c34;background:#19191f}.bankList span{color:#777b84}.addBank{border-color:#3a3a42;background:#18181e;color:#00e676}.identityPanel span{color:#777b84}.permissionList label{border-color:#303038;background:#19191f}
 
-
-/* BRANTONE VEYLOR LIGHT OVERRIDE */
-.stack{color:#172033!important}.header h1{color:#071b42!important}.header p{color:#747d89!important}
-.primary{background:#8b1029!important;border-color:#8b1029!important;color:#fff!important}.secondary{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}
-.filters,.tablePanel,.summaryGrid>div,.settingsGrid>button{background:#fff!important;border-color:#dfe3e8!important}.search{background:#fbfbfc!important;border-color:#dce1e7!important;color:#747d89!important}.search input{background:transparent!important;color:#172033!important}
-.activeSegment{background:#f8ecee!important;color:#8b1029!important;border-color:#e5cdd2!important}
-.tablePanel th{background:#f7f8fa!important;border-color:#e2e5ea!important;color:#66717f!important}.tablePanel td{border-color:#eceef2!important;color:#273244!important}.tablePanel tbody tr:hover{background:#fbf7f6!important}
-.good{background:#e9f6ef!important;color:#168654!important}.bad{background:#fdecef!important;color:#b91c2b!important}.wait{background:#fff4e3!important;color:#9a650f!important}.actions button,.linkButton{color:#8b1029!important}
-.drawer,.modal{background:#fff!important;color:#172033!important;border-color:#dfe3e8!important}.detailGrid{background:#e8ebef!important;border-color:#e4e7eb!important}.detailGrid>div{background:#fafbfc!important}.detailGrid span{color:#7a8390!important}
-.form input,.form select{background:#fff!important;border-color:#d9dee6!important;color:#172033!important}
-.positionHero{background:linear-gradient(125deg,#071b42,#102f63)!important;border-bottom-color:#1a3b71!important}
-.settingsGrid>button{color:#4d5868!important}.settingsGrid strong{color:#071b42!important}.settingsIcon,.bankIcon{background:#f7eeee!important;color:#8b1029!important;border-color:#ead5d9!important}
-.bankList article{background:#fff!important;border-color:#e1e4e9!important}.addBank{background:#fff!important;border-color:#c9d0d8!important;color:#8b1029!important}
-.permissionList label{background:#fff!important;border-color:#dfe3e8!important}
-
+/* BRANTONE VEYLOR / CANVA UI */
+.stack{color:#273244!important;gap:18px!important}
+.header{min-height:66px!important}.header h1{color:#071b42!important;font-family:var(--font-family-display)!important;font-size:28px!important;font-weight:800!important}.header p{color:#7b8490!important;font-size:12px!important}
+.primary{background:#8b1029!important;border-color:#8b1029!important;color:#fff!important;border-radius:8px!important;font-size:12px!important;font-weight:700!important;padding:9px 14px!important}.primary:hover{background:#741023!important}
+.secondary{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important;border-radius:8px!important}
+.filters,.providerBox,.tablePanel,.summaryGrid>div,.settingsGrid>button{background:#fff!important;border-color:#e0e3e7!important;border-radius:12px!important;box-shadow:0 10px 28px rgba(7,27,66,.04)!important}
+.search,.searchRow select,.auditSearch{background:#fafafa!important;border-color:#dce1e7!important;color:#6f7987!important;border-radius:8px!important}.search input,.auditSearch input{background:transparent!important;color:#273244!important}
+.tabs,.segmentWide{border-color:#e0e3e7!important}.tabs button,.segment button,.segmentWide button{color:#687382!important;font-size:11px!important}.tabs .tabActive,.activeSegment{color:#8b1029!important;border-color:#8b1029!important;background:#f9eff1!important}
+.tablePanel th{height:44px!important;background:#f7f7f8!important;border-color:#e2e5e9!important;color:#65717f!important;font-size:11px!important;font-weight:700!important}
+.tablePanel td{height:58px!important;border-color:#eceef1!important;color:#273244!important;font-size:12px!important}.tablePanel tbody tr:hover{background:#fbf7f6!important}
+.tablePanel td>span:not(.good):not(.bad):not(.wait){color:#7b8490!important}
+.good{background:#e9f6ef!important;color:#168654!important}.bad{background:#fdecef!important;color:#b91c2b!important}.wait{background:#fff4e3!important;color:#9a650f!important}
+.actions button,.link,.linkButton,.auditButton,.providerResults button{color:#8b1029!important;font-weight:600!important}
+.switchOn{background:#168654!important}.switchOff{background:#c8cdd4!important}
+.shade{background:rgba(7,27,66,.22)!important;backdrop-filter:blur(5px)!important}
+.drawer,.modal{background:#fff!important;color:#273244!important;border-color:#e0e3e7!important;box-shadow:0 30px 90px rgba(7,27,66,.18)!important}
+.drawerHeader,.drawerSection,.drawerFooter,.timeline{border-color:#e5e8ec!important}.drawerHeader h2{color:#071b42!important}.drawerHeader span,.detailGrid span,.timeline small,.drawerSection label span,.form label span{color:#7b8490!important}
+.detailGrid{background:#e7eaee!important;border-color:#e1e4e8!important}.detailGrid>div{background:#fafafa!important}.detailGrid strong{color:#071b42!important}
+.drawerSection input,.drawerSection textarea,.form input,.form select{background:#fff!important;border-color:#d9dee6!important;color:#273244!important;border-radius:8px!important}
+.summaryGrid span{color:#7b8490!important}.summaryGrid strong{color:#071b42!important}.positive{color:#168654!important}.negative{color:#b91c2b!important}
+.positionHero{background:linear-gradient(125deg,#071b42,#102f63)!important;border-bottom-color:#1a3b71!important}.positionHero strong{color:#fff!important}.positionHero span{color:#c4ceda!important}
+.settingsGrid>button{color:#536071!important}.settingsGrid strong{color:#071b42!important}.settingsIcon,.bankIcon,.riskIcon{background:#f7eeee!important;color:#8b1029!important;border:1px solid #ead7db!important}
+.bankList article,.noticeGrid article,.permissionList label{background:#fff!important;border-color:#e1e4e9!important}.addBank{background:#fff!important;border-color:#cbd1d8!important;color:#8b1029!important}
+.noticeGrid h3{color:#071b42!important}.noticeGrid p,.noticeMeta small{color:#7b8490!important}.noticeMeta span{color:#8b1029!important}
+.noticeRight button{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}.noticeRight button:hover{border-color:#8b1029!important;color:#8b1029!important}
