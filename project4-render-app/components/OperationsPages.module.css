@@ -56,3 +56,14 @@
   border-color:#00e676!important;
   color:#071009!important;
 }
+
+
+/* BRANTONE VEYLOR LIGHT OVERRIDE */
+.stack{color:#172033!important}.header h1{color:#071b42!important}.header p{color:#747d89!important}
+.primary{background:#8b1029!important;border-color:#8b1029!important;color:#fff!important}.secondary{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}
+.tabs button{color:#6f7885!important}.tabs .tabActive{border-color:#8b1029!important;color:#8b1029!important}
+.tablePanel{background:#fff!important;border-color:#dfe3e8!important}.tablePanel th{background:#f7f8fa!important;border-color:#e2e5ea!important;color:#66717f!important}.tablePanel td{border-color:#eceef2!important;color:#273244!important}.tablePanel tbody tr:hover{background:#fbf7f6!important}
+.good{background:#e9f6ef!important;color:#168654!important}.bad{background:#fdecef!important;color:#b91c2b!important}.wait{background:#fff4e3!important;color:#9a650f!important}.actions button,.auditButton{color:#8b1029!important}
+.drawer,.modal{background:#fff!important;color:#172033!important;border-color:#dfe3e8!important}.detailGrid{background:#e8ebef!important;border-color:#e4e7eb!important}.detailGrid>div{background:#fafbfc!important}.detailGrid span{color:#7a8390!important}
+.drawerSection input,.form input,.drawerSection textarea{background:#fff!important;border-color:#d9dee6!important;color:#172033!important}
+
