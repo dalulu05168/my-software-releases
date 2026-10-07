@@ -52,7 +52,7 @@ import {
 import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
 
-const logoUrl = "/brantone-veyor-logo-v3.png";\n\ntype Role = "client" | "ops" | "master";
+type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
 type View =
   | "dashboard"
