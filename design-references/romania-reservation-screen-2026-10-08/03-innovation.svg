@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-label="罗马尼亚交易项目03剩余份额展示大屏设计参考">
+ <defs><radialGradient id="bg" cx=".63" cy=".36" r=".85"><stop stop-color="#0b3769"/><stop offset=".6" stop-color="#061e40"/><stop offset="1" stop-color="#031126"/></radialGradient>
+ <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffcc66"/><stop offset=".53" stop-color="#ff981c"/><stop offset="1" stop-color="#ff651a"/></linearGradient>
+ <filter id="orangeGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="textGlow" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ </defs>
+ <rect width="1920" height="1080" fill="url(#bg)"/><circle cx="1435" cy="506" r="550" fill="#0c417a" opacity=".12"/>
+ <g><rect x="105" y="72" width="28" height="5" fill="#1587ff"/><rect x="137" y="72" width="28" height="5" fill="#e7c423"/><rect x="169" y="72" width="28" height="5" fill="#ec3551"/><path d="M230 74 H1805" stroke="#326f9c" stroke-width="1" opacity=".48"/></g>
+ <g fill="none" stroke="#1d75ba" stroke-width="2" opacity=".42">
+ <path d="M0 891 H1920M0 920 H1920"/>
+ <path d="M570 892V832H592V778H625V754H644V718H663V755H679V781H706V833H726V891"/>
+ <path d="M580 847 H710 M602 798 H694 M614 761 H679"/>
+ <path d="M737 891V859H777V842H806V817H839V791H862V771H878V753H894V771H908V790H924V816H954V839H983V858H1012V890"/>
+ <path d="M779 864H957 M812 836H934 M830 812H914"/>
+ <path d="M1080 890V856H1110V822H1130V805H1152V777H1172V805H1194V822H1218V856H1250V890"/>
+ <path d="M1470 890V855L1523 823L1576 856V890M1523 823V749M1490 837L1523 815L1559 839"/>
+ <path d="M1250 888C1305 853 1352 853 1403 888M1581 886C1663 830 1761 837 1853 887"/>
+ </g>
+ <path d="M0 950 C250 870 420 1100 670 950" fill="none" stroke="#235fba" stroke-width="3" opacity=".7"/>
+ <text x="112" y="207" fill="#75afdd" font-family="Inter,Noto Sans SC,sans-serif" font-size="27" letter-spacing="5">PROJECT 03</text>
+ <text x="112" y="289" fill="#f4f8ff" font-family="Inter,Noto Sans SC,sans-serif" font-size="51" font-weight="760">罗马尼亚科技创新增长项目</text>
+ <text x="112" y="341" fill="#93badd" font-size="19" letter-spacing="4">TECH INNOVATION · ROMANIA</text><line x1="112" y1="386" x2="197" y2="386" stroke="#2cdcf6" stroke-width="5"/>
+ <text x="112" y="460" fill="#b2d5ec" font-size="29">剩余份额</text>
+ <text x="109" y="574" fill="#ffb846" filter="url(#textGlow)" font-family="Inter,Noto Sans SC,sans-serif" font-size="122" font-weight="780">8,900</text>
+ <text x="485" y="566" fill="#ffd6a1" font-size="30">份</text>
+ <line x1="112" y1="616" x2="842" y2="616" stroke="#2b587d" opacity=".5"/>
+ <text x="112" y="686" fill="#81b6db" font-size="25">剩余比例</text>
+ <text x="112" y="742" fill="#36d7fa" font-size="59" font-weight="740">17.80%</text>
+ <text x="112" y="804" fill="#8bb2cc" font-size="25">预留总份额</text>
+ <text x="316" y="806" fill="#f0f6ff" font-size="42" font-weight="710">50,000</text><text x="530" y="806" fill="#a4c9dd" font-size="24">份</text>
+ <g><circle cx="1435" cy="506" r="281" fill="none" stroke="#2267a9" stroke-width="2" stroke-dasharray="2 14" opacity=".42"/><circle cx="1435" cy="506" r="252" fill="none" stroke="#183e6d" stroke-width="36" opacity=".95"/><circle cx="1435" cy="506" r="252" fill="none" stroke="url(#orange)" stroke-width="36" stroke-linecap="round" stroke-dasharray="281.8 1583.4" transform="rotate(-90 1435 506)" filter="url(#orangeGlow)"/><circle cx="1435" cy="506" r="265" fill="none" stroke="#377bbd" stroke-width="2" opacity=".9"/>
+ <g transform="translate(1303 404) scale(.86)" stroke="#2487c6" fill="#0b3154" stroke-width="2.2" opacity=".31">
+ <path d="M12 125 L48 81 86 79 106 44 139 65 177 34 214 45 254 15 294 37 300 63 340 91 331 125 355 151 347 195 316 208 291 251 254 252 223 292 190 267 149 285 118 244 78 251 65 218 26 206 33 167Z"/>
+ </g><text x="1435" y="480" text-anchor="middle" fill="#f9fbff" font-family="Inter,Noto Sans SC,sans-serif" font-weight="750" font-size="74">17.80%</text><text x="1435" y="538" text-anchor="middle" fill="#63c8ed" font-size="22" letter-spacing="7">REMAINING</text></g>
+ <text x="125" y="1015" fill="#689bc4" font-family="Inter,Noto Sans SC,sans-serif" font-size="17" letter-spacing="2" opacity=".65">ROMANIA · DISPLAY CONCEPT · SAMPLE DATA ONLY</text>
+</svg>
