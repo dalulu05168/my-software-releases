@@ -942,7 +942,7 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
         <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Cerrar espejo"><X size={15}/></button></div>
 
         <div className={styles.phoneHeader}>
-          <img src={logoUrl} alt="Visionary Studio"/>
+          <img src="/brantone-veyor-logo-clean.webp" alt="Brantone Veylor"/>
           <div><strong>Visionary Trading</strong><span>{customer.name} · {customer.vip}</span></div>
           <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Soporte"><MessageSquareText size={16}/></button>
         </div>
