@@ -1172,7 +1172,7 @@ export default function App() {
   const portal: Portal =
     typeof window !== "undefined" &&
     (
-      (window.location.hostname.toLowerCase() === "admin.sasakic.cc" || window.location.hostname.toLowerCase() === "admin.nuvexapro.com") ||
+      window.location.hostname.toLowerCase() === "admin.sasakic.cc" ||
       new URLSearchParams(window.location.search).get("portal") === "admin"
     )
       ? "admin"
