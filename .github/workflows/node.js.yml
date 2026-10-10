@@ -1,31 +1,43 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: P004 Frontend CI
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
+    paths:
+      - "project4-render-app/**"
+      - ".github/workflows/node.js.yml"
+  push:
+    branches: [main]
+    paths:
+      - "project4-render-app/**"
+      - ".github/workflows/node.js.yml"
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
-
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+        node-version: [20.x, 22.x]
+    defaults:
+      run:
+        working-directory: project4-render-app
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v4
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      # The release repository has no root package-lock.json. Avoid npm ci
+      # or setup-node root caching until a lockfile is committed for this app.
+      - name: Install P004 dependencies
+        run: npm install --no-audit --no-fund
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Contract regression tests
+        run: npm test
+      - name: Build P004 app
+        run: npm run build
