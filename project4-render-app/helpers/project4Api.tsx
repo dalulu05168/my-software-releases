@@ -92,13 +92,13 @@ export const project4Api = {
   createOpsAccount(input: {
     name: string; username: string; password: string; markets: Array<"US" | "MX">;
   }): Promise<OpsCredentials & { account: OpsAccount }> {
-    return adminAction("create_ops_account", input);
+    return adminAction<OpsCredentials & { account: OpsAccount }>("create_ops_account", input);
   },
   resetOpsTotp(identityId: string): Promise<OpsCredentials> {
-    return adminAction("reset_ops_totp", { identityId });
+    return adminAction<OpsCredentials>("reset_ops_totp", { identityId });
   },
   setOpsStatus(opsAccountId: string, status: "ACTIVE" | "SUSPENDED"): Promise<{ ok: true; status: string }> {
-    return adminAction("set_ops_status", { opsAccountId, status });
+    return adminAction<{ ok: true; status: string }>("set_ops_status", { opsAccountId, status });
   },
   async listClientSecurities() {
     const data = await request(undefined, "client");
