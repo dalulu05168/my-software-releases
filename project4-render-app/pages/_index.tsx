@@ -796,7 +796,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
     return {
       symbol: item.symbol,
       name: item.name,
-      price: item.quote?.lastPrice == null ? "0" : String(item.quote.lastPrice),
+      price: item.quote?.lastPrice == null ? "—" : String(item.quote.lastPrice),
       change: item.quote ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "暂无行情",
       up: pct >= 0,
       market: item.market,
@@ -806,7 +806,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
   const selected = liveStocks.find((s)=>s.symbol===symbol) ?? liveStocks[0] ?? {
     symbol: "",
     name: "暂无已上架证券",
-    price: "0",
+    price: "—",
     change: "暂无行情",
     up: true,
     market: "US" as const,
@@ -829,7 +829,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
     return marketMatch && searchMatch;
   });
   const choosePercent = (ratio: number) => {
-    const available = 186240;
+    const available = 0; // Never fabricate an account balance for order sizing.
     const price = Math.max(0.01, Number(selected.price));
     setQty(String(Math.max(1, Math.floor((available * ratio) / price))));
   };
@@ -844,11 +844,11 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
             <div><strong>{s.symbol}</strong><span>{s.name}</span></div><div><strong>{s.price}</strong><span className={s.up?styles.green:styles.red}>{s.change}</span></div>
           </button>
         ))}
-        {securitiesQuery.isFetching?<div className={enh.emptyMarket}>Se sincronizează instrumentele…</div>:null}
+        {securitiesQuery.isFetching?<div className={enh.emptyMarket}>Se sincronizează instrumentele…</div>:null}{securitiesQuery.isError?<div role="alert" className={enh.emptyMarket}>Sincronizarea nu a reușit. Verificați conexiunea și reîncărcați pagina.</div>:null}
         {visibleStocks.length===0?<div className={enh.emptyMarket}>Nu există instrumente disponibile</div>:null}
       </section>
       <section className={styles.marketCenter}>
-        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>231.44</b></span><span>Minim <b>223.98</b></span><span>Volum <b>42.8M</b></span><span>Piață <b>{selected.market}</b></span></div></div>
+        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Piață <b>{selected.market}</b></span><span>Maxim / Minim / Volum: date indisponibile</span></div></div>
         <div className={styles.chartToolbar}>
           {["1D","7D","1L","3L","1A","Max"].map((item) => (
             <button
@@ -861,20 +861,20 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
           ))}
         </div>
         <div className={styles.candleChart}>
-          <InteractiveCandleChart symbol={selected.symbol} interval={interval} />
+          <p role="status">Datele OHLC în timp real nu sunt disponibile. Nu afișăm lumânări simulate ca date de piață.</p>
         </div>
-        <div className={styles.marketBottom}><section><h3>Cumpărători</h3>{[1,2,3,4,5].map(i=><div key={i}><span>Cump. {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>Tranzacții recente</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
+        <div className={styles.marketBottom}><p>Registrul de ordine și tranzacțiile recente necesită un furnizor de date verificat; nu sunt simulate.</p></div>
       </section>
       <section className={styles.orderPanel}>
         <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>Cumpără</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>Vinde</button></div>
-        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>186,240.00</strong></div>
+        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>— (neconectat)</strong></div>
         <label><span>Instrument</span><input value={selected.symbol} readOnly/></label>
         <label><span>Preț ordin</span><input value={selected.price} readOnly/></label>
         <label><span>Cantitate</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
-        <div className={styles.quickQty}>{[["25%",.25],["50%",.5],["75%",.75],["100%",1]].map(([label,ratio])=><button key={String(label)} onClick={()=>choosePercent(Number(ratio))}>{label}</button>)}</div>
-        <div className={styles.orderEstimate}><span>Valoare estimată</span><strong>{(Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
-        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled={!orderEnabled || !selected.tradable} onClick={()=>orderEnabled&&selected.tradable&&setNotice(`Ordin ${side==="buy"?"de cumpărare":"de vânzare"} înregistrat: ${selected.symbol} × ${qty}`)}>{!selected.symbol?"Niciun instrument disponibil":!selected.tradable?"Tranzacționarea nu este activată":orderEnabled?(side==="buy"?"Plasează ordinul":"Plasează ordinul"):"Tranzacționare restricționată"}</button>
-        <p className={styles.brokerNote}>Ordinele sunt înregistrate în sistemul curent; execuția externă prin broker nu este conectată.</p>
+        <div className={styles.quickQty}>{[["25%",.25],["50%",.5],["75%",.75],["100%",1]].map(([label,ratio])=><button key={String(label)} disabled title="Soldul real nu este conectat">{label}</button>)}</div>
+        <div className={styles.orderEstimate}><span>Valoare estimată</span><strong>{selected.price === "—" ? "—" : (Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
+        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled title="Endpoint-ul securizat pentru ordine nu este conectat">Plasarea ordinelor indisponibilă</button>
+        <p className={styles.brokerNote}>Cotațiile și instrumentele provin din API-ul existent; soldurile și ordinele NU sunt conectate. Nicio tranzacție nu poate fi transmisă din această pagină.</p>
         {!orderEnabled?<div className={enh.riskHint}>Accesul la ordine este restricționat de controlul de risc.</div>:null}
         {notice?<div className={styles.orderNotice}>{notice}</div>:null}
       </section>
