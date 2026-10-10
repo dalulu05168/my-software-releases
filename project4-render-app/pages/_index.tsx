@@ -237,55 +237,40 @@ function LoginScreen({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setLoginError("");
-    if (mode === "forgot") {
-      setResetMessage(
-        portal === "client"
-          ? "Verificare finalizată. Setați o parolă nouă."
-          : "验证完成，请设置新的登录密码。",
+    setResetMessage("");
+    // Never unlock the client area or claim password recovery without a verified server endpoint.
+    if (portal === "client") {
+      setLoginError("Autentificarea și înregistrarea clienților nu sunt încă disponibile. Nu s-a creat și nu s-a modificat niciun cont.");
+      return;
+    }
+    if (mode !== "login") {
+      setLoginError("密码恢复需要后端身份核验，当前不能操作。");
+      return;
+    }
+    if (!account.trim() || !password || !/^\d{6}$/.test(totp)) {
+      setLoginError("请输入账户、密码及完整的 6 位动态验证码。");
+      return;
+    }
+    setLoggingIn(true);
+    try {
+      const result = await project4Api.loginAdmin(account.trim(), password, totp);
+      onLogin(result.role, result.displayName || account.trim());
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "LOGIN_FAILED";
+      setLoginError(
+        code === "INVALID_TOTP"
+          ? "Google 2FA 验证码错误；请检查设备时间与当前绑定的验证器。"
+          : code === "ACCOUNT_TEMPORARILY_LOCKED"
+            ? "账户因连续验证失败已临时锁定，请稍后再试。"
+            : code === "ACCOUNT_SUSPENDED"
+              ? "该子账户已暂停，请联系总账户管理员。"
+              : code === "INVALID_LOGIN_INPUT"
+                ? "请填写账户、密码及 6 位验证码。"
+                : "后台登录失败：账号、密码或验证码未通过服务器验证。",
       );
-      return;
+    } finally {
+      setLoggingIn(false);
     }
-    if (portal === "admin") {
-      setLoggingIn(true);
-      try {
-        const result = await project4Api.loginMaster(
-          account.trim(),
-          password,
-          totp,
-        );
-        onLogin("master", result.displayName || account.trim() || "Master Admin");
-      } catch (error) {
-        const code = error instanceof Error ? error.message : "LOGIN_FAILED";
-        setLoginError(
-          code === "INVALID_TOTP"
-            ? "Google 2FA 验证码错误"
-            : code === "ACCOUNT_TEMPORARILY_LOCKED"
-              ? "账户因连续验证失败已临时锁定，请稍后再试"
-              : "后台账户、密码或验证码不正确",
-        );
-      } finally {
-        setLoggingIn(false);
-      }
-      return;
-    }
-    const role: Role =
-      portal === "client"
-        ? "client"
-        : /^(ops|sub|运营|子账户)/i.test(account.trim())
-          ? "ops"
-          : "master";
-    const displayName =
-      mode === "register"
-        ? name.trim() || "Client"
-        : account.includes("@")
-          ? account.split("@")[0]
-          : account.trim() ||
-            (role === "master"
-              ? "Master Admin"
-              : role === "ops"
-                ? "Operations Admin"
-                : "Carlos Ramírez");
-    onLogin(role, displayName);
   };
 
   const isClient = portal === "client";
@@ -1201,10 +1186,17 @@ export default function App() {
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master") project4Api.logoutMaster();setRole(null);setName("");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{project4Api.logoutAdmin();setRole(null);setName("");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
-        <div className={styles.workspaceBody}>{content}</div>
+        <div className={styles.workspaceBody}>
+          {view !== "securities" && view !== "opsAccounts" ? (
+            <p role="status" style={{ padding: "9px 16px", margin: "0 0 12px", borderRadius: 10, background: "#fff1dc", color: "#593b16", fontSize: 13 }}>
+              演示数据区域：此页面的账户、订单、余额、持仓、贷款及业务操作尚未接入真实后端；不得用于真实交易或作为操作成功凭据。
+            </p>
+          ) : null}
+          {content}
+        </div>
       </div>
       {mirrorCustomer ? <AppMirror customer={mirrorCustomer} onClose={()=>setMirrorCustomer(null)} /> : null}
     </main>
