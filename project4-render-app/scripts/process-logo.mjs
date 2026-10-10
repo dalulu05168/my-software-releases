@@ -1,8 +1,9 @@
 import sharp from "sharp";
 import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 
-const input = new URL("../public/brantone-veyor-logo.webp", import.meta.url);
-const output = new URL("../public/brantone-veyor-logo-clean.webp", import.meta.url);
+const input = fileURLToPath(new URL("../public/brantone-veyor-logo.webp", import.meta.url));
+const output = fileURLToPath(new URL("../public/brantone-veyor-logo-clean.webp", import.meta.url));
 
 const { data, info } = await sharp(input)
   .ensureAlpha()
