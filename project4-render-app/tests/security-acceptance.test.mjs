@@ -7,6 +7,8 @@ const api = readFileSync(new URL("../helpers/project4Api.tsx", import.meta.url),
 const css = readFileSync(new URL("../pages/_index.module.css", import.meta.url), "utf8");
 const clientBackend = readFileSync(new URL("../backend/project4-client-api/index.ts", import.meta.url), "utf8");
 const verifiedOps = readFileSync(new URL("../components/VerifiedOpsAccounts.tsx", import.meta.url), "utf8");
+const reportingBackend = readFileSync(new URL("../backend/project4-reporting-api/index.ts", import.meta.url), "utf8");
+const verifiedReports = readFileSync(new URL("../components/VerifiedAdminRecords.tsx", import.meta.url), "utf8");
 
 test("customer authentication always requires a verified server session", () => {
   const login = main.slice(main.indexOf("function LoginScreen"), main.indexOf("function Sidebar"));
@@ -85,4 +87,24 @@ test("only master route mounts the real operations sub-account service", () => {
   assert.match(verifiedOps, /project4Api\.createOpsAccount/);
   assert.match(verifiedOps, /type="password"/);
   assert.doesNotMatch(verifiedOps, /Math\.random\(/);
+});
+
+test("read-only reporting backend enforces role sessions and ops-owned rows", () => {
+  assert.match(reportingBackend, /if \(req\.method !== "GET"\)/);
+  assert.match(reportingBackend, /AUTHORIZED_ADMIN_SESSION_REQUIRED/);
+  assert.match(reportingBackend, /identity\.role !== "OPS_ADMIN"/);
+  assert.match(reportingBackend, /identity\.ops_account_id !== ops\.ops_account_id/);
+  assert.match(reportingBackend, /q = q\.eq\("ops_account_id", who\.opsAccountId\)/);
+  assert.match(reportingBackend, /q = q\.in\("user_id", allowedIds!\)/);
+  assert.doesNotMatch(reportingBackend, /\.insert\(|\.delete\(|\.update\(/);
+});
+
+test("customer/orders/cash/positions use real read-only reports with scoped export", () => {
+  assert.match(api, /async listAdminReport\(/);
+  assert.match(api, /Authorization: "Bearer " \+ token/);
+  assert.match(main, /<VerifiedAdminRecordsPage kind="clients"\s*\/>/);
+  assert.match(main, /<VerifiedAdminRecordsPage kind=\{view as "orders" \| "cash" \| "positions"\}\s*\/>/);
+  assert.match(verifiedReports, /project4Api\.listAdminReport\(kind\)/);
+  assert.match(verifiedReports, /每次最多 200 条/);
+  assert.match(verifiedReports, /csvValue/);
 });
