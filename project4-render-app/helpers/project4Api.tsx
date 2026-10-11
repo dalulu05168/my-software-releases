@@ -181,7 +181,7 @@ export const project4Api = {
   },
 
   async listOpsAccounts(): Promise<Array<{
-    id: string; name: string; username: string; manager: string;
+    id: string; identityId: string | null; name: string; username: string; manager: string;
     status: string; enabled: boolean; invite: string; markets: string[];
   }>> {
     const data = await request({
@@ -206,6 +206,28 @@ export const project4Api = {
       throw new Error("OPS_CREATE_INVALID_RESPONSE");
     }
     return data;
+  },
+
+  async resetOpsTotp(identityId: string): Promise<{ totpSecret: string; otpauthUri: string }> {
+    if (!/^[0-9a-f-]{36}$/i.test(identityId)) throw new Error("INVALID_OPS_IDENTITY_ID");
+    const data = await request({
+      method: "POST",
+      body: JSON.stringify({ action: "reset_ops_totp", identityId }),
+    });
+    if (data?.ok !== true || typeof data.totpSecret !== "string" ||
+        typeof data.otpauthUri !== "string") {
+      throw new Error("INVALID_TOTP_RESET_RESPONSE");
+    }
+    return { totpSecret: data.totpSecret, otpauthUri: data.otpauthUri };
+  },
+
+  async setOpsStatus(opsAccountId: string, status: "ACTIVE" | "SUSPENDED"): Promise<void> {
+    if (!/^[0-9a-f-]{36}$/i.test(opsAccountId)) throw new Error("INVALID_OPS_ACCOUNT_ID");
+    const data = await request({
+      method: "POST",
+      body: JSON.stringify({ action: "set_ops_status", opsAccountId, status }),
+    });
+    if (data?.ok !== true || data.status !== status) throw new Error("OPS_STATUS_UPDATE_FAILED");
   },
 
   async listClientSecurities() {
