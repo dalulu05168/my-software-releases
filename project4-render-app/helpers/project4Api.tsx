@@ -53,25 +53,41 @@ export const project4Api = {
     throw new Error("CLIENT_AUTH_NOT_CONFIGURED");
   },
 
-  async loginMaster(username: string, password: string, totp: string) {
+  // Real backend authentication for both MASTER_ADMIN and OPS_ADMIN.
+  // The Edge Function validates credentials, TOTP and account status.
+  async loginAdmin(username: string, password: string, totp: string) {
     const data = await request({
       method: "POST",
-      body: JSON.stringify({ action: "login_master", username, password, totp }),
-    });
-    if (typeof window !== "undefined" && data.sessionToken) {
-      window.localStorage.setItem(SESSION_KEY, data.sessionToken);
-    }
-    return data as {
+      body: JSON.stringify({ action: "login_admin", username, password, totp }),
+    }) as {
       ok: boolean;
       sessionToken: string;
       expiresAt: string;
-      role: "master";
+      role: "master" | "ops";
       displayName: string;
+      opsAccountId?: string;
     };
+    if (!data.ok || !data.sessionToken || !["master", "ops"].includes(data.role)) {
+      throw new Error("INVALID_AUTH_RESPONSE");
+    }
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(SESSION_KEY, data.sessionToken);
+    }
+    return data;
   },
 
-  logoutMaster() {
+  // Backwards-compatible admin entry point, never falls back to a fake session.
+  async loginMaster(username: string, password: string, totp: string) {
+    const result = await this.loginAdmin(username, password, totp);
+    if (result.role !== "master") throw new Error("ADMIN_ROLE_REQUIRED");
+    return result;
+  },
+
+  logoutAdmin() {
     if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+  },
+  logoutMaster() {
+    this.logoutAdmin();
   },
 
   async listClientSecurities() {
