@@ -47,6 +47,12 @@ async function request(init?: RequestInit, scope?: "client" | "admin") {
 }
 
 export const project4Api = {
+  // Explicit fail-closed boundary until the server issues and validates client sessions.
+  // The existing Edge Function only implements master/ops login and securities.
+  async loginClient(_account: string, _password: string): Promise<{ displayName: string }> {
+    throw new Error("CLIENT_AUTH_NOT_CONFIGURED");
+  },
+
   async loginMaster(username: string, password: string, totp: string) {
     const data = await request({
       method: "POST",
