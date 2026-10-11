@@ -401,7 +401,7 @@ function LoginScreen({
 
           {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
           {isClient ? <div className={enh.formNotice} role="status">Autentificare verificată pe server. Numai conturile activate pot accesa datele proprii; soldurile și tranzacțiile simulate nu sunt afișate.</div> : null}
-          {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
+          {loginError ? <div className={styles.formError} role="alert">{loginError}</div> : null}
 
           <button className={styles.primaryButton} type="submit" disabled={loggingIn}>
             {isClient
@@ -415,19 +415,7 @@ function LoginScreen({
           </button>
 
           {isClient && mode === "login" ? (
-            <button type="button" className={styles.textButton} onClick={() => { setMode("forgot"); setResetMessage(""); }}>
-              Am uitat parola
-            </button>
-          ) : null}
-
-          {isClient ? (
-            <button
-              type="button"
-              className={styles.textButton}
-              onClick={() => { setMode(mode === "login" ? "register" : "login"); setResetMessage(""); }}
-            >
-              {mode === "login" ? "Nu aveți cont? Înregistrați-vă cu un cod de invitație" : "Înapoi la autentificare"}
-            </button>
+            <p className={styles.unavailableNotice}>Înregistrarea și recuperarea parolei vor fi activate după implementarea verificării securizate. Contactați administratorul pentru acces.</p>
           ) : null}
         </form>
       </section>
