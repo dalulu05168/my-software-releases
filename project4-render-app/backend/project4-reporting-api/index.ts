@@ -65,12 +65,13 @@ async function authorized(db: DB, req: Request): Promise<
 }
 const MAX_ROWS = 200;
 type Granted = NonNullable<Awaited<ReturnType<typeof authorized>>>;
-async function report(db: DB, who: Granted, action: string, origin: string | null) {
+async function report(db: DB, who: Granted, action: string, origin: string | null, scopedOpsId: string | null, requestedUserId: string | null) {
   if (action === "clients") {
     let q = db.from("client_accounts")
       .select("user_id,ops_account_id,kyc_status,login_enabled,trading_enabled,withdrawal_enabled,vip_level,account_type,created_at")
       .order("created_at", { ascending: false }).limit(MAX_ROWS);
-    if (who.role === "ops") q = q.eq("ops_account_id", who.opsAccountId);
+    if (scopedOpsId) q = q.eq("ops_account_id", scopedOpsId);
+    if (requestedUserId) q = q.eq("user_id", requestedUserId);
     const { data: accounts, error } = await q;
     if (error) return json({ error: "CLIENT_LIST_UNAVAILABLE" }, 503, origin);
     const userIds = (accounts || []).map((a) => a.user_id);
@@ -96,26 +97,32 @@ async function report(db: DB, who: Granted, action: string, origin: string | nul
       ? "id,user_id,ops_account_id,security_id,side,order_type,quantity,reference_price,limit_price,currency,state,created_at"
       : "id,user_id,ops_account_id,type,currency,amount,status,created_at,reviewed_at,completed_at";
     let q = db.from(table).select(columns).order("created_at", { ascending: false }).limit(MAX_ROWS);
-    if (who.role === "ops") q = q.eq("ops_account_id", who.opsAccountId);
+    if (scopedOpsId) q = q.eq("ops_account_id", scopedOpsId);
+    if (requestedUserId) q = q.eq("user_id", requestedUserId);
     const { data, error } = await q;
     if (error) return json({ error: "REPORT_UNAVAILABLE" }, 503, origin);
     return json({ rows: data || [], limit: MAX_ROWS, possiblyMore: (data || []).length === MAX_ROWS }, 200, origin);
   }
   if (action === "positions") {
     let allowedIds: string[] | null = null;
-    if (who.role === "ops") {
-      const { data: members, error } = await db.from("client_accounts").select("user_id")
-        .eq("ops_account_id", who.opsAccountId).limit(1000);
+    // A sub-account must never read unowned holdings. Master accounts can
+    // optionally drill down to a single operations account.
+    if (scopedOpsId) {
+      const { data: members, error } = await db.from("client_accounts")
+        .select("user_id").eq("ops_account_id", scopedOpsId).limit(1001);
       if (error) return json({ error: "ACCOUNT_SCOPE_UNAVAILABLE" }, 503, origin);
       allowedIds = (members || []).map((m) => m.user_id);
-      if (!allowedIds.length) return json({ rows: [], limit: MAX_ROWS, possiblyMore: false }, 200, origin);
-      if (allowedIds.length === 1000) {
+      if (!allowedIds.length || (requestedUserId && !allowedIds.includes(requestedUserId))) {
+        return json({ rows: [], limit: MAX_ROWS, possiblyMore: false }, 200, origin);
+      }
+      if (allowedIds.length > 1000) {
         return json({ error: "SCOPE_TOO_LARGE_USE_PAGINATION" }, 422, origin);
       }
     }
     let q = db.from("positions").select("user_id,security_id,quantity,average_cost,currency,updated_at")
       .order("updated_at", { ascending: false }).limit(MAX_ROWS);
-    if (who.role === "ops") q = q.in("user_id", allowedIds!);
+    if (requestedUserId) q = q.eq("user_id", requestedUserId);
+    else if (allowedIds) q = q.in("user_id", allowedIds);
     const { data, error } = await q;
     if (error) return json({ error: "POSITIONS_UNAVAILABLE" }, 503, origin);
     return json({ rows: data || [], limit: MAX_ROWS, possiblyMore: (data || []).length === MAX_ROWS }, 200, origin);
@@ -130,8 +137,21 @@ Deno.serve(async (req: Request) => {
     const db = service();
     const who = await authorized(db, req);
     if (!who) return json({ error: "AUTHORIZED_ADMIN_SESSION_REQUIRED" }, 401, origin);
-    const action = new URL(req.url).searchParams.get("action") || "";
-    return await report(db, who, action, origin);
+    const params = new URL(req.url).searchParams;
+    const action = params.get("action") || "";
+    const opsFilter = params.get("ops_account_id")?.trim() || null;
+    const userFilter = params.get("user_id")?.trim() || null;
+    for (const id of [opsFilter, userFilter]) {
+      if (id && (id.length > 128 || !/^[A-Za-z0-9_-]+$/.test(id))) {
+        return json({ error: "INVALID_SCOPE_FILTER" }, 422, origin);
+      }
+    }
+    if (who.role === "ops" && opsFilter && opsFilter !== who.opsAccountId) {
+      return json({ error: "OUTSIDE_ACCOUNT_SCOPE" }, 403, origin);
+    }
+    // The server always overrides a sub-account's scope with its own ID.
+    const scopedOpsId = who.role === "ops" ? who.opsAccountId : opsFilter;
+    return await report(db, who, action, origin, scopedOpsId, userFilter);
   } catch (err) {
     console.error("reporting gateway failure", err instanceof Error ? err.message : "unknown");
     return json({ error: "REPORTING_UNAVAILABLE" }, 503, origin);

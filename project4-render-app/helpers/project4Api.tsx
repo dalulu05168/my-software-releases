@@ -38,7 +38,7 @@ type ApiSecurity = {
 async function request(init?: RequestInit, scope?: "client" | "admin") {
   const token =
     typeof window !== "undefined"
-      ? window.localStorage.getItem(SESSION_KEY)
+      ? window.sessionStorage.getItem(SESSION_KEY)
       : null;
   const url = scope ? `${PROJECT4_API}?scope=${scope}` : PROJECT4_API;
   const headers = new Headers(init?.headers);
@@ -134,7 +134,8 @@ export const project4Api = {
       throw new Error("INVALID_AUTH_RESPONSE");
     }
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(SESSION_KEY, data.sessionToken);
+      window.sessionStorage.setItem(SESSION_KEY, data.sessionToken);
+      window.localStorage.removeItem(SESSION_KEY);
     }
     return data;
   },
@@ -146,21 +147,42 @@ export const project4Api = {
     return result;
   },
 
-  logoutAdmin() {
-    if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+  async logoutAdmin(): Promise<void> {
+    const token = typeof window === "undefined" ? null : window.sessionStorage.getItem(SESSION_KEY);
+    if (typeof window !== "undefined") {
+      window.sessionStorage.removeItem(SESSION_KEY);
+      window.localStorage.removeItem(SESSION_KEY);
+    }
+    if (!token) return;
+    try {
+      await fetch(PROJECT4_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+        body: JSON.stringify({ action: "logout_admin" }),
+        cache: "no-store",
+      });
+    } catch {
+      // No session remains in the browser if the network is unavailable.
+    }
   },
   logoutMaster() {
-    this.logoutAdmin();
+    return this.logoutAdmin();
   },
 
-  async listAdminReport(action: "clients" | "orders" | "cash" | "positions"): Promise<{
+  async listAdminReport(
+    action: "clients" | "orders" | "cash" | "positions",
+    filters: { opsAccountId?: string | null; userId?: string | null } = {},
+  ): Promise<{
     rows: Array<Record<string, string | number | boolean | null>>;
     limit: number;
     possiblyMore: boolean;
   }> {
-    const token = typeof window === "undefined" ? null : window.localStorage.getItem(SESSION_KEY);
+    const token = typeof window === "undefined" ? null : window.sessionStorage.getItem(SESSION_KEY);
     if (!token) throw new Error("AUTHORIZED_ADMIN_SESSION_REQUIRED");
-    const response = await fetch(PROJECT4_REPORTS_API + "?action=" + encodeURIComponent(action), {
+    const params = new URLSearchParams({ action });
+    if (filters.opsAccountId) params.set("ops_account_id", filters.opsAccountId);
+    if (filters.userId) params.set("user_id", filters.userId);
+    const response = await fetch(PROJECT4_REPORTS_API + "?" + params.toString(), {
       headers: { Authorization: "Bearer " + token },
       cache: "no-store",
     });
@@ -175,7 +197,7 @@ export const project4Api = {
   },
 
   async listOpsAccounts(): Promise<Array<{
-    id: string; name: string; username: string; manager: string;
+    id: string; identityId: string | null; name: string; username: string; manager: string;
     status: string; enabled: boolean; invite: string; markets: string[];
   }>> {
     const data = await request({
@@ -200,6 +222,28 @@ export const project4Api = {
       throw new Error("OPS_CREATE_INVALID_RESPONSE");
     }
     return data;
+  },
+
+  async resetOpsTotp(identityId: string): Promise<{ totpSecret: string; otpauthUri: string }> {
+    if (!/^[0-9a-f-]{36}$/i.test(identityId)) throw new Error("INVALID_OPS_IDENTITY_ID");
+    const data = await request({
+      method: "POST",
+      body: JSON.stringify({ action: "reset_ops_totp", identityId }),
+    });
+    if (data?.ok !== true || typeof data.totpSecret !== "string" ||
+        typeof data.otpauthUri !== "string") {
+      throw new Error("INVALID_TOTP_RESET_RESPONSE");
+    }
+    return { totpSecret: data.totpSecret, otpauthUri: data.otpauthUri };
+  },
+
+  async setOpsStatus(opsAccountId: string, status: "ACTIVE" | "SUSPENDED"): Promise<void> {
+    if (!/^[0-9a-f-]{36}$/i.test(opsAccountId)) throw new Error("INVALID_OPS_ACCOUNT_ID");
+    const data = await request({
+      method: "POST",
+      body: JSON.stringify({ action: "set_ops_status", opsAccountId, status }),
+    });
+    if (data?.ok !== true || data.status !== status) throw new Error("OPS_STATUS_UPDATE_FAILED");
   },
 
   async listClientSecurities() {

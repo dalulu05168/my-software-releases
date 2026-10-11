@@ -53,6 +53,7 @@ import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
 import { VerifiedOpsAccountsPage } from "../components/VerifiedOpsAccounts";
 import { VerifiedAdminRecordsPage } from "../components/VerifiedAdminRecords";
+import { ScopedCustomerWorkspace } from "../components/ScopedCustomerWorkspace";
 
 type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
@@ -240,10 +241,10 @@ function LoginScreen({
     event.preventDefault();
     setLoginError("");
     if (mode === "register" && portal === "client") {
-      if (!name.trim() || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(account.trim()) ||
+      if (!name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account.trim()) ||
           password.length < 12 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) ||
-          !/[0-9]/.test(password) || password !== confirmPassword || invite.trim().length < 8) {
-        setLoginError("Completați numele, e-mailul, o parolă de cel puțin 12 caractere (majuscule, minuscule și cifre), confirmarea și codul de invitație.");
+          !/[0-9]/.test(password) || password !== confirmPassword || !/^[0-9]{6}$/.test(invite.trim())) {
+        setLoginError("Completați numele, e-mailul, o parolă de cel puțin 12 caractere (majuscule, minuscule și cifre), confirmarea și codul numeric de invitație din 6 cifre.");
         return;
       }
       setLoggingIn(true);
@@ -409,8 +410,10 @@ function LoginScreen({
 
           {isClient && mode === "register" ? (
             <label>
-              <span>Cod de invitație</span>
-              <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="Introduceți codul de invitație" />
+              <span>Cod de invitație (6 cifre)</span>
+              <input type="text" inputMode="numeric" autoComplete="off" maxLength={6} pattern="[0-9]{6}"
+                value={invite} onChange={(e) => setInvite(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+                placeholder="Introduceți codul numeric (6 cifre)" />
             </label>
           ) : null}
 
@@ -469,14 +472,21 @@ function Sidebar({
         <div className={styles.navSectionTitle}>{role === 'client' ? 'Overview' : '业务管理'}</div>
         {allowed.map((item) => {
           const Icon = item.icon;
+          const unavailable = ["products", "loans", "notifications", "risk", "support", "audit", "settings", "purchaseAccess"].includes(item.key)
+            || (role === "client" && item.key === "cash");
           return (
             <button
               key={item.key}
+              type="button"
+              disabled={unavailable}
+              title={unavailable ? "功能保留，待真实后端接入后开放" : undefined}
+              aria-label={unavailable ? item.label + "（尚未接入）" : item.label}
               className={view === item.key ? styles.navActive : styles.navItem}
-              onClick={() => onView(item.key)}
+              style={unavailable ? {opacity:0.54,cursor:"not-allowed"} : undefined}
+              onClick={() => { if (!unavailable) onView(item.key); }}
             >
               <Icon size={17} />
-              <span>{role === "client" ? clientNavLabels[item.key] ?? item.label : item.label}</span>
+              <span>{role === "client" ? clientNavLabels[item.key] ?? item.label : item.label}{unavailable ? " · 待接入" : ""}</span>
             </button>
           );
         })}
@@ -503,7 +513,7 @@ function Topbar({
       {role === "client" ? (
         <div className={styles.topbarMarket}>
           <span className={styles.liveDot} />
-          <div><strong>Piață activă</strong><RomaniaClock /></div>
+          <div><strong>Piață · Date publicate</strong><RomaniaClock /></div>
         </div>
       ) : (
         <div className={styles.topSearch}>
@@ -513,7 +523,7 @@ function Topbar({
       )}
       <div className={styles.topbarActions}>
         <button onClick={() => onNavigate(role === "client" ? "market" : "customers")}><Search size={17} /></button>
-        <button onClick={() => onNavigate("notifications")}><Bell size={17} /><i /></button>
+        <button type="button" disabled title="通知中心尚未连接真实接口"><Bell size={17} /></button>
         <div className={styles.profile}>
           <div className={styles.avatar}>{name.slice(0, 1).toUpperCase()}</div>
           <div><strong>{name}</strong><span>{role === "master" ? "总账户管理员" : role === "ops" ? "运营子账户" : "Cont client"}</span></div>
@@ -841,7 +851,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
   const [interval, setInterval] = useState("1D");
   const [marketTab, setMarketTab] = useState<"US"|"MX"|"Favorite">("US");
   const [searchText, setSearchText] = useState("");
-  const [favorites, setFavorites] = useState<string[]>(["AAPL","NVDA","WALMEX"]);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [qty, setQty] = useState("100");
   const [notice, setNotice] = useState("");
   const securitiesQuery = useQuery({
@@ -854,7 +864,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
     return {
       symbol: item.symbol,
       name: item.name,
-      price: item.quote?.lastPrice == null ? "0" : String(item.quote.lastPrice),
+      price: item.quote?.lastPrice == null ? "—" : String(item.quote.lastPrice),
       change: item.quote ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "暂无行情",
       up: pct >= 0,
       market: item.market,
@@ -864,7 +874,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
   const selected = liveStocks.find((s)=>s.symbol===symbol) ?? liveStocks[0] ?? {
     symbol: "",
     name: "暂无已上架证券",
-    price: "0",
+    price: "—",
     change: "暂无行情",
     up: true,
     market: "US" as const,
@@ -886,17 +896,11 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
       stock.name.toLowerCase().includes(searchText.toLowerCase());
     return marketMatch && searchMatch;
   });
-  const choosePercent = (ratio: number) => {
-    const available = 186240;
-    const price = Math.max(0.01, Number(selected.price));
-    setQty(String(Math.max(1, Math.floor((available * ratio) / price))));
-  };
-
   return (
     <div className={styles.marketTerminal}>
       <section className={styles.marketList}>
         <div className={styles.marketListHeader}><strong>Piață</strong><div className={styles.miniSearch}><Search size={14}/><input value={searchText} onChange={(event)=>setSearchText(event.target.value)} placeholder="Caută simbol / companie"/></div></div>
-        <div className={styles.marketTabs}>{(["US","MX","Favorite"] as const).map((item)=><button key={item} className={marketTab===item?styles.marketTabActive:""} onClick={()=>setMarketTab(item)}>{item}</button>)}</div>
+        <div className={styles.marketTabs}>{(["US","MX","Favorite"] as const).map((item)=><button key={item} className={marketTab===item?styles.marketTabActive:""} onClick={()=>setMarketTab(item)}>{item==="Favorite"?"Favoris (local)":item}</button>)}</div>
         {visibleStocks.map((s)=>(
           <button key={s.symbol} className={symbol===s.symbol?styles.stockItemActive:styles.stockItem} onClick={()=>setSymbol(s.symbol)}>
             <div><strong>{s.symbol}</strong><span>{s.name}</span></div><div><strong>{s.price}</strong><span className={s.up?styles.green:styles.red}>{s.change}</span></div>
@@ -906,12 +910,13 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
         {visibleStocks.length===0?<div className={enh.emptyMarket}>Nu există instrumente disponibile</div>:null}
       </section>
       <section className={styles.marketCenter}>
-        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>—</b></span><span>Minim <b>—</b></span><span>Volum <b>—</b></span><span>Piață <b>{selected.market}</b></span></div></div>
+        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button type="button" disabled={!selected.symbol} title="仅本次页面的本地自选，不会虚称为云端保存" className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>—</b></span><span>Minim <b>—</b></span><span>Volum <b>—</b></span><span>Piață <b>{selected.market}</b></span></div></div>
         <div className={styles.chartToolbar}>
           {["1D","7D","1L","3L","1A","Max"].map((item) => (
             <button
               key={item}
               className={interval === item ? styles.chartActive : ""}
+              disabled title="真实历史 K 线尚未接入"
               onClick={() => setInterval(item)}
             >
               {item}
@@ -930,7 +935,11 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
         <label><span>Preț ordin</span><input value={selected.price} readOnly/></label>
         <label><span>Cantitate</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
         <div className={styles.quickQty}>{["25%","50%","75%","100%"].map(label=><button key={label} disabled title="Soldul verificat nu este disponibil">{label}</button>)}</div>
-        <div className={styles.orderEstimate}><span>Valoare estimată</span><strong>{(Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
+        <div className={styles.orderEstimate}><span>Valoare estimată (neexecutabilă)</span>
+          <strong>{Number.isFinite(Number(selected.price)) && Number(selected.price)>0 &&
+            Number.isFinite(Number(qty)) && Number(qty)>0
+              ? (Number(selected.price)*Number(qty)).toLocaleString(undefined,{maximumFractionDigits:2})
+              : "—"}</strong></div>
         <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled title="Tranzacționarea este dezactivată până la integrarea backend-ului">Tranzacționare indisponibilă</button>
         <p className={styles.brokerNote}>Nu se înregistrează ordine. Conectarea contului și procesarea ordinelor sunt în curs de implementare.</p>
         {!orderEnabled?<div className={enh.riskHint}>Accesul la ordine este restricționat de controlul de risc.</div>:null}
@@ -1212,6 +1221,7 @@ export default function App() {
   const [view, setView] = useState<View>("dashboard");
   const [customers, setCustomers] = useState(initialCustomers);
   const [mirrorCustomer, setMirrorCustomer] = useState<Customer | null>(null);
+  const [selectedOpsAccount, setSelectedOpsAccount] = useState<{ id: string; name: string } | null>(null);
   const [riskControls, setRiskControls] = useState<RiskControl[]>(defaultRiskControls);
   const portal: Portal =
     typeof window !== "undefined" &&
@@ -1223,18 +1233,25 @@ export default function App() {
       : "client";
 
   if (!role) {
-    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setRole(nextRole);setName(nextName);setView("dashboard");}} />;
+    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setSelectedOpsAccount(null);setRole(nextRole);setName(nextName);setView("dashboard");}} />;
   }
 
   const content =
     view === "dashboard" ? (
       <Dashboard role={role} name={name} onOpenMarket={()=>setView("market")} onNavigate={setView} />
     ) : view === "customers" && role !== "client" ? (
-      <VerifiedAdminRecordsPage kind="clients" />
+      <ScopedCustomerWorkspace
+        opsAccountId={role==="master" ? selectedOpsAccount?.id : null}
+        opsAccountName={role==="master" ? selectedOpsAccount?.name : null}
+        onClearOpsScope={()=>setSelectedOpsAccount(null)}
+      />
     ) : view === "market" ? (
       <MarketPage riskControls={riskControls} />
     ) : view === "opsAccounts" && role === "master" ? (
-      <VerifiedOpsAccountsPage />
+      <VerifiedOpsAccountsPage onOpenCustomers={account=>{
+        setSelectedOpsAccount(account);
+        setView("customers");
+      }} />
     ) : ["products", "loans", "notifications", "opsAccounts", "audit"].includes(view) ? (
       <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
     ) : ["securities", "purchaseAccess", "risk", "support"].includes(view) ? (
@@ -1255,7 +1272,7 @@ export default function App() {
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutAdmin();else void project4Api.logoutClient();queryClient.clear();setRole(null);setName("");setView("dashboard");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutAdmin();else void project4Api.logoutClient();queryClient.clear();setSelectedOpsAccount(null);setRole(null);setName("");setView("dashboard");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
         <div className={styles.workspaceBody}>{content}</div>

@@ -6,7 +6,7 @@ on:
       - 'project4-render-app/**'
       - '.github/workflows/p004-trading-build.yml'
   push:
-    branches: [p004-light-ui-render-20261011]
+    branches: [p004-light-ui-render-20261011, p004-account-flow-readonly-20261011]
     paths:
       - 'project4-render-app/**'
       - '.github/workflows/p004-trading-build.yml'
@@ -26,6 +26,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Build static trading frontend
         run: npm run build
+      - name: TypeScript strict typecheck
+        run: npx tsc --noEmit
       - name: Security and layout regression tests
         run: node --test tests/security-acceptance.test.mjs
       - name: Verify index output

@@ -197,6 +197,43 @@ async function readPortfolio(db: DB, client: NonNullable<Awaited<ReturnType<type
     limitedToLatest: 100,
   }, 200, origin);
 }
+
+async function signup(db: DB, payload: Record<string,unknown>, origin: string|null, request: Request) {
+ const name=typeof payload.name==="string"?payload.name.trim():"";
+ const email=typeof payload.email==="string"?payload.email.trim().toLowerCase():"";
+ const password=typeof payload.password==="string"?payload.password:"";
+ const invite=typeof payload.invite==="string"?payload.invite.trim():"";
+ if(name.length<2||name.length>100||! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>160||password.length<12||password.length>128||!/[A-Z]/.test(password)||!/[a-z]/.test(password)||!/[0-9]/.test(password)||!/^[0-9]{6}$/.test(invite)){
+   return json({error:"INVALID_SIGNUP_INPUT"},400,origin);
+ }
+ const encoder=new TextEncoder();
+ const hex=(bytes:Uint8Array)=>Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
+ const inviteDigest=await sha256(invite);
+ // An invite has only six decimal digits. Rate-limit by verified source IP,
+ // NOT by email, otherwise an attacker can rotate email addresses to bypass
+ // the RPC's 12-attempts-per-15-minutes guard.
+ const clientAddress=(request.headers.get("cf-connecting-ip")||"").trim();
+ // Only the trusted Supabase/Cloudflare edge may provide this header.
+ // Fail closed when unavailable, never accept a caller-supplied X-Forwarded-For.
+ if (!/^[0-9a-fA-F:.]{3,45}$/.test(clientAddress)) {
+   return json({error:"SIGNUP_SOURCE_UNAVAILABLE"},503,origin);
+ }
+ const rateKey=await sha256("p004-signup-v2:ip:"+clientAddress);
+ const salt=crypto.getRandomValues(new Uint8Array(16));
+ const key=await crypto.subtle.importKey("raw",encoder.encode(password),"PBKDF2",false,["deriveBits"]);
+ const derived=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",iterations:600000,salt},key,256);
+ const stored="pbkdf2_sha256$600000$"+hex(salt)+"$"+hex(new Uint8Array(derived));
+ const {data,error}=await db.rpc("register_client_with_invite",{
+ p_request_key:rateKey,p_invite_digest:inviteDigest,p_name:name,p_email:email,p_password_hash:stored
+ });
+ if(error){console.error("signup rpc failed",error.code);return json({error:"SIGNUP_UNAVAILABLE"},503,origin);}
+ if(data?.ok!==true) {
+ const code=data?.code==="RATE_LIMITED"?"RATE_LIMITED":data?.code==="INVALID_INPUT"?"INVALID_SIGNUP_INPUT":"INVALID_INVITE_OR_ACCOUNT";
+ return json({error:code},code==="RATE_LIMITED"?429:400,origin);
+ }
+ return json({ok:true,status:"PENDING_REVIEW",message:"Registration received. Identity verification required before trading."},201,origin);
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin");
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(origin) });
@@ -204,6 +241,10 @@ Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
   try {
     const db = adminDb();
+    if (req.method === "POST" && url.searchParams.get("action") === "register") {
+      const input=await req.json().catch(()=>({}));
+      return signup(db,input,origin,req);
+    }
     if (req.method === "POST" && url.searchParams.get("action") === "login") {
       const input = await req.json().catch(() => ({}));
       return login(db, input, origin);

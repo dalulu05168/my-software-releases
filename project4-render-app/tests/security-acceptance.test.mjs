@@ -6,9 +6,12 @@ const main = readFileSync(new URL("../pages/_index.tsx", import.meta.url), "utf8
 const api = readFileSync(new URL("../helpers/project4Api.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../pages/_index.module.css", import.meta.url), "utf8");
 const clientBackend = readFileSync(new URL("../backend/project4-client-api/index.ts", import.meta.url), "utf8");
+const adminBackend = readFileSync(new URL("../backend/project4-securities-api/index.ts", import.meta.url), "utf8");
 const verifiedOps = readFileSync(new URL("../components/VerifiedOpsAccounts.tsx", import.meta.url), "utf8");
 const reportingBackend = readFileSync(new URL("../backend/project4-reporting-api/index.ts", import.meta.url), "utf8");
 const verifiedReports = readFileSync(new URL("../components/VerifiedAdminRecords.tsx", import.meta.url), "utf8");
+const customerWorkspace = readFileSync(new URL("../components/ScopedCustomerWorkspace.tsx", import.meta.url), "utf8");
+const controlPages = readFileSync(new URL("../components/AdminControlPages.tsx", import.meta.url), "utf8");
 
 test("customer authentication always requires a verified server session", () => {
   const login = main.slice(main.indexOf("function LoginScreen"), main.indexOf("function Sidebar"));
@@ -80,7 +83,7 @@ test("customer-specific holdings and orders require scoped API, not sample data"
 
 test("only master route mounts the real operations sub-account service", () => {
   assert.match(main, /view === "opsAccounts" && role === "master"/);
-  assert.match(main, /<VerifiedOpsAccountsPage\s*\/>/);
+  assert.match(main, /<VerifiedOpsAccountsPage onOpenCustomers=/);
   assert.match(api, /action: "list_ops_accounts"/);
   assert.match(api, /action: "create_ops_account"/);
   assert.match(verifiedOps, /queryFn: project4Api\.listOpsAccounts/);
@@ -94,17 +97,114 @@ test("read-only reporting backend enforces role sessions and ops-owned rows", ()
   assert.match(reportingBackend, /AUTHORIZED_ADMIN_SESSION_REQUIRED/);
   assert.match(reportingBackend, /identity\.role !== "OPS_ADMIN"/);
   assert.match(reportingBackend, /identity\.ops_account_id !== ops\.ops_account_id/);
-  assert.match(reportingBackend, /q = q\.eq\("ops_account_id", who\.opsAccountId\)/);
-  assert.match(reportingBackend, /q = q\.in\("user_id", allowedIds!\)/);
+  assert.match(reportingBackend, /who.role === "ops" \? who.opsAccountId : opsFilter/);
+  assert.match(reportingBackend, /if \(who.role === "ops" && opsFilter && opsFilter !== who.opsAccountId\)/);
+  assert.match(reportingBackend, /if \(scopedOpsId\) q = q.eq\("ops_account_id", scopedOpsId\)/);
+  assert.match(reportingBackend, /else if \(allowedIds\) q = q.in\("user_id", allowedIds\)/);
+  assert.match(reportingBackend, /if \(requestedUserId\) q = q.eq\("user_id", requestedUserId\)/);
   assert.doesNotMatch(reportingBackend, /\.insert\(|\.delete\(|\.update\(/);
 });
 
 test("customer/orders/cash/positions use real read-only reports with scoped export", () => {
   assert.match(api, /async listAdminReport\(/);
   assert.match(api, /Authorization: "Bearer " \+ token/);
-  assert.match(main, /<VerifiedAdminRecordsPage kind="clients"\s*\/>/);
+  assert.match(main, /<ScopedCustomerWorkspace/);
+  assert.match(main, /onOpenCustomers=\{account=>/);
+  assert.match(customerWorkspace, /project4Api.listAdminReport\("clients",\{opsAccountId\}\)/);
+  assert.match(customerWorkspace, /project4Api.listAdminReport\(tab,\{opsAccountId,userId\}\)/);
+  assert.match(customerWorkspace, /查看客户详情/);
+  assert.match(customerWorkspace, /没有已保存的记录/);
   assert.match(main, /<VerifiedAdminRecordsPage kind=\{view as "orders" \| "cash" \| "positions"\}\s*\/>/);
   assert.match(verifiedReports, /project4Api\.listAdminReport\(kind\)/);
   assert.match(verifiedReports, /每次最多 200 条/);
   assert.match(verifiedReports, /csvValue/);
+});
+
+
+test("master creates both independent TOTP secret and unique six-digit customer invite", () => {
+  assert.match(adminBackend, /function generateTotpSecret\(/);
+  assert.match(adminBackend, /function generateInviteCode\(/);
+  assert.match(adminBackend, /crypto\.getRandomValues\(new Uint32Array\(1\)\)/);
+  assert.match(adminBackend, /padStart\(6, "0"\)/);
+  assert.match(adminBackend, /inviteError\.code !== "23505"/);
+  assert.match(adminBackend, /code_digest: inviteDigest/);
+  assert.match(adminBackend, /display_code: candidate/);
+  assert.match(adminBackend, /p_totp: totpSecret/);
+  assert.match(adminBackend, /otpauthUri: makeOtpAuthUri/);
+  assert.match(adminBackend, /invite: inviteCode/);
+  assert.doesNotMatch(adminBackend, /let out = "OPS-"/);
+});
+
+test("customer registration requires six numerical digits, never the TOTP secret", () => {
+  assert.ok(clientBackend.includes('!/^[0-9]{6}$/.test(invite)'));
+  assert.ok(main.includes('!/^[0-9]{6}$/.test(invite.trim())'));
+  assert.ok(main.includes('pattern="[0-9]{6}"'));
+  assert.ok(verifiedOps.includes('客户注册邀请码（固定六位数字）'));
+  assert.ok(verifiedOps.includes('管理员 2FA 绑定密钥（不是邀请码）'));
+  assert.ok(clientBackend.includes('db.rpc("register_client_with_invite"'));
+});
+
+
+test("real master operations can suspend users and rotate admin TOTP independently of signup invite", () => {
+  assert.ok(api.includes('action: "set_ops_status"'));
+  assert.ok(api.includes('action: "reset_ops_totp"'));
+  assert.ok(verifiedOps.includes('project4Api.setOpsStatus(row.id, status)'));
+  assert.ok(verifiedOps.includes('project4Api.resetOpsTotp(row.identityId)'));
+  assert.ok(verifiedOps.includes('客户六位邀请码不会改变'));
+  assert.ok(verifiedOps.includes('客户注册邀请码（固定六位数字）'));
+  assert.match(adminBackend, /action === "reset_ops_totp"/);
+  assert.match(adminBackend, /action === "set_ops_status"/);
+  assert.match(adminBackend, /ops_sessions"\)\.update\(/);
+});
+
+test("security search returns only saved database matches and can create manual hidden entries", () => {
+  const securities = controlPages.slice(controlPages.indexOf('function SecuritiesPage()'),controlPages.indexOf('function PurchaseAccessPage('));
+  assert.ok(securities.includes('await securitiesQuery.refetch()'));
+  assert.ok(securities.includes('手工录入证券'));
+  assert.ok(securities.includes('visible: false, internalOrder: false'));
+  assert.ok(securities.includes('visible: row.visible === true'));
+  assert.doesNotMatch(securities,/setTimeout\(/);
+  assert.doesNotMatch(securities,/query\.trim\(\)\.toUpperCase\(\) \|\| "NEW"/);
+  assert.ok(adminBackend.includes('.from("securities")\n        .insert(payload)'));
+  assert.ok(adminBackend.includes('provider_synced_at: null'));
+  assert.ok(adminBackend.includes('visible: false,'));
+  assert.ok(adminBackend.includes('tradable: false,'));
+  assert.ok(adminBackend.includes('SECURITY_ALREADY_EXISTS'));
+  assert.ok(adminBackend.includes('ORDER_EXECUTION_NOT_CONNECTED'));
+});
+
+test("unavailable modules and unverified money controls cannot be activated", () => {
+  assert.ok(main.includes('const unavailable = ["products", "loans", "notifications", "risk", "support", "audit", "settings", "purchaseAccess"]'));
+  assert.ok(main.includes('disabled={unavailable}'));
+  assert.ok(main.includes('当前不展示任何预设数据') === false);
+  assert.doesNotMatch(main.slice(main.indexOf('function MarketPage('),main.indexOf('function OrderRows(')),/const available = 186240/);
+  assert.ok(main.includes('price: item.quote?.lastPrice == null ? "—"'));
+  assert.ok(main.includes('Tranzacționare indisponibilă'));
+});
+
+
+test("admin logout revokes server tokens, and neither OPS nor MASTER use persistent localStorage credentials", () => {
+  assert.ok(adminBackend.includes('if (action === "logout_admin")'));
+  assert.ok(adminBackend.includes('supabase.from("master_sessions").update({ revoked_at: now })'));
+  assert.ok(adminBackend.includes('supabase.from("ops_sessions").update({ revoked_at: now })'));
+  assert.ok(api.includes('window.sessionStorage.setItem(SESSION_KEY, data.sessionToken)'));
+  assert.ok(api.includes('window.sessionStorage.getItem(SESSION_KEY)'));
+  assert.ok(api.includes('action: "logout_admin"'));
+  assert.doesNotMatch(api,/window\.localStorage\.setItem\(SESSION_KEY,/);
+});
+
+test("client invite brute-force throttling cannot be bypassed by changing registration email", () => {
+  assert.ok(clientBackend.includes('p004-signup-v2:ip:'));
+  assert.ok(clientBackend.includes('SIGNUP_SOURCE_UNAVAILABLE'));
+  assert.doesNotMatch(clientBackend,/clientAddress\+"\:"\+email/);
+});
+
+
+test("ops account status updates are validated, audited, and cannot silently succeed for missing IDs", () => {
+  assert.ok(adminBackend.includes('error: "INVALID_OPS_STATUS"'));
+  assert.ok(adminBackend.includes('error: "OPS_ACCOUNT_NOT_FOUND"'));
+  assert.ok(adminBackend.includes('OPS_ACCOUNT_SUSPENDED'));
+  assert.ok(adminBackend.includes('OPS_ACCOUNT_REACTIVATED'));
+  assert.ok(adminBackend.includes('OPS_STATUS_CHANGED_BUT_AUDIT_FAILED'));
+  assert.ok(!adminBackend.includes('clients: 0,'));
 });
