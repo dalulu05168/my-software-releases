@@ -52,6 +52,14 @@ async function request(init?: RequestInit, scope?: "client" | "admin") {
 }
 
 export const project4Api = {
+  async registerClient(input: {name:string; email:string; password:string; invite:string}): Promise<{ok:true;status:string}> {
+    const response=await fetch(PROJECT4_CLIENT_API+"?action=register",{
+      method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(input),cache:"no-store"
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||data.ok!==true)throw new Error(data.error||"SIGNUP_UNAVAILABLE");
+    return data;
+  },
   // The standalone client gateway validates the password and returns a scoped session.
   async loginClient(account: string, password: string): Promise<{ displayName: string }> {
     const response = await fetch(PROJECT4_CLIENT_API + "?action=login", {
