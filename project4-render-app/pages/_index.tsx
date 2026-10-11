@@ -309,12 +309,7 @@ function LoginScreen({
               : "统一管理客户、资金、订单、持仓、证券与风险控制，核心数据来自真实后台，不再使用页面临时状态作为业务真源。"}
           </p>
         </div>
-        <div className={styles.visualGrid}>
-          <div><strong>US</strong><span>{isClient ? "Acțiuni SUA" : "美国市场"}</span></div>
-          <div><strong>MX</strong><span>{isClient ? "Piața Mexic" : "墨西哥市场"}</span></div>
-          <div><strong>2FA</strong><span>{isClient ? "Securitate activă" : "后台安全登录"}</span></div>
-          <div><strong>RO</strong><span>{isClient ? <RomaniaClock /> : "中文运营后台"}</span></div>
-        </div>
+
       </section>
 
       <section className={styles.loginPanel}>
@@ -464,6 +459,7 @@ function Sidebar({
       <div className={styles.sidebarLogo}><Logo /></div>
       <div className={styles.sidebarRole}><RoleLabel role={role} /></div>
       <nav className={`${styles.nav} ${enh.scrollNav}`}>
+        <div className={styles.navSectionTitle}>{role === 'client' ? 'Overview' : '业务管理'}</div>
         {allowed.map((item) => {
           const Icon = item.icon;
           return (
@@ -504,8 +500,8 @@ function Topbar({
         </div>
       ) : (
         <div className={styles.topSearch}>
-          <Search size={16} />
-          <span>搜索客户 / 订单 / 股票代码</span>
+          <strong>Dashboard</strong>
+          <span> / 运营管理中心</span>
         </div>
       )}
       <div className={styles.topbarActions}>
@@ -957,8 +953,8 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
         <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Cerrar espejo"><X size={15}/></button></div>
 
         <div className={styles.phoneHeader}>
-          <img src={logoUrl} alt="Visionary Studio"/>
-          <div><strong>Visionary Trading</strong><span>{customer.name} · {customer.vip}</span></div>
+          <img src="/brantone-veyor-logo-clean.webp" alt="Brantone Veylor Private Capital Advisory"/>
+          <div><strong>BRANTONE VEYLOR</strong><span>{customer.name} · {customer.vip}</span></div>
           <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Soporte"><MessageSquareText size={16}/></button>
         </div>
 
