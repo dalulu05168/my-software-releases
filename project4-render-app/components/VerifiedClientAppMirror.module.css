@@ -1,0 +1,44 @@
+.workspace{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%;min-height:0;gap:12px;color:#243043;font-family:Inter,"Noto Sans SC",sans-serif}
+.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.toolbar h1{font-size:19px;font-weight:700;color:#1c283a;margin:0 0 6px}
+.toolbar p{font-size:12px;color:#64748b;margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.actions button{background:white;border:1px solid #d8dee7;border-radius:8px;color:#27384d;font-size:12px;padding:9px 13px;cursor:pointer}
+.actions button:disabled{opacity:.5;cursor:wait}
+.main{min-height:0;overflow:auto;display:flex;align-items:flex-start;justify-content:center;gap:24px;padding:12px 10px}
+.device{flex:0 0 360px;min-height:575px;height:min(710px,calc(100dvh - 245px));max-height:750px;display:flex;flex-direction:column;border:7px solid #202938;border-radius:38px;overflow:hidden;background:#f8f9fc;box-shadow:0 18px 50px #17253b27}
+.statusBar{display:flex;justify-content:space-between;align-items:center;padding:17px 17px 10px;background:#fff;font-size:10px;letter-spacing:.5px;font-weight:700;color:#253b52}
+.statusBar span{font-size:8px;color:#8b6229;letter-spacing:.4px}
+.deviceHeader{background:linear-gradient(135deg,#fff,#ebeff5);padding:19px 18px;display:grid;gap:6px;border-bottom:1px solid #e1e5ec}
+.deviceHeader span{font-size:11px;color:#64748b}
+.deviceHeader strong{font-size:20px;color:#25374b;overflow-wrap:anywhere}
+.deviceHeader small{font-size:10px;color:#64748b}
+.deviceBody{flex:1;min-height:0;overflow:auto;padding:15px;display:grid;align-content:start;gap:12px}
+.balance{border-radius:15px;padding:18px;background:linear-gradient(135deg,#ebeff5,#dce5f0);display:grid;gap:6px}
+.balance small{color:#657080;font-size:11px}
+.balance strong{color:#253b51;font-size:32px}
+.balance span{color:#6b7280;font-size:10px;line-height:1.6}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fields>div{background:white;border:1px solid #e0e5ec;border-radius:12px;display:grid;gap:9px;padding:12px;min-width:0}
+.fields span{font-size:10px;color:#657180}
+.fields b{font-size:12px;color:#27374b;overflow-wrap:anywhere}
+.note{font-size:10px;line-height:1.65;color:#69788b;margin:0}
+.deviceBody h2{font-size:15px;font-weight:700;margin:2px 0;color:#1d3349}
+.message{font-size:12px;line-height:1.8;color:#606e80;text-align:center;margin:10px 0;padding:15px;background:#f4f6fa;border-radius:11px}
+.records{display:grid;gap:10px}
+.record{background:#fff;border:1px solid #e2e7ee;border-radius:12px;padding:12px}
+.recordHeading{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #edf0f4;padding-bottom:9px}
+.recordHeading strong{font-size:12px;color:#26374b;overflow-wrap:anywhere}
+.recordHeading span{font-size:10px;color:#8b6229}
+.record dl{margin:10px 0 0;display:grid;gap:7px}
+.record dl div{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.record dt{font-size:10px;color:#768294}
+.record dd{font-size:10px;color:#35455c;margin:0;text-align:right;overflow-wrap:anywhere}
+.tabs{background:#fff;border-top:1px solid #e0e5eb;display:flex;padding:12px 6px 18px;gap:2px}
+.tabs button{flex:1;background:transparent;color:#5b6c7d;border:0;border-radius:9px;padding:11px 2px;font-size:10px;cursor:pointer}
+.tabs button.active{background:#e6edf5;color:#243f61;font-weight:700}
+.side{flex:0 1 310px;max-width:360px;display:grid;align-content:start;gap:13px;border:1px solid #e0e5eb;border-radius:13px;background:#fff;padding:20px}
+.side h2{font-size:16px;margin:0;color:#25374b}
+.side p{font-size:12px;color:#607080;line-height:1.9;margin:0}
+@media(max-width:900px){.side{display:none}.main{justify-content:center;padding:4px}.device{flex-basis:min(360px,100%);height:calc(100dvh - 220px);min-height:460px}}
+@media(max-width:600px){.toolbar h1{font-size:16px}.toolbar p{font-size:10px}.actions button{font-size:11px;padding:7px 9px}.device{border-width:5px;border-radius:25px;height:calc(100dvh - 210px);min-height:390px}.statusBar{padding-top:10px}.tabs{padding-bottom:10px}}
