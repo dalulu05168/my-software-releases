@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { project4Api } from "../helpers/project4Api";
 import {
   Activity,
@@ -51,6 +51,8 @@ import {
 } from "../components/OperationsPages";
 import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
+import { VerifiedOpsAccountsPage } from "../components/VerifiedOpsAccounts";
+import { VerifiedAdminRecordsPage } from "../components/VerifiedAdminRecords";
 
 type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
@@ -237,23 +239,38 @@ function LoginScreen({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setLoginError("");
-    if (mode === "forgot") {
-      setResetMessage(
-        portal === "client"
-          ? "Verificare finalizată. Setați o parolă nouă."
-          : "验证完成，请设置新的登录密码。",
-      );
+    if (mode === "register" && portal === "client") {
+      if (!name.trim() || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(account.trim()) ||
+          password.length < 12 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) ||
+          !/[0-9]/.test(password) || password !== confirmPassword || invite.trim().length < 8) {
+        setLoginError("Completați numele, e-mailul, o parolă de cel puțin 12 caractere (majuscule, minuscule și cifre), confirmarea și codul de invitație.");
+        return;
+      }
+      setLoggingIn(true);
+      try {
+        await project4Api.registerClient({ name:name.trim(),email:account.trim(),password,invite:invite.trim() });
+        setPassword("");setConfirmPassword("");setInvite("");
+        setResetMessage("Contul a fost înregistrat. Verificarea identității este în așteptare; tranzacționarea și retragerile rămân dezactivate.");
+        setMode("login");
+      } catch (error) {
+        const code=error instanceof Error?error.message:"SIGNUP_UNAVAILABLE";
+        setLoginError(code==="RATE_LIMITED"?"Prea multe încercări. Așteptați 15 minute.":code==="INVALID_INVITE_OR_ACCOUNT"?"Codul de invitație nu este valid sau contul există deja.":"Înregistrarea nu a reușit. Verificați informațiile și încercați din nou.");
+      } finally {setLoggingIn(false);}
+      return;
+    }
+    if (mode !== "login") {
+      setLoginError("Recuperarea parolei este disponibilă doar prin administrator până la implementarea verificării securizate.");
       return;
     }
     if (portal === "admin") {
       setLoggingIn(true);
       try {
-        const result = await project4Api.loginMaster(
+        const result = await project4Api.loginAdmin(
           account.trim(),
           password,
           totp,
         );
-        onLogin("master", result.displayName || account.trim() || "Master Admin");
+        onLogin(result.role, result.displayName || account.trim() || (result.role === "master" ? "Master Admin" : "Operations Admin"));
       } catch (error) {
         const code = error instanceof Error ? error.message : "LOGIN_FAILED";
         setLoginError(
@@ -268,24 +285,24 @@ function LoginScreen({
       }
       return;
     }
-    const role: Role =
-      portal === "client"
-        ? "client"
-        : /^(ops|sub|运营|子账户)/i.test(account.trim())
-          ? "ops"
-          : "master";
-    const displayName =
-      mode === "register"
-        ? name.trim() || "Client"
-        : account.includes("@")
-          ? account.split("@")[0]
-          : account.trim() ||
-            (role === "master"
-              ? "Master Admin"
-              : role === "ops"
-                ? "Operations Admin"
-                : "Carlos Ramírez");
-    onLogin(role, displayName);
+    // Fail closed: no client identity or balance can be trusted without a server-verified session.
+    // This preview does not have an implemented client login endpoint yet.
+    setLoggingIn(true);
+    try {
+      const result = await project4Api.loginClient(account.trim(), password);
+      onLogin("client", result.displayName);
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "CLIENT_LOGIN_FAILED";
+      setLoginError(
+        code === "ACCOUNT_TEMPORARILY_LOCKED"
+          ? "Cont blocat temporar din cauza încercărilor eșuate. Încercați din nou mai târziu."
+          : code === "CLIENT_SESSION_REQUIRED" || code === "CLIENT_AUTH_UNAVAILABLE" || code === "SERVICE_UNAVAILABLE"
+            ? "Serviciul de autentificare nu este disponibil momentan. Reîncercați mai târziu."
+            : "Autentificare nereușită. Verificați datele sau contactați administratorul.",
+      );
+    } finally {
+      setLoggingIn(false);
+    }
   };
 
   const isClient = portal === "client";
@@ -309,12 +326,7 @@ function LoginScreen({
               : "统一管理客户、资金、订单、持仓、证券与风险控制，核心数据来自真实后台，不再使用页面临时状态作为业务真源。"}
           </p>
         </div>
-        <div className={styles.visualGrid}>
-          <div><strong>US</strong><span>{isClient ? "Acțiuni SUA" : "美国市场"}</span></div>
-          <div><strong>MX</strong><span>{isClient ? "Piața Mexic" : "墨西哥市场"}</span></div>
-          <div><strong>2FA</strong><span>{isClient ? "Securitate activă" : "后台安全登录"}</span></div>
-          <div><strong>RO</strong><span>{isClient ? <RomaniaClock /> : "中文运营后台"}</span></div>
-        </div>
+
       </section>
 
       <section className={styles.loginPanel}>
@@ -351,8 +363,8 @@ function LoginScreen({
           ) : null}
 
           <label>
-            <span>{isClient ? "Telefon / e-mail / cont" : "后台账户"}</span>
-            <input value={account} onChange={(e) => setAccount(e.target.value)} placeholder={isClient ? "+40... / nume@exemplu.ro" : "请输入后台账户"} />
+            <span>{isClient && mode === "register" ? "E-mail" : isClient ? "Telefon / e-mail / cont" : "后台账户"}</span>
+            <input type={isClient && mode === "register" ? "email" : "text"} autoComplete={isClient && mode === "register" ? "email" : "username"} required value={account} onChange={(e) => setAccount(e.target.value)} placeholder={isClient && mode === "register" ? "nume@exemplu.ro" : isClient ? "+40... / nume@exemplu.ro" : "请输入后台账户"} />
           </label>
 
           {mode !== "forgot" ? (
@@ -403,9 +415,10 @@ function LoginScreen({
           ) : null}
 
           {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
-          {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
+          {isClient && mode==="login" ? <div className={enh.formNotice} role="status">Autentificare verificată pe server. Tranzacționarea și retragerile sunt supuse verificării identității.</div> : null}
+          {loginError ? <div className={styles.formError} role="alert">{loginError}</div> : null}
 
-          <button className={styles.primaryButton} type="submit">
+          <button className={styles.primaryButton} type="submit" disabled={loggingIn}>
             {isClient
               ? mode === "register"
                 ? "Creează cont"
@@ -416,21 +429,10 @@ function LoginScreen({
             <ChevronRight size={17} />
           </button>
 
-          {isClient && mode === "login" ? (
-            <button type="button" className={styles.textButton} onClick={() => { setMode("forgot"); setResetMessage(""); }}>
-              Am uitat parola
-            </button>
-          ) : null}
-
-          {isClient ? (
-            <button
-              type="button"
-              className={styles.textButton}
-              onClick={() => { setMode(mode === "login" ? "register" : "login"); setResetMessage(""); }}
-            >
-              {mode === "login" ? "Nu aveți cont? Înregistrați-vă cu un cod de invitație" : "Înapoi la autentificare"}
-            </button>
-          ) : null}
+          {isClient ? <div style={{display:"flex",gap:12,justifyContent:"center",alignItems:"center",flexWrap:"wrap",fontSize:12}}>
+            {mode !== "register" ? <button type="button" className={styles.textButton} onClick={()=>{setMode("register");setLoginError("");setResetMessage("");}}>Creează cont cu invitație</button> : null}
+            {mode !== "login" ? <button type="button" className={styles.textButton} onClick={()=>{setMode("login");setLoginError("");}}>Înapoi la autentificare</button> : null}
+          </div> : null}
         </form>
       </section>
     </main>
@@ -464,6 +466,7 @@ function Sidebar({
       <div className={styles.sidebarLogo}><Logo /></div>
       <div className={styles.sidebarRole}><RoleLabel role={role} /></div>
       <nav className={`${styles.nav} ${enh.scrollNav}`}>
+        <div className={styles.navSectionTitle}>{role === 'client' ? 'Overview' : '业务管理'}</div>
         {allowed.map((item) => {
           const Icon = item.icon;
           return (
@@ -504,8 +507,8 @@ function Topbar({
         </div>
       ) : (
         <div className={styles.topSearch}>
-          <Search size={16} />
-          <span>搜索客户 / 订单 / 股票代码</span>
+          <strong>Dashboard</strong>
+          <span> / 运营管理中心</span>
         </div>
       )}
       <div className={styles.topbarActions}>
@@ -529,95 +532,135 @@ function Metric({ title, value, sub, icon: Icon }: any) {
   );
 }
 
+function PendingIntegrationPage({ title, client = false }: { title: string; client?: boolean }) {
+  return (
+    <div className={styles.contentStack}>
+      <div className={styles.pageHeader}>
+        <div><h1>{title}</h1><p>{client ? "Datele vor fi disponibile după verificarea contului." : "业务数据验证状态"}</p></div>
+      </div>
+      <section className={styles.panel} role="status" style={{ minHeight: 150, display: "grid", gap: 12, alignContent: "center" }}>
+        <h3 style={{ margin: 0, color: "#202A37" }}>{client ? "Date reale indisponibile" : "暂未接入可核验的真实数据"}</h3>
+        <p style={{ margin: 0, color: "#4B5563", lineHeight: 1.7 }}>
+          {client
+            ? "Pentru protecția contului, această secțiune nu afișează solduri, ordine sau rezultate simulate. Serviciul de cont securizat nu este încă disponibil."
+            : "此模块原先使用前端预置数据或本地状态。已暂停虚拟客户、资金、订单及权限操作展示。完成真实业务接口与权限校验后再开放。"}
+        </p>
+      </section>
+    </div>
+  );
+}
+
 function Dashboard({
   role,
   name,
   onOpenMarket,
-  onNavigate,
 }: {
   role: Role;
   name: string;
   onOpenMarket: () => void;
   onNavigate: (view: View) => void;
 }) {
-  if (role === "client") {
-    return (
-      <div className={styles.contentStack}>
-        <div className={styles.pageHeader}>
-          <div><h1>Prezentare cont</h1><p>Bine ai revenit, {name}</p></div>
-          <button className={styles.primarySmall} onClick={onOpenMarket}>Deschide piața <ChevronRight size={15} /></button>
-        </div>
-        <section className={styles.heroBalance}>
-          <div><span>Valoare totală cont</span><strong>248,630.80</strong><small>Disponibil 186,240.00 · USD 3,471.20</small></div>
-          <div className={styles.heroStats}>
-            <div><span>Variație astăzi</span><strong className={styles.green}>+2,418.70</strong></div>
-            <div><span>Poziții</span><strong>8</strong></div>
-            <div><span>Nivel cont</span><strong>VIP3</strong></div>
-          </div>
-        </section>
-        <div className={styles.metricGrid}>
-          <Metric icon={WalletCards} title="Fonduri disponibile" value="186,240" sub="Disponibil acum" />
-          <Metric icon={LineChart} title="Valoare poziții" value="62,390" sub="8 poziții" />
-          <Metric icon={Heart} title="Favorite" value="12" sub="US / MX" />
-          <Metric icon={ShieldCheck} title="Verificare" value="Finalizată" sub="Cont activ" />
-        </div>
-        <div className={styles.twoColumns}>
-          <section className={styles.panel}>
-            <div className={styles.panelTitle}><div><h3>Instrumente urmărite</h3><p>Ultimele cotații</p></div><button onClick={onOpenMarket}>Toată piața</button></div>
-            <StockRows compact />
-          </section>
-          <section className={styles.panel}>
-            <div className={styles.panelTitle}><div><h3>Ordine recente</h3><p>Activitatea contului</p></div></div>
-            <OrderRows />
-          </section>
-        </div>
-      </div>
-    );
-  }
-
+  const securitiesQuery = useQuery({
+    queryKey: ["p004-dashboard-verified-securities", role],
+    queryFn: role === "master" ? project4Api.listAdminSecurities : project4Api.listClientSecurities,
+    staleTime: 10_000,
+  });
+  const clientPortfolio = useQuery({
+    queryKey: ["p004-client-dashboard-portfolio", name],
+    queryFn: project4Api.getClientPortfolio,
+    enabled: role === "client",
+    staleTime: 0,
+    retry: false,
+  });
+  const verified = securitiesQuery.data || [];
+  const count = securitiesQuery.isError ? "读取失败" : securitiesQuery.isPending ? "查询中" : String(verified.filter((s) => s.visible && s.status === "ACTIVE").length);
   return (
     <div className={styles.contentStack}>
       <div className={styles.pageHeader}>
-        <div><h1>{role === "master" ? "运营总览" : "子账户总览"}</h1><p>{role === "master" ? "查看全平台客户、资金与订单状态" : "查看当前子账户名下客户和运营数据"}</p></div>
-        <div className={styles.headerPills}><span>US</span><span>MX</span><span>系统正常</span></div>
+        <div><h1>{role === "client" ? "Prezentare cont" : "运营总览"}</h1><p>{name} · {role === "client" ? "Situație verificată" : "只展示已核验的系统记录"}</p></div>
+        <button className={styles.secondaryButton} onClick={onOpenMarket}> {role === "client" ? "Piață" : "查看已上架证券"} <ChevronRight size={15}/></button>
       </div>
       <div className={styles.metricGrid}>
-        <Metric icon={Users} title="客户总数" value={role === "master" ? "2,846" : "428"} sub="+18 今日新增" />
-        <Metric icon={Banknote} title="累计入金" value="MXN 18.62M" sub="USD 624,830" />
-        <Metric icon={Activity} title="订单数量" value="1,284" sub="今日 74" />
-        <Metric icon={BadgeDollarSign} title="持仓市值" value="MXN 26.84M" sub="USD 906,420" />
+        <Metric icon={LineChart} title={role === "client" ? "Instrumente listate" : "已上架证券"} value={count} sub={securitiesQuery.isError ? "服务器读取失败" : "来自证券 API"} />
+        <Metric icon={Users} title={role === "client" ? "Poziții reale" : "客户账户"} value={role === "client" && clientPortfolio.isSuccess ? String(clientPortfolio.data.positions.length) : "—"} sub={role === "client" ? "Date din contul autentificat" : "未接入账户汇总"} />
+        <Metric icon={WalletCards} title={role === "client" ? "Sold verificat" : "核验资金余额"} value="—" sub="尚未连接真实账本" />
+        <Metric icon={ListFilter} title={role === "client" ? "Ordine reale" : "真实订单"} value={role === "client" && clientPortfolio.isSuccess ? String(clientPortfolio.data.orders.length) : "—"} sub={role === "client" ? "Ultimele maximum 100 de ordine" : "尚未连接订单汇总"} />
       </div>
-      <div className={styles.fourStats}>
-        {[
-          ["今日充值", "MXN 386,200", "+12.8%"],
-          ["今日提现", "MXN 94,700", "-4.2%"],
-          ["今日买入", "MXN 612,540", "+18.6%"],
-          ["今日卖出", "MXN 428,310", "+7.4%"],
-        ].map(([title, value, change]) => (
-          <div key={title}><span>{title}</span><strong>{value}</strong><small>{change}</small></div>
-        ))}
+      <section className={styles.panel} role="status">
+        <div className={styles.panelTitle}><div><h3>{role === "client" ? "Date reale indisponibile" : "真实业务状态"}</h3><p>{role === "client" ? "Nu se afișează active simulate" : "未连接的数据不展示虚拟资产与趋势"}</p></div></div>
+        <p style={{ color: "#4B5563", marginTop: 10, lineHeight: 1.8 }}>
+          {role === "client"
+            ? clientPortfolio.isError
+              ? "Nu se pot încărca datele contului; sesiunea poate fi expirată. Vă rugăm să vă autentificați din nou."
+              : "Pozițiile și ordinele sunt citite doar din contul autentificat. Soldul disponibil nu este încă calculat și tranzacționarea este dezactivată."
+            : "客户、订单、持仓、资金流水目前未完成前后端联通。本页不再把示例金额和图表当作真实统计。"}
+        </p>
+      </section>
+    </div>
+  );
+}
+
+
+function ClientPortfolioRecordsPage({ view }: { view: "orders" | "positions" }) {
+  const query = useQuery({
+    queryKey: ["p004-client-real-records", view],
+    queryFn: project4Api.getClientPortfolio,
+    staleTime: 0,
+    retry: false,
+  });
+  const orders = query.data?.orders || [];
+  const positions = query.data?.positions || [];
+  return (
+    <div className={styles.contentStack}>
+      <div className={styles.pageHeader}>
+        <div>
+          <h1>{view === "orders" ? "Ordine" : "Poziții"}</h1>
+          <p>Numai înregistrări din contul autentificat · vizualizare fără tranzacționare</p>
+        </div>
+        <button className={styles.secondaryButton} type="button" onClick={() => void query.refetch()}>Actualizare</button>
       </div>
-      <div className={styles.twoColumnsWide}>
-        <section className={styles.panel}>
-          <div className={styles.panelTitle}><div><h3>资金趋势</h3><p>近 7 日运营变化</p></div><div className={styles.segment}><button className={styles.segmentActive}>MXN</button><button>USD</button></div></div>
-          <div className={styles.chartArea}>
-            <InteractiveTrendChart />
-          </div>
+      {query.isError ? (
+        <section className={styles.panel} role="alert" style={{color:"#9F3E1B"}}>
+          Datele nu pot fi încărcate. Verificați sesiunea și încercați din nou.
         </section>
-        <section className={styles.panel}>
-          <div className={styles.panelTitle}><div><h3>待处理事项</h3><p>需要运营确认</p></div></div>
-          <div className={styles.todoList}>
-            {[
-              ["实名认证审核", "18", FileCheck2, "customers"],
-              ["充值审核", "12", Banknote, "cash"],
-              ["提现审核", "7", CreditCard, "cash"],
-              ["人工通知", "24", Bell, "notifications"],
-            ].map(([label,count,Icon,target]:any)=>(
-              <button key={label} onClick={() => onNavigate(target)}><span><Icon size={16}/>{label}</span><strong>{count}</strong><ChevronRight size={15}/></button>
-            ))}
-          </div>
+      ) : query.isPending ? (
+        <section className={styles.panel} role="status">Se verifică înregistrările...</section>
+      ) : (
+        <section className={styles.tablePanel}>
+          {view === "orders" ? (
+            <table>
+              <thead><tr><th>Ordin</th><th>Sens</th><th>Cantitate</th><th>Monedă</th><th>Stare</th><th>Înregistrat</th></tr></thead>
+              <tbody>
+                {orders.map((item) => <tr key={item.id}>
+                  <td className={styles.mono}>{item.id.slice(0, 12)}</td>
+                  <td>{item.side}</td>
+                  <td className={styles.mono}>{item.quantity ?? "—"}</td>
+                  <td>{item.currency}</td>
+                  <td>{item.state}</td>
+                  <td>{item.created_at ? new Date(item.created_at).toLocaleString("ro-RO") : "—"}</td>
+                </tr>)}
+                {orders.length === 0 ? <tr><td colSpan={6}>Nu există ordine înregistrate pentru acest cont.</td></tr> : null}
+              </tbody>
+            </table>
+          ) : (
+            <table>
+              <thead><tr><th>Instrument</th><th>Cantitate</th><th>Cost mediu</th><th>Monedă</th></tr></thead>
+              <tbody>
+                {positions.map((item) => <tr key={item.security_id}>
+                  <td><strong>{item.security?.symbol || "—"}</strong><span>{item.security?.name || "Instrument neidentificat"}</span></td>
+                  <td className={styles.mono}>{item.quantity}</td>
+                  <td className={styles.mono}>{item.average_cost}</td>
+                  <td>{item.currency}</td>
+                </tr>)}
+                {positions.length === 0 ? <tr><td colSpan={4}>Nu există poziții înregistrate pentru acest cont.</td></tr> : null}
+              </tbody>
+            </table>
+          )}
         </section>
-      </div>
+      )}
+      <p style={{fontSize:11,color:"#4B5563"}}>
+        Datele provin din API-ul de client; nu se afișează solduri calculate sau profituri estimate.
+      </p>
     </div>
   );
 }
@@ -863,7 +906,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
         {visibleStocks.length===0?<div className={enh.emptyMarket}>Nu există instrumente disponibile</div>:null}
       </section>
       <section className={styles.marketCenter}>
-        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>231.44</b></span><span>Minim <b>223.98</b></span><span>Volum <b>42.8M</b></span><span>Piață <b>{selected.market}</b></span></div></div>
+        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>—</b></span><span>Minim <b>—</b></span><span>Volum <b>—</b></span><span>Piață <b>{selected.market}</b></span></div></div>
         <div className={styles.chartToolbar}>
           {["1D","7D","1L","3L","1A","Max"].map((item) => (
             <button
@@ -876,20 +919,20 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
           ))}
         </div>
         <div className={styles.candleChart}>
-          <InteractiveCandleChart symbol={selected.symbol} interval={interval} />
+          <div role="status" style={{padding:22, color:"#4B5563", fontSize:13}}>Datele istorice verificabile nu sunt încă disponibile. Graficul simulat a fost dezactivat.</div>
         </div>
-        <div className={styles.marketBottom}><section><h3>Cumpărători</h3>{[1,2,3,4,5].map(i=><div key={i}><span>Cump. {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>Tranzacții recente</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
+        <div className={styles.marketBottom}><section><h3>Cumpărători</h3><p style={{color:"#4B5563"}}>Date în timp real indisponibile.</p></section><section><h3>Tranzacții recente</h3><p style={{color:"#4B5563"}}>Nu există tranzacții verificate.</p></section></div>
       </section>
       <section className={styles.orderPanel}>
         <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>Cumpără</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>Vinde</button></div>
-        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>186,240.00</strong></div>
+        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>—</strong></div>
         <label><span>Instrument</span><input value={selected.symbol} readOnly/></label>
         <label><span>Preț ordin</span><input value={selected.price} readOnly/></label>
         <label><span>Cantitate</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
-        <div className={styles.quickQty}>{[["25%",.25],["50%",.5],["75%",.75],["100%",1]].map(([label,ratio])=><button key={String(label)} onClick={()=>choosePercent(Number(ratio))}>{label}</button>)}</div>
+        <div className={styles.quickQty}>{["25%","50%","75%","100%"].map(label=><button key={label} disabled title="Soldul verificat nu este disponibil">{label}</button>)}</div>
         <div className={styles.orderEstimate}><span>Valoare estimată</span><strong>{(Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
-        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled={!orderEnabled || !selected.tradable} onClick={()=>orderEnabled&&selected.tradable&&setNotice(`Ordin ${side==="buy"?"de cumpărare":"de vânzare"} înregistrat: ${selected.symbol} × ${qty}`)}>{!selected.symbol?"Niciun instrument disponibil":!selected.tradable?"Tranzacționarea nu este activată":orderEnabled?(side==="buy"?"Plasează ordinul":"Plasează ordinul"):"Tranzacționare restricționată"}</button>
-        <p className={styles.brokerNote}>Ordinele sunt înregistrate în sistemul curent; execuția externă prin broker nu este conectată.</p>
+        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled title="Tranzacționarea este dezactivată până la integrarea backend-ului">Tranzacționare indisponibilă</button>
+        <p className={styles.brokerNote}>Nu se înregistrează ordine. Conectarea contului și procesarea ordinelor sunt în curs de implementare.</p>
         {!orderEnabled?<div className={enh.riskHint}>Accesul la ordine este restricționat de controlul de risc.</div>:null}
         {notice?<div className={styles.orderNotice}>{notice}</div>:null}
       </section>
@@ -957,8 +1000,8 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
         <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Cerrar espejo"><X size={15}/></button></div>
 
         <div className={styles.phoneHeader}>
-          <img src={logoUrl} alt="Visionary Studio"/>
-          <div><strong>Visionary Trading</strong><span>{customer.name} · {customer.vip}</span></div>
+          <img src="/brantone-veyor-logo-clean.webp" alt="Brantone Veylor Private Capital Advisory"/>
+          <div><strong>BRANTONE VEYLOR</strong><span>{customer.name} · {customer.vip}</span></div>
           <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Soporte"><MessageSquareText size={16}/></button>
         </div>
 
@@ -1163,6 +1206,7 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
 }
 
 export default function App() {
+  const queryClient = useQueryClient();
   const [role, setRole] = useState<Role | null>(null);
   const [name, setName] = useState("");
   const [view, setView] = useState<View>("dashboard");
@@ -1186,22 +1230,32 @@ export default function App() {
     view === "dashboard" ? (
       <Dashboard role={role} name={name} onOpenMarket={()=>setView("market")} onNavigate={setView} />
     ) : view === "customers" && role !== "client" ? (
-      <CustomersPage customers={customers} setCustomers={setCustomers} onMirror={setMirrorCustomer} />
+      <VerifiedAdminRecordsPage kind="clients" />
     ) : view === "market" ? (
       <MarketPage riskControls={riskControls} />
+    ) : view === "opsAccounts" && role === "master" ? (
+      <VerifiedOpsAccountsPage />
     ) : ["products", "loans", "notifications", "opsAccounts", "audit"].includes(view) ? (
-      <OperationsPage view={view as OperationsView} role={role} />
+      <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
     ) : ["securities", "purchaseAccess", "risk", "support"].includes(view) ? (
-      <AdminControlPage view={view as AdminControlView} role={role} accountName={name} riskControls={riskControls} onRiskControlsChange={setRiskControls} />
-    ) : ["orders", "cash", "positions", "settings"].includes(view) ? (
-      <CoreWorkflowPage view={view as CoreWorkflowView} role={role} accountName={name} riskControls={riskControls} />
+      view === "securities" && role === "master"
+        ? <AdminControlPage view="securities" role={role} accountName={name} riskControls={riskControls} onRiskControlsChange={setRiskControls} />
+        : <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "管理模块"} client={role === "client"}/>
+    ) : ["orders", "cash", "positions"].includes(view) ? (
+      role === "client" && (view === "orders" || view === "positions")
+        ? <ClientPortfolioRecordsPage view={view} />
+        : role !== "client"
+          ? <VerifiedAdminRecordsPage kind={view as "orders" | "cash" | "positions"} />
+          : <PendingIntegrationPage title={clientNavLabels[view] || "Cont"} client />
+    ) : view === "settings" ? (
+      <PendingIntegrationPage title={role === "client" ? "Setări" : "系统设置"} client={role === "client"}/>
     ) : (
-      <GenericPage view={view} />
+      <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "模块"} client={role === "client"}/>
     );
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master") project4Api.logoutMaster();setRole(null);setName("");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutAdmin();else void project4Api.logoutClient();queryClient.clear();setRole(null);setName("");setView("dashboard");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
         <div className={styles.workspaceBody}>{content}</div>

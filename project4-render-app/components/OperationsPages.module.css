@@ -28,3 +28,45 @@
 .bankList article,.noticeGrid article,.permissionList label{background:#fff!important;border-color:#e1e4e9!important}.addBank{background:#fff!important;border-color:#cbd1d8!important;color:#8b1029!important}
 .noticeGrid h3{color:#071b42!important}.noticeGrid p,.noticeMeta small{color:#7b8490!important}.noticeMeta span{color:#8b1029!important}
 .noticeRight button{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}.noticeRight button:hover{border-color:#8b1029!important;color:#8b1029!important}
+
+
+/* P004 white-card reference override: customer and operational lists */
+.stack{color:#263443!important;overflow:auto!important;min-height:0!important}
+.header h1{color:#243343!important;font:650 17px Inter,"Noto Sans SC",sans-serif!important}
+.header p{color:#8a98a5!important}
+.primary{background:linear-gradient(100deg,#ffa258,#fa6c39)!important;color:#fff!important;border-color:#fc8750!important}
+.secondary{background:#fff!important;color:#647385!important;border-color:#e1e6ea!important}
+.tabs{border-color:#e8ecf0!important}.tabs button{color:#7d8996!important}.tabs .tabActive{color:#ea7848!important;border-color:#ea7848!important}
+.tablePanel{background:#fff!important;border-color:#e4e8ec!important;min-height:0!important;max-height:calc(100% - 100px)!important;overflow:auto!important}
+.tablePanel th{background:#f8fafb!important;color:#8090a0!important;border-color:#e7ebef!important}
+.tablePanel td{background:#fff!important;color:#263444!important;border-color:#edf0f3!important}
+.tablePanel tbody tr:hover{background:#fbfcfd!important}
+.good{background:#e7f8ef!important;color:#168b65!important}.bad{background:#fff0f1!important;color:#dd5360!important}.wait{background:#fff4e5!important;color:#be842b!important}
+.actions button,.auditButton{color:#3179cf!important}
+.drawer,.modal{background:#fff!important;color:#263443!important;border-color:#e4e8ed!important}
+.detailGrid{background:#e8ecef!important}.detailGrid>div{background:#fff!important}
+.drawerSection input,.form input,.drawerSection textarea{background:#fff!important;color:#263443!important;border-color:#e0e6eb!important}
+.noticeGrid article{background:#fff!important;color:#263444!important;border-color:#e4e8ed!important}
+.noticeIcon{background:#fff1e9!important;color:#ee7843!important}
+.noticeRight button{background:#fff!important;color:#687889!important;border-color:#e2e6ea!important}
+.auditSearch,.auditSearch input{background:#fff!important;color:#263444!important;border-color:#e3e8ed!important}
+
+
+/* AA contrast refinement — customers, orders and notices */
+.stack,.tablePanel,.drawer,.modal{color:#374151!important}
+.header h1,.detailGrid strong,.noticeGrid h3{color:#202A37!important}
+.header p,.noticeGrid p,.noticeMeta small,.detailGrid span,.drawerHeader span,
+.drawerSection label span,.form label span,.resultBox p,.resultBox span{color:#4B5563!important}
+.tablePanel,.noticeGrid article,.detailGrid{border-color:#D8DEE6!important}
+.tablePanel th{color:#4B5563!important;border-color:#D8DEE6!important}
+.tablePanel td{color:#374151!important}
+.form input,.drawerSection input,.drawerSection textarea,.auditSearch input{color:#374151!important;border-color:#D8DEE6!important}
+.form input::placeholder,.drawerSection input::placeholder,.drawerSection textarea::placeholder,
+.auditSearch input::placeholder{color:#667085!important;opacity:1!important}
+.primary{
+  background:linear-gradient(105deg,#B94D1C,#9F3E1B)!important;
+  border-color:#9F3E1B!important;color:#FFFFFF!important;text-shadow:none!important
+}
+.secondary{color:#374151!important;border-color:#D8DEE6!important}
+.actions button,.auditButton{color:#215DA8!important}
+
