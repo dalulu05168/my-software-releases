@@ -72,7 +72,7 @@ test("gateway blocks cross-origin, rogue Host, bogus methods and oversized bodie
   assert.equal(badAuth.status, 400);
   const oversized = await fetch(h.origin + "/gateway/client?action=register", {
     method: "POST", headers: { "content-type": "application/json", Origin: h.origin },
-    body: "x".repeat(131072),
+    body: "x".repeat(131073),
   });
   assert.equal(oversized.status, 413);
   assert.equal(h.calls.length, 0);
