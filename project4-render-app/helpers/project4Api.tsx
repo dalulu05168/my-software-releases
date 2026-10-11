@@ -38,7 +38,7 @@ type ApiSecurity = {
 async function request(init?: RequestInit, scope?: "client" | "admin") {
   const token =
     typeof window !== "undefined"
-      ? window.localStorage.getItem(SESSION_KEY)
+      ? window.sessionStorage.getItem(SESSION_KEY)
       : null;
   const url = scope ? `${PROJECT4_API}?scope=${scope}` : PROJECT4_API;
   const headers = new Headers(init?.headers);
@@ -134,7 +134,8 @@ export const project4Api = {
       throw new Error("INVALID_AUTH_RESPONSE");
     }
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(SESSION_KEY, data.sessionToken);
+      window.sessionStorage.setItem(SESSION_KEY, data.sessionToken);
+      window.localStorage.removeItem(SESSION_KEY);
     }
     return data;
   },
@@ -146,11 +147,26 @@ export const project4Api = {
     return result;
   },
 
-  logoutAdmin() {
-    if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+  async logoutAdmin(): Promise<void> {
+    const token = typeof window === "undefined" ? null : window.sessionStorage.getItem(SESSION_KEY);
+    if (typeof window !== "undefined") {
+      window.sessionStorage.removeItem(SESSION_KEY);
+      window.localStorage.removeItem(SESSION_KEY);
+    }
+    if (!token) return;
+    try {
+      await fetch(PROJECT4_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+        body: JSON.stringify({ action: "logout_admin" }),
+        cache: "no-store",
+      });
+    } catch {
+      // No session remains in the browser if the network is unavailable.
+    }
   },
   logoutMaster() {
-    this.logoutAdmin();
+    return this.logoutAdmin();
   },
 
   async listAdminReport(
@@ -161,7 +177,7 @@ export const project4Api = {
     limit: number;
     possiblyMore: boolean;
   }> {
-    const token = typeof window === "undefined" ? null : window.localStorage.getItem(SESSION_KEY);
+    const token = typeof window === "undefined" ? null : window.sessionStorage.getItem(SESSION_KEY);
     if (!token) throw new Error("AUTHORIZED_ADMIN_SESSION_REQUIRED");
     const params = new URLSearchParams({ action });
     if (filters.opsAccountId) params.set("ops_account_id", filters.opsAccountId);
