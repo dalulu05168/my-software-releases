@@ -277,9 +277,11 @@ function LoginScreen({
     } catch (error) {
       const code = error instanceof Error ? error.message : "CLIENT_LOGIN_FAILED";
       setLoginError(
-        code === "CLIENT_AUTH_NOT_CONFIGURED" || code === "MASTER_SESSION_REQUIRED"
-          ? "Autentificarea clienților nu este încă disponibilă. Accesul este blocat până la activarea verificării serverului."
-          : "Autentificare nereușită. Verificați datele sau contactați administratorul.",
+        code === "ACCOUNT_TEMPORARILY_LOCKED"
+          ? "Cont blocat temporar din cauza încercărilor eșuate. Încercați din nou mai târziu."
+          : code === "CLIENT_SESSION_REQUIRED" || code === "CLIENT_AUTH_UNAVAILABLE" || code === "SERVICE_UNAVAILABLE"
+            ? "Serviciul de autentificare nu este disponibil momentan. Reîncercați mai târziu."
+            : "Autentificare nereușită. Verificați datele sau contactați administratorul.",
       );
     } finally {
       setLoggingIn(false);
@@ -396,7 +398,7 @@ function LoginScreen({
           ) : null}
 
           {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
-          {isClient ? <div className={enh.formNotice} role="status">Versiune de verificare: autentificarea clienților este blocată până la conectarea serviciului real. Nu sunt afișate solduri sau tranzacții simulate.</div> : null}
+          {isClient ? <div className={enh.formNotice} role="status">Autentificare verificată pe server. Numai conturile activate pot accesa datele proprii; soldurile și tranzacțiile simulate nu sunt afișate.</div> : null}
           {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
 
           <button className={styles.primaryButton} type="submit" disabled={loggingIn}>
