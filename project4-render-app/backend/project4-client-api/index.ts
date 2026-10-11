@@ -2,9 +2,68 @@
 // Requires a review-approved SQL function project4_login_client_checked.
 // Required environment: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, PROJECT4_ALLOWED_ORIGINS.
 // No service_role key is sent to the browser. No transfers/orders/withdrawals are processed.
-import { createClient } from "npm:@supabase/supabase-js@2.57.0";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.57.0";
 
-type Db = ReturnType<typeof createClient>;
+// Checked-in API contract for the columns used by this Edge Function.
+// Additional DB columns are intentionally not fetched or exposed to clients.
+type Table<R, I = Partial<R>, U = Partial<R>> = {
+  Row: R;
+  Insert: I;
+  Update: U;
+  Relationships: [];
+};
+type SessionRow = {
+  id: string; user_id: string; ops_account_id: string;
+  token_digest: string; expires_at: string; revoked_at: string | null;
+};
+type IdentityRow = { id: string; enabled: boolean; role: string };
+type AccountRow = { user_id: string; ops_account_id: string | null; login_enabled: boolean };
+type OpsRow = { id: string; status: string };
+type OrderRow = {
+  id: string; user_id: string; ops_account_id: string | null;
+  security_id: string | null; product_id: string | null;
+  side: string; order_type: string | null; quantity: number | string | null;
+  reference_price: number | string | null; currency: string; state: string; created_at: string;
+};
+type CashRow = {
+  id: string; user_id: string; ops_account_id: string;
+  type: string; currency: string; amount: number | string;
+  status: string; created_at: string;
+};
+type PositionRow = {
+  user_id: string; security_id: string; quantity: number | string;
+  average_cost: number | string; currency: string; updated_at: string;
+};
+type SecurityRow = {
+  id: string; symbol: string; name: string; market: string; currency: string;
+};
+type LoginCheck = {
+  ok: boolean; error?: string; userId?: string; opsAccountId?: string; displayName?: string;
+};
+type ClientDatabase = {
+  public: {
+    Tables: {
+      client_sessions: Table<SessionRow, Pick<SessionRow, "user_id" | "ops_account_id" | "token_digest" | "expires_at">>;
+      identities: Table<IdentityRow>;
+      client_accounts: Table<AccountRow>;
+      ops_accounts: Table<OpsRow>;
+      orders: Table<OrderRow>;
+      cash_requests: Table<CashRow>;
+      positions: Table<PositionRow>;
+      securities: Table<SecurityRow>;
+    };
+    Views: {};
+    Functions: {
+      project4_login_client_checked: {
+        Args: { p_login: string; p_password: string };
+        Returns: LoginCheck;
+      };
+    };
+    Enums: {};
+    CompositeTypes: {};
+  };
+};
+type Db = SupabaseClient<ClientDatabase>;
 type ErrorCode = "CLIENT_SESSION_REQUIRED" | "CLIENT_SESSION_INVALID" | "CLIENT_SESSION_EXPIRED";
 
 function getAllowedOrigin(req: Request): string | null {
@@ -45,7 +104,7 @@ function serviceClient(): Db {
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) throw new Error("SERVER_NOT_CONFIGURED");
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return createClient<ClientDatabase>(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
 function bearer(req: Request): string {
