@@ -1,9 +1,20 @@
-const PROJECT4_API =
-  "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-securities-api";
-const PROJECT4_CLIENT_API =
-  "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-client-api";
-const PROJECT4_REPORTS_API =
-  "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-reporting-api";
+// The installed Windows app serves its UI from an ephemeral 127.0.0.1 port.
+// Its same-origin /gateway endpoints forward only the three allowed API routes,
+// so Supabase's browser CORS allowlist does not need to be weakened.
+const IS_LOCAL_DESKTOP =
+  typeof window !== "undefined" &&
+  window.location.hostname === "127.0.0.1" &&
+  window.location.protocol === "http:" &&
+  new URLSearchParams(window.location.search).get("desktop") === "1";
+const PROJECT4_API = IS_LOCAL_DESKTOP
+  ? "/gateway/admin"
+  : "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-securities-api";
+const PROJECT4_CLIENT_API = IS_LOCAL_DESKTOP
+  ? "/gateway/client"
+  : "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-client-api";
+const PROJECT4_REPORTS_API = IS_LOCAL_DESKTOP
+  ? "/gateway/reporting"
+  : "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-reporting-api";
 
 const SESSION_KEY = "project4_master_session";
 const CLIENT_SESSION_KEY = "project4_client_session";
