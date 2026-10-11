@@ -30,3 +30,28 @@
 .bankList article,.noticeGrid article,.permissionList label{background:#fff!important;border-color:#e1e4e9!important}.addBank{background:#fff!important;border-color:#cbd1d8!important;color:#8b1029!important}
 .noticeGrid h3{color:#071b42!important}.noticeGrid p,.noticeMeta small{color:#7b8490!important}.noticeMeta span{color:#8b1029!important}
 .noticeRight button{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}.noticeRight button:hover{border-color:#8b1029!important;color:#8b1029!important}
+
+
+/* P004 white-card reference override: operational forms & orders */
+.stack{color:#253343!important;background:transparent!important;overflow:auto!important;min-height:0!important}
+.header h1{font:650 17px Inter,"Noto Sans SC",sans-serif!important;color:#222d3a!important}
+.header p{color:#8a97a6!important}
+.filters,.tablePanel,.summaryGrid>div,.settingsGrid>button,.bankList article{background:#fff!important;border:1px solid #e3e8ed!important;border-radius:9px!important;color:#273443!important}
+.primary{background:linear-gradient(95deg,#ffa157,#fa6d38)!important;color:#fff!important;border-color:#fa8a4e!important;border-radius:8px!important}
+.secondary{background:#fff!important;border:1px solid #e1e6eb!important;color:#697789!important}
+.search,.search input{background:#fff!important;border-color:#e3e8ee!important;color:#263442!important}
+.tablePanel{min-height:0!important;overflow:auto!important;max-height:calc(100% - 100px)!important}
+.tablePanel th{background:#f8fafc!important;color:#8090a0!important;border-color:#e7ebef!important}
+.tablePanel td{background:#fff!important;color:#263442!important;border-color:#edf0f3!important}
+.tablePanel tbody tr:hover{background:#f9fafb!important}
+.segment button,.segmentWide button{color:#75818f!important}.segmentWide{border-color:#e5e9ec!important}
+.activeSegment{background:#fff3eb!important;color:#ec7140!important;border-color:#ffdecb!important}
+.good{background:#e7f8ef!important;color:#168e67!important}.bad{background:#fff1f2!important;color:#da535d!important}.wait{background:#fff4e6!important;color:#bd812d!important}
+.actions button,.linkButton{color:#317ac8!important}
+.drawer,.modal{background:#fff!important;color:#273443!important;border-color:#e4e8ed!important}
+.detailGrid{background:#e5e9ed!important}.detailGrid>div{background:#fff!important}
+.form input,.form select{background:#fff!important;color:#263342!important;border-color:#dee5eb!important}
+.summaryGrid strong,.settingsGrid strong{color:#283442!important}.summaryGrid span,.settingsGrid span{color:#8794a2!important}
+.positionHero{background:linear-gradient(115deg,#fafbfc,#fff4ec)!important;color:#273545!important;border-color:#e6e8ed!important}
+.proof,.bankList article,.permissionList label{background:#fff!important;color:#576578!important;border-color:#e3e8ec!important}
+.settingsIcon,.bankIcon{background:#fff1e9!important;color:#eb7946!important}.addBank{background:#fff!important;color:#ec7743!important}
