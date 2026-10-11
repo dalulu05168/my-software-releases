@@ -94,10 +94,31 @@ if (!single) {
     if (mainWindow) { if (mainWindow.isMinimized()) mainWindow.restore(); mainWindow.focus(); }
   });
   app.whenReady().then(async () => {
+    if (process.argv.includes("--p004-smoke")) {
+      let smokeServer;
+      let code = 1;
+      try {
+        smokeServer = await startDesktopServer({ distDir });
+        const response = await fetch(smokeServer.origin + "/");
+        const html = await response.text();
+        const forbidden = await fetch(smokeServer.origin + "/gateway/reporting", {
+          method: "POST",
+        });
+        if (response.ok && html.includes('id="root"') && forbidden.status === 405) {
+          code = 0;
+        }
+      } catch (err) {
+        console.error("P004_WINDOWS_SMOKE_FAILED", err instanceof Error ? err.message : "unknown");
+      } finally {
+        if (smokeServer) await smokeServer.close();
+        app.exit(code);
+      }
+      return;
+    }
     try { await createWindow(); }
     catch (error) {
       dialog.showErrorBox("P004 本地启动失败",
-        "无法加载安装包中的静态资源或启动本地回环服务。请重新安装程序。\n" +
+        "无法加载安装包中的静态资源或启动本地回环服务。请重新安装程序。\\n" +
         (error instanceof Error ? error.message : ""));
       app.quit();
     }
