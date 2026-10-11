@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { project4Api } from "../helpers/project4Api";
+import { clientApiEnabled, project4ClientApi } from "../helpers/project4ClientApi";
 import {
   Activity,
   BadgeDollarSign,
@@ -238,9 +239,27 @@ function LoginScreen({
     event.preventDefault();
     setLoginError("");
     setResetMessage("");
-    // Never unlock the client area or claim password recovery without a verified server endpoint.
     if (portal === "client") {
-      setLoginError("Autentificarea și înregistrarea clienților nu sunt încă disponibile. Nu s-a creat și nu s-a modificat niciun cont.");
+      if (mode !== "login") {
+        setLoginError("Înregistrarea și resetarea parolei vor fi disponibile doar după activarea verificării securizate în server.");
+        return;
+      }
+      if (!clientApiEnabled()) {
+        setLoginError("Autentificarea clienților nu este încă activată. Serviciul securizat trebuie validat și publicat separat.");
+        return;
+      }
+      setLoggingIn(true);
+      try {
+        const result = await project4ClientApi.login(account, password);
+        onLogin("client", result.displayName);
+      } catch (error) {
+        const code = error instanceof Error ? error.message : "CLIENT_LOGIN_FAILED";
+        setLoginError(code === "ACCOUNT_TEMPORARILY_LOCKED"
+          ? "Contul este blocat temporar după autentificări nereușite."
+          : "Autentificarea nu a fost confirmată de server. Verificați datele de acces.");
+      } finally {
+        setLoggingIn(false);
+      }
       return;
     }
     if (mode !== "login") {
@@ -1186,7 +1205,7 @@ export default function App() {
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{project4Api.logoutAdmin();setRole(null);setName("");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="client") { void project4ClientApi.logout(); } else { project4Api.logoutAdmin(); } setRole(null);setName("");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
         <div className={styles.workspaceBody}>
