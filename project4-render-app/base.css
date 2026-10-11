@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=League+Spartan:wght@600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
 
 :root{
-  --background:#f7f5f2;
+  --background:#F3F5F7;
   --foreground:#273244;
   --surface:#ffffff;
   --surface-soft:#fbfaf8;
@@ -12,7 +12,7 @@
   --primary-foreground:#ffffff;
   --navy:#071b42;
   --burgundy:#8b1029;
-  --warm-white:#f7f5f2;
+  --warm-white:#F3F5F7;
   --line:#dfe3e8;
   --muted:#747d89;
   --success:#168654;
@@ -40,8 +40,8 @@ body{
   line-height:1.45;
   color:var(--foreground);
   background:
-    radial-gradient(circle at 2% 2%,rgba(7,27,66,.035),transparent 24rem),
-    linear-gradient(135deg,#fbfaf8 0%,#f7f5f2 52%,#efebe6 100%);
+    radial-gradient(circle at 2% 2%,rgba(255,255,255,.72),transparent 24rem),
+    linear-gradient(135deg,#F7F8FA 0%,#F3F5F7 52%,#EAEEF3 100%);
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
