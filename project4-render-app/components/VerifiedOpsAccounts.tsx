@@ -21,6 +21,7 @@ export function VerifiedOpsAccountsPage({
   const [password, setPassword] = useState("");
   const [markets, setMarkets] = useState<Array<"US" | "MX">>(["US", "MX"]);
   const [busy, setBusy] = useState(false);
+  const [busyAccountId, setBusyAccountId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [issued, setIssued] = useState<null | {
     username: string; name: string; invite: string; totpSecret: string; otpauthUri: string;
@@ -52,6 +53,45 @@ export function VerifiedOpsAccountsPage({
       setBusy(false);
     }
   };
+  const changeStatus = async (row: {
+    id: string; name: string; status: string;
+  }) => {
+    const status = row.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
+    const action = status === "SUSPENDED" ? "停用" : "启用";
+    if (!window.confirm(`确认${action}子账户「${row.name}」？停用将阻止该子账户登录和客户使用其邀请码注册。`)) return;
+    setError("");
+    setBusyAccountId(row.id);
+    try {
+      await project4Api.setOpsStatus(row.id, status);
+      await queryClient.invalidateQueries({ queryKey: ["p004-real-ops-accounts"] });
+    } catch (err) {
+      setError(`${action}失败：` + (err instanceof Error ? err.message : "服务器错误"));
+    } finally {
+      setBusyAccountId(null);
+    }
+  };
+
+  const resetTotp = async (row: {
+    id: string; identityId: string | null; name: string; username: string; invite: string;
+  }) => {
+    if (!row.identityId) { setError("此子账户缺少后台登录身份，无法重置 2FA。"); return; }
+    if (!window.confirm(`确认重置「${row.name}」的 2FA 密钥？原绑定立即失效，已有登录会话也会被撤销。客户六位邀请码不会改变。`)) return;
+    setError("");
+    setBusyAccountId(row.id);
+    try {
+      const credentials = await project4Api.resetOpsTotp(row.identityId);
+      setIssued({
+        username: row.username, name: row.name, invite: row.invite,
+        totpSecret: credentials.totpSecret, otpauthUri: credentials.otpauthUri,
+      });
+      await queryClient.invalidateQueries({ queryKey: ["p004-real-ops-accounts"] });
+    } catch (err) {
+      setError("2FA 重置失败：" + (err instanceof Error ? err.message : "服务器错误"));
+    } finally {
+      setBusyAccountId(null);
+    }
+  };
+
   const flipMarket = (value: "US" | "MX") =>
     setMarkets((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value]);
 
@@ -71,7 +111,7 @@ export function VerifiedOpsAccountsPage({
       {accounts.isError ? <p className={styles.error} role="alert">账户列表读取失败。请检查管理员会话或服务状态。</p> : accounts.isPending ?
       <p className={styles.note}>正在读取服务器账户记录…</p> :
       <div className={styles.tableWrap}>
-        <table><thead><tr><th>账户名</th><th>显示名称</th><th>市场权限</th><th>状态</th><th>客户注册邀请码（6位）</th><th>客户明细</th></tr></thead>
+        <table><thead><tr><th>账户名</th><th>显示名称</th><th>市场权限</th><th>状态</th><th>客户注册邀请码（6位）</th><th>客户明细</th><th>安全管理</th></tr></thead>
           <tbody>
             {accounts.data.map((row) => <tr key={row.id}>
               <td>{row.username || "—"}</td><td>{row.name}</td>
@@ -80,13 +120,20 @@ export function VerifiedOpsAccountsPage({
                 onClick={() => onOpenCustomers?.({ id: row.id, name: row.name })}>
                 查看所属客户
               </button></td>
+              <td><div className={styles.actions}>
+                <button type="button" className={styles.lightButton} disabled={busyAccountId === row.id}
+                  onClick={() => void changeStatus(row)}>{row.status === "ACTIVE" ? "停用账户" : "启用账户"}</button>
+                <button type="button" className={styles.lightButton} disabled={!row.identityId || busyAccountId === row.id}
+                  onClick={() => void resetTotp(row)}>重置 2FA</button>
+              </div></td>
             </tr>)}
-            {accounts.data.length === 0 ? <tr><td colSpan={6}>当前没有真实子账户记录。</td></tr> : null}
+            {accounts.data.length === 0 ? <tr><td colSpan={7}>当前没有真实子账户记录。</td></tr> : null}
           </tbody>
         </table>
       </div>}
     </section>
-    <p className={styles.note}>展示的子账户来自项目数据库；不会虚构用户数量、客户数或 2FA 密钥。</p>
+    <p className={styles.note}>账户创建、停用、2FA 重置均调用服务端并记录审计。重置 2FA 不会更改该子账户已有的六位数字客户邀请码。</p>
+    {error && !open ? <p className={styles.error} role="alert">{error}</p> : null}
     {issued ? <section className={styles.success} role="status">
       <div className={styles.cardTitle}>
         <strong>账户已由服务器创建，以下绑定资料仅在本次页面中显示</strong>
@@ -95,6 +142,7 @@ export function VerifiedOpsAccountsPage({
       <p>账户：{issued.username}（{issued.name}）</p>
       <p>客户注册邀请码（固定六位数字）：<code>{/^[0-9]{6}$/.test(issued.invite) ? issued.invite : "邀请码格式异常，不得发放"}</code></p>
       <p>管理员 2FA 绑定密钥（不是邀请码）：<code>{issued.totpSecret}</code></p>
+      <p>身份验证器绑定 URI：<code>{issued.otpauthUri}</code></p>
       <p className={styles.note}>2FA 密钥仅用于该子账户身份验证器；六位数字邀请码用于下属客户注册并自动归属此子账户。请勿将 2FA 密钥发给客户。</p>
       <p className={styles.note}>立即在授权管理员的身份验证器中绑定。不要在公开场合共享密钥。</p>
     </section> : null}
