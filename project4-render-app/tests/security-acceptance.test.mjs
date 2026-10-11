@@ -6,6 +6,7 @@ const main = readFileSync(new URL("../pages/_index.tsx", import.meta.url), "utf8
 const api = readFileSync(new URL("../helpers/project4Api.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../pages/_index.module.css", import.meta.url), "utf8");
 const clientBackend = readFileSync(new URL("../backend/project4-client-api/index.ts", import.meta.url), "utf8");
+const verifiedOps = readFileSync(new URL("../components/VerifiedOpsAccounts.tsx", import.meta.url), "utf8");
 
 test("customer authentication always requires a verified server session", () => {
   const login = main.slice(main.indexOf("function LoginScreen"), main.indexOf("function Sidebar"));
@@ -73,4 +74,15 @@ test("customer-specific holdings and orders require scoped API, not sample data"
   assert.match(api, /CLIENT_SESSION_REQUIRED/);
   assert.match(api, /Authorization: "Bearer " \+ token/);
   assert.match(main, /project4Api\.logoutClient\(\)/);
+});
+
+test("only master route mounts the real operations sub-account service", () => {
+  assert.match(main, /view === "opsAccounts" && role === "master"/);
+  assert.match(main, /<VerifiedOpsAccountsPage\s*\/>/);
+  assert.match(api, /action: "list_ops_accounts"/);
+  assert.match(api, /action: "create_ops_account"/);
+  assert.match(verifiedOps, /queryFn: project4Api\.listOpsAccounts/);
+  assert.match(verifiedOps, /project4Api\.createOpsAccount/);
+  assert.match(verifiedOps, /type="password"/);
+  assert.doesNotMatch(verifiedOps, /Math\.random\(/);
 });
