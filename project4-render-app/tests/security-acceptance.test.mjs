@@ -11,6 +11,7 @@ const verifiedOps = readFileSync(new URL("../components/VerifiedOpsAccounts.tsx"
 const reportingBackend = readFileSync(new URL("../backend/project4-reporting-api/index.ts", import.meta.url), "utf8");
 const verifiedReports = readFileSync(new URL("../components/VerifiedAdminRecords.tsx", import.meta.url), "utf8");
 const customerWorkspace = readFileSync(new URL("../components/ScopedCustomerWorkspace.tsx", import.meta.url), "utf8");
+const controlPages = readFileSync(new URL("../components/AdminControlPages.tsx", import.meta.url), "utf8");
 
 test("customer authentication always requires a verified server session", () => {
   const login = main.slice(main.indexOf("function LoginScreen"), main.indexOf("function Sidebar"));
@@ -141,4 +142,42 @@ test("customer registration requires six numerical digits, never the TOTP secret
   assert.ok(verifiedOps.includes('客户注册邀请码（固定六位数字）'));
   assert.ok(verifiedOps.includes('管理员 2FA 绑定密钥（不是邀请码）'));
   assert.ok(clientBackend.includes('db.rpc("register_client_with_invite"'));
+});
+
+
+test("real master operations can suspend users and rotate admin TOTP independently of signup invite", () => {
+  assert.ok(api.includes('action: "set_ops_status"'));
+  assert.ok(api.includes('action: "reset_ops_totp"'));
+  assert.ok(verifiedOps.includes('project4Api.setOpsStatus(row.id, status)'));
+  assert.ok(verifiedOps.includes('project4Api.resetOpsTotp(row.identityId)'));
+  assert.ok(verifiedOps.includes('客户六位邀请码不会改变'));
+  assert.ok(verifiedOps.includes('客户注册邀请码（固定六位数字）'));
+  assert.match(adminBackend, /action === "reset_ops_totp"/);
+  assert.match(adminBackend, /action === "set_ops_status"/);
+  assert.match(adminBackend, /ops_sessions"\)\.update\(/);
+});
+
+test("security search returns only saved database matches and can create manual hidden entries", () => {
+  const securities = controlPages.slice(controlPages.indexOf('function SecuritiesPage()'),controlPages.indexOf('function PurchaseAccessPage('));
+  assert.ok(securities.includes('await securitiesQuery.refetch()'));
+  assert.ok(securities.includes('手工录入证券'));
+  assert.ok(securities.includes('visible: false, internalOrder: false'));
+  assert.ok(securities.includes('visible: row.visible === true'));
+  assert.doesNotMatch(securities,/setTimeout\(/);
+  assert.doesNotMatch(securities,/query\.trim\(\)\.toUpperCase\(\) \|\| "NEW"/);
+  assert.ok(adminBackend.includes('.from("securities")\n        .insert(payload)'));
+  assert.ok(adminBackend.includes('provider_synced_at: null'));
+  assert.ok(adminBackend.includes('visible: false,'));
+  assert.ok(adminBackend.includes('tradable: false,'));
+  assert.ok(adminBackend.includes('SECURITY_ALREADY_EXISTS'));
+  assert.ok(adminBackend.includes('ORDER_EXECUTION_NOT_CONNECTED'));
+});
+
+test("unavailable modules and unverified money controls cannot be activated", () => {
+  assert.ok(main.includes('const unavailable = ["products", "loans", "notifications", "risk", "support", "audit", "settings", "purchaseAccess"]'));
+  assert.ok(main.includes('disabled={unavailable}'));
+  assert.ok(main.includes('当前不展示任何预设数据') === false);
+  assert.doesNotMatch(main.slice(main.indexOf('function MarketPage('),main.indexOf('function OrderRows(')),/const available = 186240/);
+  assert.ok(main.includes('price: item.quote?.lastPrice == null ? "—"'));
+  assert.ok(main.includes('Tranzacționare indisponibilă'));
 });
