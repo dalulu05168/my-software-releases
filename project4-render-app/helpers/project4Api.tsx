@@ -153,14 +153,20 @@ export const project4Api = {
     this.logoutAdmin();
   },
 
-  async listAdminReport(action: "clients" | "orders" | "cash" | "positions"): Promise<{
+  async listAdminReport(
+    action: "clients" | "orders" | "cash" | "positions",
+    filters: { opsAccountId?: string | null; userId?: string | null } = {},
+  ): Promise<{
     rows: Array<Record<string, string | number | boolean | null>>;
     limit: number;
     possiblyMore: boolean;
   }> {
     const token = typeof window === "undefined" ? null : window.localStorage.getItem(SESSION_KEY);
     if (!token) throw new Error("AUTHORIZED_ADMIN_SESSION_REQUIRED");
-    const response = await fetch(PROJECT4_REPORTS_API + "?action=" + encodeURIComponent(action), {
+    const params = new URLSearchParams({ action });
+    if (filters.opsAccountId) params.set("ops_account_id", filters.opsAccountId);
+    if (filters.userId) params.set("user_id", filters.userId);
+    const response = await fetch(PROJECT4_REPORTS_API + "?" + params.toString(), {
       headers: { Authorization: "Bearer " + token },
       cache: "no-store",
     });
