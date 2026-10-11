@@ -165,7 +165,7 @@ test("security search returns only saved database matches and can create manual 
   assert.ok(securities.includes('visible: row.visible === true'));
   assert.doesNotMatch(securities,/setTimeout\(/);
   assert.doesNotMatch(securities,/query\.trim\(\)\.toUpperCase\(\) \|\| "NEW"/);
-  assert.ok(adminBackend.includes('.from("securities")\n        .insert(payload)'));
+  assert.match(adminBackend, /\.from\("securities"\)\s*\.insert\(payload\)/);
   assert.ok(adminBackend.includes('provider_synced_at: null'));
   assert.ok(adminBackend.includes('visible: false,'));
   assert.ok(adminBackend.includes('tradable: false,'));
