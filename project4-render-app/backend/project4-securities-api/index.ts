@@ -702,7 +702,10 @@ Deno.serve(async (req: Request) => {
 
     if (action === "set_ops_status") {
       const opsAccountId = String(body?.opsAccountId || "");
-      const status = body?.status === "SUSPENDED" ? "SUSPENDED" : "ACTIVE";
+      if (body?.status !== "SUSPENDED" && body?.status !== "ACTIVE") {
+        return json({ error: "INVALID_OPS_STATUS" }, 400);
+      }
+      const status: "ACTIVE" | "SUSPENDED" = body.status;
 
       if (!/^[0-9a-f-]{36}$/i.test(opsAccountId)) {
         return json({ error: "INVALID_OPS_ACCOUNT_ID" }, 400);
