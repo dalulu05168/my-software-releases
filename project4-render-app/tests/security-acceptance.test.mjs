@@ -5,13 +5,16 @@ import { readFileSync } from "node:fs";
 const main = readFileSync(new URL("../pages/_index.tsx", import.meta.url), "utf8");
 const api = readFileSync(new URL("../helpers/project4Api.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../pages/_index.module.css", import.meta.url), "utf8");
+const clientBackend = readFileSync(new URL("../backend/project4-client-api/index.ts", import.meta.url), "utf8");
 
 test("customer authentication always requires a verified server session", () => {
   const login = main.slice(main.indexOf("function LoginScreen"), main.indexOf("function Sidebar"));
   assert.match(login, /await project4Api\.loginClient\(account\.trim\(\), password\)/);
   assert.match(login, /onLogin\("client", result\.displayName\)/);
   assert.doesNotMatch(login, /onLogin\(role, displayName\)/);
-  assert.match(api, /throw new Error\("CLIENT_AUTH_NOT_CONFIGURED"\)/);
+  assert.match(api, /PROJECT4_CLIENT_API \+ "\?action=login"/);
+  assert.match(api, /window\.sessionStorage\.setItem\(CLIENT_SESSION_KEY, data\.sessionToken\)/);
+  assert.match(api, /data\?\.ok !== true \|\| data\?\.role !== "client"/);
 });
 
 test("password reset and signup do not claim success without a backend", () => {
@@ -50,4 +53,24 @@ test("responsive UI restores readable account text and expands the viewport", ()
   assert.match(css, /\.heroBalance>div:first-child strong\s*\{\s*color:#202A37!important/);
   assert.match(css, /width:100vw!important/);
   assert.match(css, /max-height:100dvh!important/);
+});
+
+test("read-only client backend validates existing clients and scoped sessions", () => {
+  assert.match(clientBackend, /async function verifyPassword\(/);
+  assert.match(clientBackend, /PBKDF2/);
+  assert.match(clientBackend, /identity\.role !== "CLIENT"/);
+  assert.match(clientBackend, /account\.ops_account_id !== session\.ops_account_id/);
+  assert.match(clientBackend, /\.eq\("user_id", id\)\.order\("created_at"/);
+  assert.match(clientBackend, /\.eq\("user_id", id\)\.order\("updated_at"/);
+  assert.match(clientBackend, /balances: null/);
+  assert.match(clientBackend, /orderSubmissionEnabled: false/);
+  assert.doesNotMatch(clientBackend, /action"\) === "place_order"/);
+});
+
+test("customer-specific holdings and orders require scoped API, not sample data", () => {
+  assert.match(main, /function ClientPortfolioRecordsPage/);
+  assert.match(main, /queryFn: project4Api\.getClientPortfolio/);
+  assert.match(api, /CLIENT_SESSION_REQUIRED/);
+  assert.match(api, /Authorization: "Bearer " \+ token/);
+  assert.match(main, /project4Api\.logoutClient\(\)/);
 });
