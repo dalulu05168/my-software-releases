@@ -198,3 +198,13 @@ test("client invite brute-force throttling cannot be bypassed by changing regist
   assert.ok(clientBackend.includes('SIGNUP_SOURCE_UNAVAILABLE'));
   assert.doesNotMatch(clientBackend,/clientAddress\+"\:"\+email/);
 });
+
+
+test("ops account status updates are validated, audited, and cannot silently succeed for missing IDs", () => {
+  assert.ok(adminBackend.includes('error: "INVALID_OPS_STATUS"'));
+  assert.ok(adminBackend.includes('error: "OPS_ACCOUNT_NOT_FOUND"'));
+  assert.ok(adminBackend.includes('OPS_ACCOUNT_SUSPENDED'));
+  assert.ok(adminBackend.includes('OPS_ACCOUNT_REACTIVATED'));
+  assert.ok(adminBackend.includes('OPS_STATUS_CHANGED_BUT_AUDIT_FAILED'));
+  assert.ok(!adminBackend.includes('clients: 0,'));
+});
