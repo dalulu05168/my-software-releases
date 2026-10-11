@@ -478,6 +478,25 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    if (action === "logout_admin") {
+      const accessToken = bearer(req);
+      if (accessToken.length < 32 || accessToken.length > 200) {
+        return json({ error: "ADMIN_SESSION_REQUIRED" }, 401);
+      }
+      const digest = await sha256Hex(accessToken);
+      const now = new Date().toISOString();
+      // Logout works for either verified master or OPS tokens. An unknown
+      // token touches no rows, and only token digests are stored server-side.
+      const [master, ops] = await Promise.all([
+        supabase.from("master_sessions").update({ revoked_at: now })
+          .eq("token_digest", digest).is("revoked_at", null),
+        supabase.from("ops_sessions").update({ revoked_at: now })
+          .eq("token_digest", digest).is("revoked_at", null),
+      ]);
+      if (master.error || ops.error) return json({ error: "LOGOUT_UNAVAILABLE" }, 503);
+      return json({ ok: true });
+    }
+
     const auth = await requireMasterSession(supabase, req);
     if ("error" in auth) return json({ error: auth.error }, 401);
 
