@@ -6,6 +6,7 @@ const main = readFileSync(new URL("../pages/_index.tsx", import.meta.url), "utf8
 const api = readFileSync(new URL("../helpers/project4Api.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../pages/_index.module.css", import.meta.url), "utf8");
 const clientBackend = readFileSync(new URL("../backend/project4-client-api/index.ts", import.meta.url), "utf8");
+const adminBackend = readFileSync(new URL("../backend/project4-securities-api/index.ts", import.meta.url), "utf8");
 const verifiedOps = readFileSync(new URL("../components/VerifiedOpsAccounts.tsx", import.meta.url), "utf8");
 const reportingBackend = readFileSync(new URL("../backend/project4-reporting-api/index.ts", import.meta.url), "utf8");
 const verifiedReports = readFileSync(new URL("../components/VerifiedAdminRecords.tsx", import.meta.url), "utf8");
@@ -116,4 +117,28 @@ test("customer/orders/cash/positions use real read-only reports with scoped expo
   assert.match(verifiedReports, /project4Api\.listAdminReport\(kind\)/);
   assert.match(verifiedReports, /每次最多 200 条/);
   assert.match(verifiedReports, /csvValue/);
+});
+
+
+test("master creates both independent TOTP secret and unique six-digit customer invite", () => {
+  assert.match(adminBackend, /function generateTotpSecret\(/);
+  assert.match(adminBackend, /function generateInviteCode\(/);
+  assert.match(adminBackend, /crypto\.getRandomValues\(new Uint32Array\(1\)\)/);
+  assert.match(adminBackend, /padStart\(6, "0"\)/);
+  assert.match(adminBackend, /inviteError\.code !== "23505"/);
+  assert.match(adminBackend, /code_digest: inviteDigest/);
+  assert.match(adminBackend, /display_code: candidate/);
+  assert.match(adminBackend, /p_totp: totpSecret/);
+  assert.match(adminBackend, /otpauthUri: makeOtpAuthUri/);
+  assert.match(adminBackend, /invite: inviteCode/);
+  assert.doesNotMatch(adminBackend, /let out = "OPS-"/);
+});
+
+test("customer registration requires six numerical digits, never the TOTP secret", () => {
+  assert.ok(clientBackend.includes('!/^[0-9]{6}$/.test(invite)'));
+  assert.ok(main.includes('!/^[0-9]{6}$/.test(invite.trim())'));
+  assert.ok(main.includes('pattern="[0-9]{6}"'));
+  assert.ok(verifiedOps.includes('客户注册邀请码（固定六位数字）'));
+  assert.ok(verifiedOps.includes('管理员 2FA 绑定密钥（不是邀请码）'));
+  assert.ok(clientBackend.includes('db.rpc("register_client_with_invite"'));
 });
