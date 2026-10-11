@@ -46,6 +46,13 @@ jobs:
         run: node --test tests/security-acceptance.test.mjs
       - name: Package Windows setup installer
         run: npm run desktop:package
+      - name: Smoke-test packaged Windows desktop executable
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path desktop-release/win-unpacked -Filter "*.exe" -File | Select-Object -First 1
+          if (-not $exe) { throw "Packaged Electron executable was not found" }
+          $process = Start-Process -FilePath $exe.FullName -ArgumentList "--p004-smoke" -PassThru -Wait
+          if ($process.ExitCode -ne 0) { throw "Electron bundled startup smoke failed with exit code $($process.ExitCode)" }
       - name: Verify installer exists and is not empty
         shell: pwsh
         run: |
