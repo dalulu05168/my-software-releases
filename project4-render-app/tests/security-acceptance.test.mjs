@@ -181,3 +181,20 @@ test("unavailable modules and unverified money controls cannot be activated", ()
   assert.ok(main.includes('price: item.quote?.lastPrice == null ? "—"'));
   assert.ok(main.includes('Tranzacționare indisponibilă'));
 });
+
+
+test("admin logout revokes server tokens, and neither OPS nor MASTER use persistent localStorage credentials", () => {
+  assert.ok(adminBackend.includes('if (action === "logout_admin")'));
+  assert.ok(adminBackend.includes('supabase.from("master_sessions").update({ revoked_at: now })'));
+  assert.ok(adminBackend.includes('supabase.from("ops_sessions").update({ revoked_at: now })'));
+  assert.ok(api.includes('window.sessionStorage.setItem(SESSION_KEY, data.sessionToken)'));
+  assert.ok(api.includes('window.sessionStorage.getItem(SESSION_KEY)'));
+  assert.ok(api.includes('action: "logout_admin"'));
+  assert.doesNotMatch(api,/window\.localStorage\.setItem\(SESSION_KEY,/);
+});
+
+test("client invite brute-force throttling cannot be bypassed by changing registration email", () => {
+  assert.ok(clientBackend.includes('p004-signup-v2:ip:'));
+  assert.ok(clientBackend.includes('SIGNUP_SOURCE_UNAVAILABLE'));
+  assert.doesNotMatch(clientBackend,/clientAddress\+"\:"\+email/);
+});
