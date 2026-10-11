@@ -621,3 +621,8 @@
   .metricGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .pageHeader>div{flex-basis:120px!important}
 }
+
+
+/* Clear distinction between actionable errors and ordinary neutral help text. */
+.formError{background:#FFF0EA;color:#9F3E1B;border:1px solid #DFB5A4;border-radius:9px;padding:11px 12px;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.unavailableNotice{margin:4px 0 0;color:#4B5563!important;font-size:11px!important;line-height:1.6;text-align:center}
