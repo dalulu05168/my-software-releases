@@ -1,0 +1,30 @@
+name: P004 Trading Platform Build
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'project4-render-app/**'
+      - '.github/workflows/p004-trading-build.yml'
+  push:
+    branches: [p004-light-ui-render-20261011]
+    paths:
+      - 'project4-render-app/**'
+      - '.github/workflows/p004-trading-build.yml'
+  workflow_dispatch:
+jobs:
+  web-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: project4-render-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build static trading frontend
+        run: npm run build
+      - name: Verify index output
+        run: test -s dist/index.html
