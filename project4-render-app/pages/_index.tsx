@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { project4Api } from "../helpers/project4Api";
+import { clientApiEnabled, project4ClientApi } from "../helpers/project4ClientApi";
 import {
   Activity,
   BadgeDollarSign,
@@ -237,55 +238,58 @@ function LoginScreen({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setLoginError("");
-    if (mode === "forgot") {
-      setResetMessage(
-        portal === "client"
-          ? "Verificare finalizată. Setați o parolă nouă."
-          : "验证完成，请设置新的登录密码。",
-      );
-      return;
-    }
-    if (portal === "admin") {
+    setResetMessage("");
+    if (portal === "client") {
+      if (mode !== "login") {
+        setLoginError("Înregistrarea și resetarea parolei vor fi disponibile doar după activarea verificării securizate în server.");
+        return;
+      }
+      if (!clientApiEnabled()) {
+        setLoginError("Autentificarea clienților nu este încă activată. Serviciul securizat trebuie validat și publicat separat.");
+        return;
+      }
       setLoggingIn(true);
       try {
-        const result = await project4Api.loginMaster(
-          account.trim(),
-          password,
-          totp,
-        );
-        onLogin("master", result.displayName || account.trim() || "Master Admin");
+        const result = await project4ClientApi.login(account, password);
+        onLogin("client", result.displayName);
       } catch (error) {
-        const code = error instanceof Error ? error.message : "LOGIN_FAILED";
-        setLoginError(
-          code === "INVALID_TOTP"
-            ? "Google 2FA 验证码错误"
-            : code === "ACCOUNT_TEMPORARILY_LOCKED"
-              ? "账户因连续验证失败已临时锁定，请稍后再试"
-              : "后台账户、密码或验证码不正确",
-        );
+        const code = error instanceof Error ? error.message : "CLIENT_LOGIN_FAILED";
+        setLoginError(code === "ACCOUNT_TEMPORARILY_LOCKED"
+          ? "Contul este blocat temporar după autentificări nereușite."
+          : "Autentificarea nu a fost confirmată de server. Verificați datele de acces.");
       } finally {
         setLoggingIn(false);
       }
       return;
     }
-    const role: Role =
-      portal === "client"
-        ? "client"
-        : /^(ops|sub|运营|子账户)/i.test(account.trim())
-          ? "ops"
-          : "master";
-    const displayName =
-      mode === "register"
-        ? name.trim() || "Client"
-        : account.includes("@")
-          ? account.split("@")[0]
-          : account.trim() ||
-            (role === "master"
-              ? "Master Admin"
-              : role === "ops"
-                ? "Operations Admin"
-                : "Carlos Ramírez");
-    onLogin(role, displayName);
+    if (mode !== "login") {
+      setLoginError("密码恢复需要后端身份核验，当前不能操作。");
+      return;
+    }
+    if (!account.trim() || !password || !/^\d{6}$/.test(totp)) {
+      setLoginError("请输入账户、密码及完整的 6 位动态验证码。");
+      return;
+    }
+    setLoggingIn(true);
+    try {
+      const result = await project4Api.loginAdmin(account.trim(), password, totp);
+      onLogin(result.role, result.displayName || account.trim());
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "LOGIN_FAILED";
+      setLoginError(
+        code === "INVALID_TOTP"
+          ? "Google 2FA 验证码错误；请检查设备时间与当前绑定的验证器。"
+          : code === "ACCOUNT_TEMPORARILY_LOCKED"
+            ? "账户因连续验证失败已临时锁定，请稍后再试。"
+            : code === "ACCOUNT_SUSPENDED"
+              ? "该子账户已暂停，请联系总账户管理员。"
+              : code === "INVALID_LOGIN_INPUT"
+                ? "请填写账户、密码及 6 位验证码。"
+                : "后台登录失败：账号、密码或验证码未通过服务器验证。",
+      );
+    } finally {
+      setLoggingIn(false);
+    }
   };
 
   const isClient = portal === "client";
@@ -451,7 +455,7 @@ function Sidebar({
   const allowed =
     role === "client"
       ? navItems.filter((item) =>
-          ["dashboard", "products", "orders", "cash", "positions", "loans", "notifications", "market", "support", "settings"].includes(item.key),
+          ["orders", "cash", "positions", "market", "settings"].includes(item.key),
         )
       : role === "ops"
         ? navItems.filter((item) =>
@@ -811,7 +815,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
     return {
       symbol: item.symbol,
       name: item.name,
-      price: item.quote?.lastPrice == null ? "0" : String(item.quote.lastPrice),
+      price: item.quote?.lastPrice == null ? "—" : String(item.quote.lastPrice),
       change: item.quote ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "暂无行情",
       up: pct >= 0,
       market: item.market,
@@ -821,7 +825,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
   const selected = liveStocks.find((s)=>s.symbol===symbol) ?? liveStocks[0] ?? {
     symbol: "",
     name: "暂无已上架证券",
-    price: "0",
+    price: "—",
     change: "暂无行情",
     up: true,
     market: "US" as const,
@@ -844,7 +848,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
     return marketMatch && searchMatch;
   });
   const choosePercent = (ratio: number) => {
-    const available = 186240;
+    const available = 0; // Never fabricate an account balance for order sizing.
     const price = Math.max(0.01, Number(selected.price));
     setQty(String(Math.max(1, Math.floor((available * ratio) / price))));
   };
@@ -859,11 +863,11 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
             <div><strong>{s.symbol}</strong><span>{s.name}</span></div><div><strong>{s.price}</strong><span className={s.up?styles.green:styles.red}>{s.change}</span></div>
           </button>
         ))}
-        {securitiesQuery.isFetching?<div className={enh.emptyMarket}>Se sincronizează instrumentele…</div>:null}
+        {securitiesQuery.isFetching?<div className={enh.emptyMarket}>Se sincronizează instrumentele…</div>:null}{securitiesQuery.isError?<div role="alert" className={enh.emptyMarket}>Sincronizarea nu a reușit. Verificați conexiunea și reîncărcați pagina.</div>:null}
         {visibleStocks.length===0?<div className={enh.emptyMarket}>Nu există instrumente disponibile</div>:null}
       </section>
       <section className={styles.marketCenter}>
-        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>231.44</b></span><span>Minim <b>223.98</b></span><span>Volum <b>42.8M</b></span><span>Piață <b>{selected.market}</b></span></div></div>
+        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Piață <b>{selected.market}</b></span><span>Maxim / Minim / Volum: date indisponibile</span></div></div>
         <div className={styles.chartToolbar}>
           {["1D","7D","1L","3L","1A","Max"].map((item) => (
             <button
@@ -876,20 +880,20 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
           ))}
         </div>
         <div className={styles.candleChart}>
-          <InteractiveCandleChart symbol={selected.symbol} interval={interval} />
+          <p role="status">Datele OHLC în timp real nu sunt disponibile. Nu afișăm lumânări simulate ca date de piață.</p>
         </div>
-        <div className={styles.marketBottom}><section><h3>Cumpărători</h3>{[1,2,3,4,5].map(i=><div key={i}><span>Cump. {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>Tranzacții recente</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
+        <div className={styles.marketBottom}><p>Registrul de ordine și tranzacțiile recente necesită un furnizor de date verificat; nu sunt simulate.</p></div>
       </section>
       <section className={styles.orderPanel}>
         <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>Cumpără</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>Vinde</button></div>
-        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>186,240.00</strong></div>
+        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>— (neconectat)</strong></div>
         <label><span>Instrument</span><input value={selected.symbol} readOnly/></label>
         <label><span>Preț ordin</span><input value={selected.price} readOnly/></label>
         <label><span>Cantitate</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
-        <div className={styles.quickQty}>{[["25%",.25],["50%",.5],["75%",.75],["100%",1]].map(([label,ratio])=><button key={String(label)} onClick={()=>choosePercent(Number(ratio))}>{label}</button>)}</div>
-        <div className={styles.orderEstimate}><span>Valoare estimată</span><strong>{(Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
-        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled={!orderEnabled || !selected.tradable} onClick={()=>orderEnabled&&selected.tradable&&setNotice(`Ordin ${side==="buy"?"de cumpărare":"de vânzare"} înregistrat: ${selected.symbol} × ${qty}`)}>{!selected.symbol?"Niciun instrument disponibil":!selected.tradable?"Tranzacționarea nu este activată":orderEnabled?(side==="buy"?"Plasează ordinul":"Plasează ordinul"):"Tranzacționare restricționată"}</button>
-        <p className={styles.brokerNote}>Ordinele sunt înregistrate în sistemul curent; execuția externă prin broker nu este conectată.</p>
+        <div className={styles.quickQty}>{[["25%",.25],["50%",.5],["75%",.75],["100%",1]].map(([label,ratio])=><button key={String(label)} disabled title="Soldul real nu este conectat">{label}</button>)}</div>
+        <div className={styles.orderEstimate}><span>Valoare estimată</span><strong>{selected.price === "—" ? "—" : (Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
+        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled title="Endpoint-ul securizat pentru ordine nu este conectat">Plasarea ordinelor indisponibilă</button>
+        <p className={styles.brokerNote}>Cotațiile și instrumentele provin din API-ul existent; soldurile și ordinele NU sunt conectate. Nicio tranzacție nu poate fi transmisă din această pagină.</p>
         {!orderEnabled?<div className={enh.riskHint}>Accesul la ordine este restricționat de controlul de risc.</div>:null}
         {notice?<div className={styles.orderNotice}>{notice}</div>:null}
       </section>
@@ -957,7 +961,7 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
         <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Cerrar espejo"><X size={15}/></button></div>
 
         <div className={styles.phoneHeader}>
-          <img src={logoUrl} alt="Visionary Studio"/>
+          <img src="/brantone-veyor-logo-clean.webp" alt="Brantone Veylor"/>
           <div><strong>Visionary Trading</strong><span>{customer.name} · {customer.vip}</span></div>
           <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Soporte"><MessageSquareText size={16}/></button>
         </div>
@@ -1179,11 +1183,13 @@ export default function App() {
       : "client";
 
   if (!role) {
-    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setRole(nextRole);setName(nextName);setView("dashboard");}} />;
+    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setRole(nextRole);setName(nextName);setView(nextRole==="client"?"orders":"dashboard");}} />;
   }
 
   const content =
-    view === "dashboard" ? (
+    role === "client" && !["orders", "cash", "positions", "market", "settings"].includes(view) ? (
+      <div role="alert">此功能尚未通过客户端真实数据与权限验收，因此暂不开放。</div>
+    ) : view === "dashboard" ? (
       <Dashboard role={role} name={name} onOpenMarket={()=>setView("market")} onNavigate={setView} />
     ) : view === "customers" && role !== "client" ? (
       <CustomersPage customers={customers} setCustomers={setCustomers} onMirror={setMirrorCustomer} />
@@ -1201,10 +1207,17 @@ export default function App() {
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master") project4Api.logoutMaster();setRole(null);setName("");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="client") { void project4ClientApi.logout(); } else { project4Api.logoutAdmin(); } setRole(null);setName("");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
-        <div className={styles.workspaceBody}>{content}</div>
+        <div className={styles.workspaceBody}>
+          {view !== "securities" && view !== "opsAccounts" ? (
+            <p role="status" style={{ padding: "9px 16px", margin: "0 0 12px", borderRadius: 10, background: "#fff1dc", color: "#593b16", fontSize: 13 }}>
+              演示数据区域：此页面的账户、订单、余额、持仓、贷款及业务操作尚未接入真实后端；不得用于真实交易或作为操作成功凭据。
+            </p>
+          ) : null}
+          {content}
+        </div>
       </div>
       {mirrorCustomer ? <AppMirror customer={mirrorCustomer} onClose={()=>setMirrorCustomer(null)} /> : null}
     </main>

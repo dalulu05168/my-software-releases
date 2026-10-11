@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Bell,
   Building2,
@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import styles from "./OperationsPages.module.css";
+import { project4Api, type OpsAccount } from "../helpers/project4Api";
 import extra from "./WorkflowEnhancements.module.css";
 
 export type OperationsView =
@@ -345,70 +346,167 @@ function NotificationsPage({ role }: { role: "client" | "ops" | "master" }) {
 }
 
 function OpsAccountsPage() {
-  const [rows, setRows] = useState(opsAccountsSeed);
+  const [rows, setRows] = useState<OpsAccount[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
-  const [result, setResult] = useState<{ invite: string; secret: string } | null>(null);
+  const [result, setResult] = useState<{ invite: string; secret: string; uri: string } | null>(null);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-  const [editing, setEditing] = useState<(typeof opsAccountsSeed)[number] | null>(null);
+  const [password, setPassword] = useState("");
+  const [markets, setMarkets] = useState<Array<"US" | "MX">>(["US", "MX"]);
+  const [editing, setEditing] = useState<OpsAccount | null>(null);
   const [resetSecret, setResetSecret] = useState("");
+  const [resetUri, setResetUri] = useState("");
 
-  const submit = (event: FormEvent) => {
+  const reload = async () => {
+    const current = await project4Api.listOpsAccounts();
+    setRows(current);
+  };
+  useEffect(() => {
+    let active = true;
+    project4Api.listOpsAccounts().then((data) => {
+      if (active) setRows(data);
+    }).catch((cause: unknown) => {
+      if (active) setError(cause instanceof Error ? cause.message : "加载子账户失败");
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; };
+  }, []);
+
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const next = rows.length + 1;
-    const id = `OPS-MX-0${next}`;
-    const invite = `MX${String(6800 + next * 97)}K`;
-    setRows([{ id, name: name || `Operations ${next}`, manager: username || "New Admin", markets: "US + MX", clients: 0, status: "启用", invite }, ...rows]);
-    setResult({ invite, secret: `VS${id.replaceAll("-", "")}2FA${Date.now().toString().slice(-6)}` });
+    setError("");
+    if (name.trim().length < 2 || !/^[A-Za-z0-9._-]{3,64}$/.test(username.trim()) || password.length < 12 || !markets.length) {
+      setError("请输入至少 2 字的名称、合法管理员账号、至少 12 位初始密码，并勾选市场。");
+      return;
+    }
+    setBusy(true);
+    try {
+      const created = await project4Api.createOpsAccount({ name: name.trim(), username: username.trim(), password, markets });
+      setResult({ invite: created.account.invite, secret: created.totpSecret, uri: created.otpauthUri });
+      setPassword("");
+      await reload();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "服务器创建失败，未确认成功。");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggleStatus = async (row: OpsAccount) => {
+    const next = row.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
+    if (!window.confirm(`确认${next === "SUSPENDED" ? "暂停" : "恢复"}子账户 ${row.name}？`)) return;
+    setBusy(true);
+    setError("");
+    try {
+      await project4Api.setOpsStatus(row.id, next);
+      await reload();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "更新失败");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const resetTotp = async (row: OpsAccount) => {
+    if (!row.identityId) { setError("缺少已验证的子账户身份 ID"); return; }
+    if (!window.confirm(`确认重置 ${row.username} 的 Google 2FA？旧密钥与所有登录会话将立即失效。`)) return;
+    setBusy(true);
+    setError("");
+    try {
+      const data = await project4Api.resetOpsTotp(row.identityId);
+      setEditing(row);
+      setResetSecret(data.totpSecret);
+      setResetUri(data.otpauthUri);
+      await reload();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "2FA 重置失败");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>子账户管理</h1><p>创建子账户并管理邀请码、2FA 与市场权限</p></div><button className={styles.primary} onClick={() => { setCreating(true); setResult(null); }}><UserPlus size={15}/> 创建子账户</button></div>
+      <div className={styles.header}>
+        <div><h1>子账户管理</h1><p>服务器数据 · 创建账号、动态验证器绑定、停用与恢复</p></div>
+        <button className={styles.primary} disabled={busy} onClick={() => { setError(""); setCreating(true); setResult(null); }}>
+          <UserPlus size={15}/> 创建子账户
+        </button>
+      </div>
+      {error ? <p role="alert" className={extra.savedMessage}>{error}</p> : null}
       <section className={styles.tablePanel}>
         <table>
-          <thead><tr><th>子账户</th><th>名称</th><th>管理员</th><th>市场</th><th>客户数</th><th>邀请码</th><th>2FA</th><th>状态</th><th>操作</th></tr></thead>
-          <tbody>{rows.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td><td>{row.name}</td><td>{row.manager}</td><td>{row.markets}</td><td>{row.clients}</td><td className={styles.mono}>{row.invite}</td><td><span className={styles.good}>已启用</span></td><td><Status value={row.status}/></td><td><div className={styles.actions}><button onClick={() => { setEditing(row); setResetSecret(""); }}>权限</button><button onClick={() => { setEditing(row); setResetSecret(`VS${row.id.replaceAll("-", "")}${Date.now().toString().slice(-6)}`); }}>重置2FA</button><button onClick={() => setRows(rows.map((item) => item.id === row.id ? { ...item, status: item.status === "启用" ? "暂停" : "启用" } : item))}>{row.status === "启用" ? "暂停" : "恢复"}</button></div></td></tr>)}</tbody>
+          <thead><tr><th>账户 ID</th><th>名称</th><th>管理员</th><th>市场</th><th>客户数</th><th>邀请码</th><th>2FA</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.id}>
+                <td className={styles.mono}>{row.id.slice(0, 8)}</td>
+                <td>{row.name}</td><td>{row.username || "—"}</td>
+                <td>{row.markets.join(" + ") || "—"}</td>
+                <td>{row.clients}</td>
+                <td className={styles.mono}>{row.invite || "—"}</td>
+                <td>服务端保护</td><td><Status value={row.status === "ACTIVE" ? "启用" : "暂停"}/></td>
+                <td><div className={styles.actions}>
+                  <button disabled={busy} onClick={() => { setEditing(row); setResetSecret(""); setResetUri(""); }}>权限</button>
+                  <button disabled={busy || !row.identityId} onClick={() => void resetTotp(row)}>重置2FA</button>
+                  <button disabled={busy} onClick={() => void toggleStatus(row)}>{row.status === "ACTIVE" ? "暂停" : "恢复"}</button>
+                </div></td>
+              </tr>
+            ))}
+          </tbody>
         </table>
+        {loading ? <p role="status">正在从服务器读取子账户…</p> : !rows.length ? <p role="status">暂无子账户；未显示任何模拟数据。</p> : null}
       </section>
       {creating ? (
         <div className={styles.shade}>
           <div className={styles.modal}>
-            <div className={styles.drawerHeader}><div><span>总账户操作</span><h2>创建子账户</h2></div><button onClick={() => setCreating(false)}><X size={18}/></button></div>
+            <div className={styles.drawerHeader}><div><span>总账户操作</span><h2>创建子账户</h2></div><button onClick={() => { setCreating(false); setResult(null); }}><X size={18}/></button></div>
             {!result ? (
               <form className={styles.form} onSubmit={submit}>
-                <label><span>子账户名称</span><input value={name} onChange={(e) => setName(e.target.value)} placeholder="例如 Mexico Operations 04"/></label>
-                <label><span>管理员账户</span><input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="输入管理员账户"/></label>
-                <label><span>初始密码</span><input type="password" defaultValue="ChangeMe2026!"/></label>
-                <div className={styles.checks}><label><input type="checkbox" defaultChecked/> US 市场</label><label><input type="checkbox" defaultChecked/> MX 市场</label><label><input type="checkbox" defaultChecked/> 股票</label><label><input type="checkbox" defaultChecked/> 大宗 / IPO / 基金</label></div>
-                <button className={styles.primary} type="submit">创建并生成登录资料</button>
+                <label><span>子账户名称</span><input required minLength={2} value={name} onChange={(e) => setName(e.target.value)} placeholder="例如 Mexico Operations 04"/></label>
+                <label><span>管理员账号</span><input required value={username} onChange={(e) => setUsername(e.target.value)} placeholder="英文字母、数字、点、下划线、连字符"/></label>
+                <label><span>初始密码（至少 12 位）</span><input required minLength={12} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} /></label>
+                <div className={styles.checks}>
+                  {(["US", "MX"] as const).map((market) => (
+                    <label key={market}><input type="checkbox" checked={markets.includes(market)} onChange={(e) => setMarkets((old) => e.target.checked ? [...old, market] : old.filter((m) => m !== market))}/>{market} 市场</label>
+                  ))}
+                </div>
+                <button className={styles.primary} type="submit" disabled={busy}>{busy ? "服务器处理中…" : "创建并生成真实绑定资料"}</button>
               </form>
             ) : (
               <div className={styles.resultBox}>
-                <CircleCheck size={34}/>
-                <h3>子账户创建完成</h3>
-                <p>以下资料只在当前创建流程展示，请交给对应管理员保存。</p>
-                <div><span>专属邀请码</span><strong>{result.invite}</strong></div>
+                <CircleCheck size={34}/><h3>服务器已创建子账户</h3>
+                <p>请用 Google Authenticator 扫描绑定地址或手动输入以下密钥。资料只在此步骤展示。</p>
+                <div><span>邀请码</span><strong>{result.invite}</strong></div>
                 <div><span>2FA 密钥</span><strong>{result.secret}</strong></div>
-                <button className={styles.primary} onClick={() => setCreating(false)}>完成</button>
+                <div><span>验证器绑定地址</span><small style={{overflowWrap:"anywhere"}}>{result.uri}</small></div>
+                <button className={styles.primary} onClick={() => { setCreating(false); setResult(null); setName(""); setUsername(""); }}>已安全保存</button>
               </div>
             )}
           </div>
         </div>
       ) : null}
       {editing ? (
-        <div className={styles.shade} onMouseDown={() => setEditing(null)}>
+        <div className={styles.shade} onMouseDown={() => { setEditing(null); setResetSecret(""); setResetUri(""); }}>
           <div className={styles.modal} onMouseDown={(event) => event.stopPropagation()}>
-            <div className={styles.drawerHeader}><div><span>子账户安全与权限</span><h2>{editing.id}</h2></div><button onClick={() => setEditing(null)}><X size={18}/></button></div>
+            <div className={styles.drawerHeader}><div><span>子账户安全与权限</span><h2>{editing.name}</h2></div><button onClick={() => { setEditing(null); setResetSecret(""); setResetUri(""); }}><X size={18}/></button></div>
             {resetSecret ? (
-              <div className={styles.resultBox}><ShieldCheck size={32}/><h3>新的2FA密钥已生成</h3><div><span>2FA密钥</span><strong>{resetSecret}</strong></div><p>保存后旧密钥不再使用。</p></div>
+              <div className={styles.resultBox}><ShieldCheck size={32}/><h3>服务器已重置 2FA</h3>
+                <p>旧密钥和已登录会话已失效。请保存新密钥并重新绑定验证器。</p>
+                <div><span>2FA 密钥</span><strong>{resetSecret}</strong></div>
+                <div><span>绑定地址</span><small style={{overflowWrap:"anywhere"}}>{resetUri}</small></div>
+              </div>
             ) : (
               <div className={styles.form}>
-                <label><span>子账户名称</span><input defaultValue={editing.name}/></label>
-                <div className={styles.checks}><label><input type="checkbox" defaultChecked={editing.markets.includes("US")}/> US 市场</label><label><input type="checkbox" defaultChecked={editing.markets.includes("MX")}/> MX 市场</label><label><input type="checkbox" defaultChecked/> 股票</label><label><input type="checkbox" defaultChecked/> 大宗 / IPO / 基金</label></div>
+                <p>当前市场权限：{editing.markets.join(" + ") || "—"}</p>
+                <p>市场/功能权限修改接口尚未开放，为避免产生假的“保存成功”，本页面只读。</p>
               </div>
             )}
-            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setEditing(null)}>关闭</button>{!resetSecret ? <button className={styles.primary} onClick={() => setEditing(null)}>保存权限</button> : null}</div>
+            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => { setEditing(null); setResetSecret(""); setResetUri(""); }}>关闭</button></div>
           </div>
         </div>
       ) : null}

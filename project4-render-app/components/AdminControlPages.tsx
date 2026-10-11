@@ -176,7 +176,6 @@ function SecuritiesPage() {
   }));
   const [market, setMarket] = useState<"ALL" | "US" | "MX">("ALL");
   const [query, setQuery] = useState("");
-  const [searching, setSearching] = useState(false);
   const [providerRows, setProviderRows] = useState<SecurityRow[]>([]);
   const [selected, setSelected] = useState<SecurityRow | null>(null);
 
@@ -189,35 +188,12 @@ function SecuritiesPage() {
         .includes(query.toLowerCase()),
   );
 
+  // Until a real external provider lookup is connected, only search securities
+  // returned by the backend. Never invent symbol / price / sync timestamps.
   const searchProvider = () => {
-    setSearching(true);
-    setTimeout(() => {
-      const candidates = rows.filter((row) =>
-        [row.symbol, row.name]
-          .join(" ")
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-      );
-      setProviderRows(
-        candidates.length
-          ? candidates
-          : [
-              {
-                symbol: query.trim().toUpperCase() || "NEW",
-                name: query.trim().toUpperCase() || "待录入证券",
-                market: market === "MX" ? "MX" : "US",
-                exchange: market === "MX" ? "BMV" : "NASDAQ",
-                mic: market === "MX" ? "XMEX" : "XNAS",
-                currency: market === "MX" ? "MXN" : "USD",
-                visible: true,
-                internalOrder: false,
-                quote: "—",
-                sync: "刚刚",
-              },
-            ],
-      );
-      setSearching(false);
-    }, 180);
+    setProviderRows(rows.filter((row) =>
+      [row.symbol, row.name].join(" ").toLowerCase().includes(query.toLowerCase()),
+    ));
   };
 
   const refreshSecurities = async () => {
@@ -269,8 +245,8 @@ function SecuritiesPage() {
       <section className={styles.providerBox}>
         <div className={styles.providerTitle}>
           <div>
-            <strong>证券数据源搜索</strong>
-            <span>按代码或名称查找 US / MX 证券资料</span>
+            <strong>已入库证券查询</strong>
+            <span>查询真实 API 内的 US / MX 证券；外部数据源检索尚未接入，不生成虚构证券</span>
           </div>
           <LineChart size={20} />
         </div>
@@ -294,7 +270,7 @@ function SecuritiesPage() {
             />
           </div>
           <button className={styles.primary} onClick={searchProvider}>
-            {searching ? "查询中…" : "查询证券"}
+            查询已上架证券
           </button>
         </div>
         {providerRows.length ? (
@@ -315,6 +291,15 @@ function SecuritiesPage() {
         ) : null}
       </section>
 
+      {securitiesQuery.isError ? (
+        <p role="alert">证券列表从服务器同步失败。请检查后台会话与网络连接，当前不会展示模拟证券。</p>
+      ) : null}
+      {!securitiesQuery.isFetching && !securitiesQuery.isError && rows.length === 0 ? (
+        <p role="status">服务器暂无证券记录；没有使用默认演示行情代替。</p>
+      ) : null}
+      {updateMutation.isError || upsertMutation.isError ? (
+        <p role="alert">证券写入未通过服务器验证；页面未确认操作成功。</p>
+      ) : null}
       <section className={styles.tablePanel}>
         <table>
           <thead>

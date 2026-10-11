@@ -18,6 +18,7 @@ import {
 import styles from "./CoreWorkflowPages.module.css";
 import extra from "./WorkflowEnhancements.module.css";
 import type { RiskControl } from "./AdminControlPages";
+import { ClientPortfolioPage } from "./ClientPortfolioPage";
 
 export type CoreWorkflowView = "orders" | "cash" | "positions" | "settings";
 
@@ -98,6 +99,14 @@ export function CoreWorkflowPage({
   accountName: string;
   riskControls: RiskControl[];
 }) {
+  if (role === "client") return <ClientPortfolioPage view={view} />;
+  if (["orders", "cash", "positions"].includes(view)) {
+    return <div role="status" className={styles.stack}>
+      <h1>{view === "orders" ? "订单管理" : view === "cash" ? "资金管理" : "客户持仓"}</h1>
+      <p>服务器账户范围核验与后台数据查询接口尚待部署，当前不能查看或修改客户真实数据。</p>
+      <p>为避免显示虚构客户订单、资金和收益，这里不加载本地演示记录。</p>
+    </div>;
+  }
   if (view === "orders") return <OrdersPage role={role} accountName={accountName} />;
   if (view === "cash") return <CashPage role={role} accountName={accountName} riskControls={riskControls} />;
   if (view === "positions") return <PositionsPage role={role} accountName={accountName} />;
