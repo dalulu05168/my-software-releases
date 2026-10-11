@@ -160,7 +160,7 @@ async function portfolio(db: Db, session: ClientSession) {
   const securityIds = [...new Set([
     ...orders.map((row) => row.security_id),
     ...positions.map((row) => row.security_id),
-  ].filter(Boolean))];
+  ].filter((id): id is string => typeof id === "string"))];
   const securities = securityIds.length
     ? await db.from("securities").select("id,symbol,name,market,currency")
         .in("id", securityIds).limit(200)
@@ -213,6 +213,8 @@ Deno.serve(async (req: Request) => {
         if (!check?.ok)
           return respond(req, { error: check?.error || "INVALID_CREDENTIALS" },
             check?.error === "ACCOUNT_TEMPORARILY_LOCKED" ? 423 : 401);
+        if (typeof check.userId !== "string" || typeof check.opsAccountId !== "string")
+          return respond(req, { error: "INVALID_LOGIN_RESPONSE" }, 503);
 
         const token = sessionToken();
         const digest = await sha256Hex(token);
