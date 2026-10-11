@@ -143,6 +143,34 @@ export const project4Api = {
     this.logoutAdmin();
   },
 
+  async listOpsAccounts(): Promise<Array<{
+    id: string; name: string; username: string; manager: string;
+    status: string; enabled: boolean; invite: string; markets: string[];
+  }>> {
+    const data = await request({
+      method: "POST",
+      body: JSON.stringify({ action: "list_ops_accounts" }),
+    });
+    if (!Array.isArray(data.accounts)) throw new Error("OPS_ACCOUNTS_INVALID_RESPONSE");
+    return data.accounts;
+  },
+
+  async createOpsAccount(input: {
+    name: string; username: string; password: string; markets: Array<"US" | "MX">;
+  }): Promise<{
+    account: { id: string; username: string; name: string; invite: string };
+    totpSecret: string; otpauthUri: string;
+  }> {
+    const data = await request({
+      method: "POST",
+      body: JSON.stringify({ action: "create_ops_account", ...input }),
+    });
+    if (data.ok !== true || !data.account?.id || typeof data.totpSecret !== "string") {
+      throw new Error("OPS_CREATE_INVALID_RESPONSE");
+    }
+    return data;
+  },
+
   async listClientSecurities() {
     const data = await request(undefined, "client");
     return (data.securities || []) as ApiSecurity[];
