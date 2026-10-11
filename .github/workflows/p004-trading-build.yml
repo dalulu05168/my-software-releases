@@ -26,5 +26,7 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Build static trading frontend
         run: npm run build
+      - name: Security and layout regression tests
+        run: node --test tests/security-acceptance.test.mjs
       - name: Verify index output
         run: test -s dist/index.html
