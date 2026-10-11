@@ -41,3 +41,13 @@ jobs:
         run: npm test
       - name: Build P004 app
         run: npm run build
+
+  backend-static-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type check proposed Deno Edge Function (no deployment)
+        run: deno check project4-render-app/backend/project4-client-api/index.ts
