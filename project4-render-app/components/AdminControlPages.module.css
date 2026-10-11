@@ -57,3 +57,22 @@
 .staffMessage{background:#fff1e8!important;border-color:#ffe0cd!important}
 .chatForm input{color:#263443!important;background:#fff!important}
 .supportLayout{height:100%!important;min-height:0!important;grid-template-columns:minmax(200px,270px) minmax(0,1fr)!important}
+
+
+/* AA contrast refinement — securities, risk, admin tools */
+.stack,.providerBox,.tablePanel,.riskGrid article,.supportLayout,.drawer,.modal{color:#374151!important}
+.header h1,.providerTitle strong,.detailGrid strong{color:#202A37!important}
+.header p,.providerTitle span,.providerResults span,.riskGrid span,.form label span,.drawerHeader span,
+.thread span,.threadActive span,.chatHeader span,.clientMessage span,.staffMessage span{color:#4B5563!important}
+.providerBox,.tablePanel,.riskGrid article,.supportLayout,.providerResults>div{border-color:#D8DEE6!important}
+.tablePanel th{color:#4B5563!important;border-color:#D8DEE6!important}
+.tablePanel td{color:#374151!important}
+.search,.search input,.searchRow select,.form input,.chatForm input{border-color:#D8DEE6!important;color:#374151!important}
+.search input::placeholder,.form input::placeholder,.chatForm input::placeholder{color:#667085!important;opacity:1!important}
+.primary{
+  background:linear-gradient(105deg,#B94D1C,#9F3E1B)!important;
+  color:#FFFFFF!important;border-color:#9F3E1B!important;text-shadow:none!important
+}
+.providerResults button,.link,.actions button{color:#215DA8!important}
+.boundary{color:#4B5563!important;border-color:#D8DEE6!important}
+
