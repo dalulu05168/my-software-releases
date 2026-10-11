@@ -252,7 +252,7 @@ function SecuritiesPage() {
         name: row.name,
         market: row.market,
         currency: row.currency,
-        visible: true,
+        visible: row.visible === true,
         tradable: false,
         providerExchange: row.exchange,
         micCode: row.mic,
