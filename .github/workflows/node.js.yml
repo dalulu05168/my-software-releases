@@ -19,4 +19,6 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npm run build
+      - name: Security and layout regression tests
+        run: node --test tests/security-acceptance.test.mjs
       - run: test -s dist/index.html
