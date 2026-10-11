@@ -561,3 +561,14 @@
 .metricGrid .metricCard:nth-child(2) .metricIcon{color:#286BC5!important}
 .metricGrid .metricCard:nth-child(3) .metricIcon{color:#137A58!important}
 @media(max-width:900px){.loginPanel,.sidebar{background:#F3F5F7!important}}
+
+
+/* High-specificity fix: old login-panel theme was overriding the new gray surface. */
+.loginPage:has(.loginForm) .loginPanel{
+  background:#F3F5F7!important;
+  color:#374151!important;
+}
+.loginPage:has(.loginForm) .loginForm{
+  background:#FFFFFF!important;
+  border-color:#D8DEE6!important;
+}
