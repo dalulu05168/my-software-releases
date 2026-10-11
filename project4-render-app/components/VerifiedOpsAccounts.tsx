@@ -3,7 +3,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { project4Api } from "../helpers/project4Api";
 import styles from "./VerifiedOpsAccounts.module.css";
 
-export function VerifiedOpsAccountsPage() {
+export function VerifiedOpsAccountsPage({
+  onOpenCustomers,
+}: {
+  onOpenCustomers?: (account: { id: string; name: string }) => void;
+} = {}) {
   const queryClient = useQueryClient();
   const accounts = useQuery({
     queryKey: ["p004-real-ops-accounts"],
@@ -67,13 +71,17 @@ export function VerifiedOpsAccountsPage() {
       {accounts.isError ? <p className={styles.error} role="alert">账户列表读取失败。请检查管理员会话或服务状态。</p> : accounts.isPending ?
       <p className={styles.note}>正在读取服务器账户记录…</p> :
       <div className={styles.tableWrap}>
-        <table><thead><tr><th>账户名</th><th>显示名称</th><th>市场权限</th><th>状态</th><th>运营邀请码</th></tr></thead>
+        <table><thead><tr><th>账户名</th><th>显示名称</th><th>市场权限</th><th>状态</th><th>运营邀请码</th><th>客户明细</th></tr></thead>
           <tbody>
             {accounts.data.map((row) => <tr key={row.id}>
               <td>{row.username || "—"}</td><td>{row.name}</td>
               <td>{row.markets?.join(", ") || "—"}</td><td>{row.status}</td><td>{row.invite || "—"}</td>
+              <td><button type="button" className={styles.lightButton}
+                onClick={() => onOpenCustomers?.({ id: row.id, name: row.name })}>
+                查看所属客户
+              </button></td>
             </tr>)}
-            {accounts.data.length === 0 ? <tr><td colSpan={5}>当前没有真实子账户记录。</td></tr> : null}
+            {accounts.data.length === 0 ? <tr><td colSpan={6}>当前没有真实子账户记录。</td></tr> : null}
           </tbody>
         </table>
       </div>}
