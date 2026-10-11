@@ -30,3 +30,30 @@
 .bankList article,.noticeGrid article,.permissionList label{background:#fff!important;border-color:#e1e4e9!important}.addBank{background:#fff!important;border-color:#cbd1d8!important;color:#8b1029!important}
 .noticeGrid h3{color:#071b42!important}.noticeGrid p,.noticeMeta small{color:#7b8490!important}.noticeMeta span{color:#8b1029!important}
 .noticeRight button{background:#fff!important;border-color:#d9dee6!important;color:#4d5868!important}.noticeRight button:hover{border-color:#8b1029!important;color:#8b1029!important}
+
+
+/* P004 white-card reference override: securities, risk, support */
+.stack{color:#273442!important;background:transparent!important;overflow:auto!important;min-height:0!important}
+.header h1{color:#253343!important;font:650 17px Inter,"Noto Sans SC",sans-serif!important}.header p{color:#8b97a3!important}
+.primary{background:linear-gradient(100deg,#ffa258,#fa6c39)!important;color:#fff!important;border-color:#fc8750!important}
+.providerBox,.tablePanel,.riskGrid article,.supportLayout{background:#fff!important;color:#263443!important;border:1px solid #e3e8ee!important;border-radius:9px!important}
+.providerTitle,.providerTitle strong{color:#253442!important}.providerTitle span{color:#8996a4!important}
+.boundary{background:#f8f9fa!important;border-color:#e3e8ed!important;color:#798696!important}
+.searchRow select,.search,.search input{background:#fff!important;color:#293849!important;border-color:#dee5eb!important}
+.providerResults>div{background:#fafbfc!important;border-color:#e7ebee!important}
+.providerResults button,.link,.actions button{color:#2a7acd!important}
+.tablePanel{min-height:0!important;max-height:calc(100% - 135px)!important;overflow:auto!important}
+.tablePanel th{background:#f8fafc!important;color:#82909e!important;border-color:#e7ebee!important}
+.tablePanel td{background:#fff!important;color:#263444!important;border-color:#eef0f2!important}
+.switchOn{background:#23a981!important}.good{background:#e8f7ef!important;color:#168b68!important}.bad{background:#fff0f2!important;color:#db5361!important}.wait{background:#fff4e7!important;color:#b97e2f!important}
+.shade{background:#23324355!important}.drawer,.modal{background:#fff!important;color:#263443!important;border-color:#e3e8eb!important}
+.detailGrid{background:#e8ecef!important}.detailGrid>div{background:#fff!important}
+.form input{background:#fff!important;color:#263443!important;border-color:#e1e7ed!important}
+.riskIcon,.noticeIcon{background:#fff2e9!important;color:#ed7b45!important}
+.threadList,.chatHeader,.chatForm{border-color:#e5e9ed!important}
+.thread,.threadActive{background:#fff!important;border-color:#e8edf0!important;color:#263444!important}
+.threadActive{background:#fff2ea!important;box-shadow:inset 3px 0 #f17b44!important}
+.chatBody{background:#f7f9fb!important}.clientMessage{background:#fff!important;border-color:#e3e7eb!important}
+.staffMessage{background:#fff1e8!important;border-color:#ffe0cd!important}
+.chatForm input{color:#263443!important;background:#fff!important}
+.supportLayout{height:100%!important;min-height:0!important;grid-template-columns:minmax(200px,270px) minmax(0,1fr)!important}
