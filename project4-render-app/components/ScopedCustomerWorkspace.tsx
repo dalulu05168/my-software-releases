@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { project4Api } from "../helpers/project4Api";
+import { VerifiedClientAppMirror } from "./VerifiedClientAppMirror";
 import styles from "./VerifiedAdminRecords.module.css";
 
 type Row = Record<string, string | number | boolean | null>;
@@ -36,8 +37,9 @@ function saveCsv(rows: Row[], columns: Array<[string,string]>) {
   URL.revokeObjectURL(url);
 }
 
-function CustomerDetails({ customer, opsAccountId, onBack }: {
+function CustomerDetails({ customer, opsAccountId, onBack, onOpenMirror }: {
   customer: Row; opsAccountId?: string | null; onBack: () => void;
+  onOpenMirror: () => void;
 }) {
   const userId = String(customer.user_id || "");
   const [tab, setTab] = useState<DetailKind>("orders");
@@ -52,6 +54,7 @@ function CustomerDetails({ customer, opsAccountId, onBack }: {
       <div><h1>客户详情：{cell(customer,"name")}</h1>
         <p>客户 ID：{userId} · 所属子账户：{cell(customer,"ops_account_id")}</p></div>
       <div className={styles.actions}><button type="button" onClick={onBack}>返回客户列表</button>
+        <button type="button" onClick={onOpenMirror}>打开客户 APP 数据镜像</button>
         <button type="button" onClick={() => void records.refetch()}>刷新记录</button></div>
     </header>
     <section className={styles.panel} style={{maxHeight:"none",padding:14,gap:10}}>
@@ -97,6 +100,7 @@ export function ScopedCustomerWorkspace({ opsAccountId, opsAccountName, onClearO
 }) {
   const [search,setSearch] = useState("");
   const [selected,setSelected] = useState<Row|null>(null);
+  const [mirrored,setMirrored] = useState<Row|null>(null);
   const clients = useQuery({
     queryKey:["p004-scoped-customer-list",opsAccountId||"server-own"],
     queryFn:()=>project4Api.listAdminReport("clients",{opsAccountId}),
@@ -105,9 +109,15 @@ export function ScopedCustomerWorkspace({ opsAccountId, opsAccountName, onClearO
   const filtered = useMemo(() => (clients.data?.rows||[]).filter(row =>
     !search || customerColumns.some(([key])=>cell(row,key).toLowerCase().includes(search.toLowerCase()))
   ),[clients.data,search]);
+  if (mirrored) {
+    return <VerifiedClientAppMirror key={String(mirrored.user_id)}
+      userId={String(mirrored.user_id)}
+      opsAccountId={opsAccountId} onClose={()=>setMirrored(null)}/>;
+  }
   if (selected) {
     return <CustomerDetails key={String(selected.user_id)} customer={selected}
-      opsAccountId={opsAccountId} onBack={()=>setSelected(null)}/>;
+      opsAccountId={opsAccountId} onBack={()=>setSelected(null)}
+      onOpenMirror={()=>setMirrored(selected)}/>;
   }
   return <div className={styles.layout}>
     <header className={styles.header}>
@@ -132,11 +142,14 @@ export function ScopedCustomerWorkspace({ opsAccountId, opsAccountName, onClearO
           <thead><tr>{customerColumns.map(([key,label])=><th key={key}>{label}</th>)}<th>操作</th></tr></thead>
           <tbody>{filtered.map((client,i)=><tr key={String(client.user_id||i)}>
             {customerColumns.map(([key])=><td key={key}>{cell(client,key)}</td>)}
-            <td><button type="button" onClick={()=>setSelected(client)}>查看客户详情</button></td>
+            <td><div className={styles.actions}>
+              <button type="button" onClick={()=>setSelected(client)}>查看客户详情</button>
+              <button type="button" onClick={()=>setMirrored(client)}>APP 数据镜像</button>
+            </div></td>
           </tr>)}
           {!filtered.length?<tr><td colSpan={customerColumns.length+1}>没有符合条件的客户记录。</td></tr>:null}</tbody>
         </table></div>}
     </section>
-    <p className={styles.note}>权限隔离在服务器进行；搜索与 CSV 仅针对每次最多200条的已加载记录。此页面不执行客户修改或真实交易。</p>
+    <p className={styles.note}>客户 APP 数据镜像可从每行进入，显示服务器核验的账户、订单、持仓和资金申请；并非远程控屏。权限隔离在服务器进行；搜索与 CSV 仅针对每次最多200条的已加载记录。此页面不执行客户修改或真实交易。</p>
   </div>;
 }

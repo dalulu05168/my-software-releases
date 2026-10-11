@@ -1,11 +1,15 @@
 {
   "name": "project4-render-app",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "prebuild": "node scripts/process-logo.mjs"
+    "prebuild": "node scripts/process-logo.mjs && node scripts/create-desktop-icon.mjs",
+    "desktop:test": "node --test desktop/server.test.cjs",
+    "desktop:package": "electron-builder --win nsis --x64 --publish never",
+    "desktop:dev": "npm run build && electron .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.2",
@@ -19,6 +23,46 @@
     "@vitejs/plugin-react": "^5.0.4",
     "typescript": "^5.9.3",
     "vite": "^7.1.7",
-    "sharp": "^0.34.4"
+    "sharp": "^0.34.4",
+    "electron": "^35.7.5",
+    "electron-builder": "^26.0.12"
+  },
+  "main": "desktop/main.cjs",
+  "description": "Windows desktop client for Brantone Veylor P004 trading administration and client read-only workflows.",
+  "build": {
+    "appId": "com.brantoneveyor.p004.desktop",
+    "productName": "Brantone Veylor Desktop",
+    "asar": true,
+    "directories": {
+      "output": "desktop-release"
+    },
+    "files": [
+      "dist/**/*",
+      "desktop/main.cjs",
+      "desktop/server.cjs",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": true,
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": false,
+      "uninstallDisplayName": "Brantone Veylor Desktop"
+    },
+    "artifactName": "P004-Brantone-Veylor-Setup-${version}-${arch}.${ext}"
   }
 }

@@ -11,6 +11,7 @@ const verifiedOps = readFileSync(new URL("../components/VerifiedOpsAccounts.tsx"
 const reportingBackend = readFileSync(new URL("../backend/project4-reporting-api/index.ts", import.meta.url), "utf8");
 const verifiedReports = readFileSync(new URL("../components/VerifiedAdminRecords.tsx", import.meta.url), "utf8");
 const customerWorkspace = readFileSync(new URL("../components/ScopedCustomerWorkspace.tsx", import.meta.url), "utf8");
+const appMirror = readFileSync(new URL("../components/VerifiedClientAppMirror.tsx", import.meta.url), "utf8");
 const controlPages = readFileSync(new URL("../components/AdminControlPages.tsx", import.meta.url), "utf8");
 
 test("customer authentication always requires a verified server session", () => {
@@ -165,7 +166,7 @@ test("security search returns only saved database matches and can create manual 
   assert.ok(securities.includes('visible: row.visible === true'));
   assert.doesNotMatch(securities,/setTimeout\(/);
   assert.doesNotMatch(securities,/query\.trim\(\)\.toUpperCase\(\) \|\| "NEW"/);
-  assert.ok(adminBackend.includes('.from("securities")\n        .insert(payload)'));
+  assert.match(adminBackend, /\.from\("securities"\)\s*\.insert\(payload\)/);
   assert.ok(adminBackend.includes('provider_synced_at: null'));
   assert.ok(adminBackend.includes('visible: false,'));
   assert.ok(adminBackend.includes('tradable: false,'));
@@ -207,4 +208,28 @@ test("ops account status updates are validated, audited, and cannot silently suc
   assert.ok(adminBackend.includes('OPS_ACCOUNT_REACTIVATED'));
   assert.ok(adminBackend.includes('OPS_STATUS_CHANGED_BUT_AUDIT_FAILED'));
   assert.ok(!adminBackend.includes('clients: 0,'));
+});
+
+
+test("customer APP data mirror is reachable from scoped customer list and client detail", () => {
+  assert.match(customerWorkspace,/import \{ VerifiedClientAppMirror \}/);
+  assert.match(customerWorkspace,/APP 数据镜像/);
+  assert.match(customerWorkspace,/onClick=\{\(\)=>setMirrored\(client\)\}/);
+  assert.match(customerWorkspace,/<VerifiedClientAppMirror/);
+  assert.match(customerWorkspace,/onOpenMirror=\{\(\)=>setMirrored\(selected\)\}/);
+});
+
+test("APP data mirror re-verifies customer ownership and reads only actual server records", () => {
+  assert.match(appMirror,/project4Api\.listAdminReport\("clients",\{ opsAccountId, userId \}\)/);
+  assert.match(appMirror,/user\.data\.rows\.length === 1/);
+  assert.match(appMirror,/String\(user\.data\.rows\[0\]\.user_id\) === userId/);
+  assert.match(appMirror,/enabled: identity !== null && screen !== "home"/);
+  assert.match(appMirror,/project4Api\.listAdminReport\(action,\{ opsAccountId, userId \}\)/);
+  assert.match(appMirror,/refetchInterval: 30_000/);
+  assert.match(appMirror,/余额账本|Registrul de solduri/);
+  assert.match(appMirror,/Sold disponibil verificat/);
+  assert.match(appMirror,/Tranzacționare/);
+  assert.doesNotMatch(appMirror,/Math\.random\(/);
+  assert.doesNotMatch(appMirror,/localStorage\.setItem/);
+  assert.doesNotMatch(appMirror,/action: "place_order"/);
 });

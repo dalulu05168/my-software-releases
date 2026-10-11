@@ -307,6 +307,11 @@ function LoginScreen({
   };
 
   const isClient = portal === "client";
+  const isInstalledDesktop =
+    typeof window !== "undefined" &&
+    window.location.hostname === "127.0.0.1" &&
+    new URLSearchParams(window.location.search).get("desktop") === "1";
+
 
   return (
     <main className={styles.loginPage}>
@@ -333,6 +338,14 @@ function LoginScreen({
       <section className={styles.loginPanel}>
         <div className={styles.mobileLogo}><Logo /></div>
 
+        {isInstalledDesktop ? (
+          <div style={{display:"flex",gap:10,justifyContent:"center",padding:"12px 0"}}>
+            <button type="button" className={styles.textButton} disabled={!isClient}
+              onClick={() => window.location.assign("/?desktop=1&portal=admin")}>总账户 / 子账户登录</button>
+            <button type="button" className={styles.textButton} disabled={isClient}
+              onClick={() => window.location.assign("/?desktop=1&portal=client")}>客户登录</button>
+          </div>
+        ) : null}
         <form className={styles.loginForm} onSubmit={submit}>
           <div className={styles.formTitle}>
             <span className={styles.roleLabel}>
@@ -972,255 +985,12 @@ function GenericPage({ view }: { view: View }) {
   );
 }
 
-function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => void }) {
-  type MirrorTab =
-    | "home" | "market" | "favorites" | "operate" | "account"
-    | "funds" | "block" | "ipo" | "support" | "settings"
-    | "cash" | "positions" | "orders" | "bank" | "kyc" | "password";
-
-  const [tab, setTab] = useState<MirrorTab>("home");
-  const [market, setMarket] = useState<"US" | "MX">("US");
-  const [favorites, setFavorites] = useState(["AAPL", "NVDA", "WALMEX"]);
-  const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
-  const selected = stocks.find((item) => item.symbol === selectedSymbol) ?? stocks[0];
-  const marketStocks = stocks.filter((item) => item.market === market);
-  const nested = !["home", "market", "favorites", "operate", "account"].includes(tab);
-
-  const productRows = {
-    funds: [
-      { title: "Fondo Estrategia MX", meta: "90 días · Riesgo moderado", value: "8.2%–11.6%" },
-      { title: "Fondo Liquidez USD", meta: "Abierto · USD", value: "NAV 1.0842" },
-    ],
-    block: [
-      { title: "WALMEX", meta: "Mercado 58.73 · Mín. 500", value: "-8.0%" },
-      { title: "AMXL", meta: "Mercado 18.94 · Mín. 800", value: "-6.5%" },
-    ],
-    ipo: [
-      { title: "TMX Energía", meta: "Rango 1,000–20,000", value: "MXN 24.60" },
-      { title: "Nova Infra", meta: "Listado estimado 10/08", value: "MXN 18.20" },
-    ],
-  };
-
-  const goAccount = () => setTab("account");
-
-  return (
-    <div className={styles.mirrorShade} onMouseDown={onClose}>
-      <div className={styles.phone} onMouseDown={(e)=>e.stopPropagation()}>
-        <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Cerrar espejo"><X size={15}/></button></div>
-
-        <div className={styles.phoneHeader}>
-          <img src="/brantone-veyor-logo-clean.webp" alt="Brantone Veylor Private Capital Advisory"/>
-          <div><strong>BRANTONE VEYLOR</strong><span>{customer.name} · {customer.vip}</span></div>
-          <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Soporte"><MessageSquareText size={16}/></button>
-        </div>
-
-        {nested ? (
-          <div className={styles.phoneSubHeader}>
-            <button onClick={() => ["funds","block","ipo","support"].includes(tab) ? setTab("home") : goAccount()}>‹</button>
-            <strong>{
-              tab==="funds"?"基金":
-              tab==="block"?"Operaciones en bloque":
-              tab==="ipo"?"IPO":
-              tab==="support"?"客服":
-              tab==="settings"?"设置":
-              tab==="cash"?"资金记录":
-              tab==="positions"?"持仓":
-              tab==="orders"?"订单":
-              tab==="bank"?"银行账户":
-              tab==="kyc"?"身份认证":"安全"
-            }</strong>
-            <span/>
-          </div>
-        ) : null}
-
-        {tab==="home" ? (
-          <div className={styles.phoneContent}>
-            <div className={styles.mirrorNotice}>中文客户APP镜像 · 后台授权操作将记录审计。</div>
-            <div className={styles.phoneSearch}><Search size={14}/>搜索股票代码或名称</div>
-            <div className={styles.phoneBalance}>
-              <span>账户总资产</span>
-              <strong>{customer.balance}</strong>
-              <small>可用资金与涨跌数据以正式客户账户为准</small>
-            </div>
-
-            <div className={styles.mirrorProductGrid}>
-              <button onClick={()=>setTab("funds")}><Landmark size={18}/><strong>基金</strong><span>产品</span></button>
-              <button onClick={()=>setTab("block")}><BadgeDollarSign size={18}/><strong>大宗交易</strong><span>折扣项目</span></button>
-              <button onClick={()=>setTab("ipo")}><FileCheck2 size={18}/><strong>IPO</strong><span>申购</span></button>
-            </div>
-
-            <div className={styles.mirrorIndexGrid}>
-              {stocks.slice(0,3).map((item)=>(
-                <button key={item.symbol} onClick={()=>{setSelectedSymbol(item.symbol);setMarket(item.market);setTab("market");}}>
-                  <span>{item.symbol}</span>
-                  <strong>{item.price}</strong>
-                  <small className={item.up?styles.green:styles.red}>{item.change}</small>
-                  <i className={item.up?styles.miniTrendUp:styles.miniTrendDown}/>
-                </button>
-              ))}
-            </div>
-
-            <div className={styles.phoneSection}>
-              <div className={styles.mirrorSectionTitle}><h3>关注行情</h3><button onClick={()=>setTab("market")}>查看全部</button></div>
-              <StockRows compact/>
-            </div>
-
-            <div className={styles.mirrorNews}>
-              <div><strong>通知与提醒</strong><span>正式系统消息同步</span></div>
-              <ChevronRight size={15}/>
-            </div>
-          </div>
-        ) : null}
-
-        {tab==="market" ? (
-          <div className={styles.phoneContent}>
-            <div className={styles.phoneSearch}><Search size={14}/>搜索证券</div>
-            <div className={styles.mirrorSegment}>
-              <button className={market==="US"?styles.mirrorSegmentActive:""} onClick={()=>setMarket("US")}>美股</button>
-              <button className={market==="MX"?styles.mirrorSegmentActive:""} onClick={()=>setMarket("MX")}>México</button>
-            </div>
-            <div className={styles.mirrorQuoteHero}>
-              <div><span>{selected.symbol}</span><small>{selected.name}</small></div>
-              <div><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div>
-            </div>
-            <div className={styles.mirrorSpark}>
-              {[24,36,30,49,42,57,52,66,60,74,69,82].map((h,i)=><i key={i} style={{height:`${h}%`}}/> )}
-            </div>
-            <div className={styles.mirrorMarketFacts}><span>Máx.<b>231.44</b></span><span>Mín.<b>223.98</b></span><span>Vol.<b>42.8M</b></span></div>
-            <div className={styles.mirrorStockList}>
-              {marketStocks.map((item)=>(
-                <button key={item.symbol} className={selected.symbol===item.symbol?styles.mirrorStockActive:""} onClick={()=>setSelectedSymbol(item.symbol)}>
-                  <div><strong>{item.symbol}</strong><span>{item.name}</span></div>
-                  <div><strong>{item.price}</strong><span className={item.up?styles.green:styles.red}>{item.change}</span></div>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {tab==="favorites" ? (
-          <div className={styles.phoneContent}>
-            <div className={styles.phoneSearch}><Search size={14}/>Buscar en favoritos</div>
-            <div className={styles.mirrorIndexGrid}>
-              {stocks.slice(0,3).map((item)=><button key={item.symbol}><span>{item.symbol}</span><strong>{item.price}</strong><small className={item.up?styles.green:styles.red}>{item.change}</small></button>)}
-            </div>
-            <div className={styles.mirrorStockList}>
-              {stocks.filter((item)=>favorites.includes(item.symbol)).map((item)=>(
-                <button key={item.symbol} onClick={()=>setFavorites(favorites.filter((symbol)=>symbol!==item.symbol))}>
-                  <div><strong>♥ {item.symbol}</strong><span>{item.name} · {item.market}</span></div>
-                  <div><strong>{item.price}</strong><span className={item.up?styles.green:styles.red}>{item.change}</span></div>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {tab==="operate" ? (
-          <div className={styles.phoneContent}>
-            <div className={styles.mirrorPortfolioGrid}>
-              <div><span>Valor MX</span><strong>MXN 62,390</strong><small className={styles.green}>+2.18%</small></div>
-              <div><span>Ganancia MX</span><strong>+1,324.80</strong><small>Hoy</small></div>
-              <div><span>Valor US</span><strong>USD 3,471</strong><small className={styles.green}>+0.82%</small></div>
-              <div><span>Ganancia US</span><strong>+84.30</strong><small>Hoy</small></div>
-            </div>
-            <div className={styles.mirrorSectionTitle}><h3>Posiciones</h3><button onClick={()=>setTab("positions")}>Detalle</button></div>
-            {stocks.slice(0,4).map((item,i)=>(
-              <div className={enh.phoneRecord} key={item.symbol}>
-                <div><strong>{item.symbol}</strong><span>{[120,600,80,50][i]} acciones · Costo {(Number(item.price)*.93).toFixed(2)}</span></div>
-                <b className={item.up?styles.green:styles.red}>{item.change}</b>
-              </div>
-            ))}
-            <button className={styles.mirrorWideAction} onClick={()=>setTab("orders")}><ListFilter size={15}/> Historial de órdenes <ChevronRight size={14}/></button>
-          </div>
-        ) : null}
-
-        {tab==="account" ? (
-          <div className={styles.phoneContent}>
-            <div className={styles.mirrorAccountHero}>
-              <div className={styles.avatar}>{customer.name.slice(0,1)}</div>
-              <div><strong>{customer.name}</strong><span>ID {customer.id} · {customer.kyc}</span><small>{customer.vip}</small></div>
-              <button onClick={()=>setTab("settings")}><Settings size={16}/></button>
-            </div>
-            <div className={styles.mirrorAccountBalance}><span>Portafolio total</span><strong>{customer.balance}</strong><small>Disponible MXN 186,240 · Pendiente MXN 48,500</small></div>
-            <div className={styles.phoneMenu}>
-              <button onClick={()=>setTab("cash")}><Banknote size={18}/><span>Depositar</span></button>
-              <button onClick={()=>setTab("cash")}><CreditCard size={18}/><span>Retirar</span></button>
-              <button onClick={()=>setTab("orders")}><ListFilter size={18}/><span>Historial</span></button>
-              <button onClick={()=>setTab("positions")}><WalletCards size={18}/><span>Posiciones</span></button>
-            </div>
-            <div className={styles.mirrorScoreRow}><span>Crédito <strong>100</strong></span><button>Mi préstamo <ChevronRight size={13}/></button></div>
-            <button className={styles.phoneLine} onClick={()=>setTab("bank")}>Cuenta bancaria<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("kyc")}>Verificación de identidad<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Contraseñas<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("settings")}>Configuración y notificaciones<ChevronRight size={14}/></button>
-          </div>
-        ) : null}
-
-        {(["funds","block","ipo"] as MirrorTab[]).includes(tab) ? (
-          <div className={styles.phoneContent}>
-            <div className={styles.mirrorProductBanner}>
-              <span>{tab==="funds"?"INVERSIÓN":tab==="block"?"PRECIO ESPECIAL":"OFERTA PÚBLICA"}</span>
-              <strong>{tab==="funds"?"Fondos de inversión":tab==="block"?"Operaciones en bloque":"IPO"}</strong>
-              <small>正式系统数据同步 · 后台授权操作将记录审计</small>
-            </div>
-            {productRows[tab as "funds"|"block"|"ipo"].map((item)=>(
-              <div className={styles.mirrorProductCard} key={item.title}>
-                <div><strong>{item.title}</strong><span>{item.meta}</span></div>
-                <b>{item.value}</b>
-                <button onClick={()=>setTab("operate")}>进入操作</button>
-              </div>
-            ))}
-            <button className={styles.mirrorWideAction} onClick={()=>setTab("orders")}>Ver historial relacionado <ChevronRight size={14}/></button>
-          </div>
-        ) : null}
-
-        {tab==="support" ? (
-          <div className={styles.phoneContent}>
-            <div className={styles.mirrorSupportWelcome}><MessageSquareText size={24}/><strong>Hola, ¿en qué podemos ayudarle?</strong><span>Soporte de cuenta y operaciones</span></div>
-            <div className={styles.mirrorChatBubble}>Bienvenido a soporte. Seleccione una consulta o escriba un mensaje.</div>
-            <div className={styles.mirrorChatBubbleClient}>Necesito revisar el estado de una orden.</div>
-            <div className={styles.mirrorChatComposer}><span>Escriba un mensaje…</span><button>Enviar</button></div>
-          </div>
-        ) : null}
-
-        {tab==="settings" ? (
-          <div className={styles.phoneContent}>
-            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Contraseña de acceso<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("password")}>Contraseña de transacción<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("kyc")}>Verificación de identidad<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine} onClick={()=>setTab("bank")}>Agregar cuenta bancaria<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine}>Notificaciones<ChevronRight size={14}/></button>
-            <button className={styles.phoneLine}>Idioma · Español (México)<ChevronRight size={14}/></button>
-            <button className={styles.mirrorLogout}>Cerrar sesión</button>
-          </div>
-        ) : null}
-
-        {tab==="cash" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Movimientos</strong><span>Depósitos / retiros</span></div>{[["Depósito","MXN 120,000","Pendiente"],["Retiro","MXN 48,500","En revisión"],["Depósito","USD 18,000","Aprobado"]].map((row)=><div className={enh.phoneRecord} key={row.join("-")}><div><strong>{row[0]}</strong><span>{row[2]}</span></div><b>{row[1]}</b></div>)}</div> : null}
-        {tab==="positions" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Posiciones</strong><span>Valor y rendimiento</span></div>{stocks.slice(0,4).map((s,i)=><div className={enh.phoneRecord} key={s.symbol}><div><strong>{s.symbol}</strong><span>{[120,600,80,50][i]} acciones · {s.name}</span></div><b className={s.up?styles.green:styles.red}>{s.change}</b></div>)}</div> : null}
-        {tab==="orders" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Historial de órdenes</strong><span>Acciones / bloques / IPO / fondos</span></div>{[["AAPL","Compra","Registrada"],["WALMEX","Bloque","Procesando"],["TMX","IPO","Pendiente de asignación"],["FG-019","Fondo","Pendiente"]].map((row)=><div className={enh.phoneRecord} key={row.join("-")}><div><strong>{row[0]}</strong><span>{row[1]}</span></div><b>{row[2]}</b></div>)}</div> : null}
-        {tab==="bank" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Cuentas bancarias</strong><span>Administración de retiro</span></div><div className={enh.phoneBank}><CreditCard size={20}/><div><strong>BBVA México</strong><span>•••• 7812 · Predeterminada</span></div></div><div className={enh.phoneBank}><CreditCard size={20}/><div><strong>Santander</strong><span>•••• 3097</span></div></div><button className={enh.phonePrimary}>Agregar cuenta bancaria</button></div> : null}
-        {tab==="kyc" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Verificación de identidad</strong><span>Estado de documentación</span></div><div className={enh.phoneStatusCard}><FileCheck2 size={28}/><strong>{customer.kyc}</strong><span>{customer.name}</span><small>CURP / Pasaporte protegido</small></div></div> : null}
-        {tab==="password" ? <div className={styles.phoneContent}><div className={enh.phonePageTitle}><strong>Seguridad</strong><span>Acceso y transacciones</span></div><label className={enh.phoneField}><span>Contraseña actual</span><input type="password"/></label><label className={enh.phoneField}><span>Nueva contraseña</span><input type="password"/></label><label className={enh.phoneField}><span>Confirmar contraseña</span><input type="password"/></label><button className={enh.phonePrimary}>Guardar cambios</button></div> : null}
-
-        <div className={styles.phoneNav}>
-          <button className={tab==="home"?styles.phoneNavActive:""} onClick={()=>setTab("home")}><LayoutDashboard size={17}/><span>首页</span></button>
-          <button className={tab==="market"?styles.phoneNavActive:""} onClick={()=>setTab("market")}><LineChart size={17}/><span>行情</span></button>
-          <button className={tab==="favorites"?styles.phoneNavActive:""} onClick={()=>setTab("favorites")}><Heart size={17}/><span>自选</span></button>
-          <button className={tab==="operate"?styles.phoneNavActive:""} onClick={()=>setTab("operate")}><Activity size={17}/><span>交易</span></button>
-          <button className={tab==="account"?styles.phoneNavActive:""} onClick={()=>setTab("account")}><CircleUserRound size={17}/><span>账户</span></button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const queryClient = useQueryClient();
   const [role, setRole] = useState<Role | null>(null);
   const [name, setName] = useState("");
   const [view, setView] = useState<View>("dashboard");
   const [customers, setCustomers] = useState(initialCustomers);
-  const [mirrorCustomer, setMirrorCustomer] = useState<Customer | null>(null);
   const [selectedOpsAccount, setSelectedOpsAccount] = useState<{ id: string; name: string } | null>(null);
   const [riskControls, setRiskControls] = useState<RiskControl[]>(defaultRiskControls);
   const portal: Portal =
@@ -1277,7 +1047,6 @@ export default function App() {
         <Topbar name={name} role={role} onNavigate={setView} />
         <div className={styles.workspaceBody}>{content}</div>
       </div>
-      {mirrorCustomer ? <AppMirror customer={mirrorCustomer} onClose={()=>setMirrorCustomer(null)} /> : null}
     </main>
   );
 }
