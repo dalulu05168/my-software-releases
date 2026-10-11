@@ -455,7 +455,7 @@ function Sidebar({
   const allowed =
     role === "client"
       ? navItems.filter((item) =>
-          ["dashboard", "products", "orders", "cash", "positions", "loans", "notifications", "market", "support", "settings"].includes(item.key),
+          ["orders", "cash", "positions", "market", "settings"].includes(item.key),
         )
       : role === "ops"
         ? navItems.filter((item) =>
@@ -1183,11 +1183,13 @@ export default function App() {
       : "client";
 
   if (!role) {
-    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setRole(nextRole);setName(nextName);setView("dashboard");}} />;
+    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setRole(nextRole);setName(nextName);setView(nextRole==="client"?"orders":"dashboard");}} />;
   }
 
   const content =
-    view === "dashboard" ? (
+    role === "client" && !["orders", "cash", "positions", "market", "settings"].includes(view) ? (
+      <div role="alert">此功能尚未通过客户端真实数据与权限验收，因此暂不开放。</div>
+    ) : view === "dashboard" ? (
       <Dashboard role={role} name={name} onOpenMarket={()=>setView("market")} onNavigate={setView} />
     ) : view === "customers" && role !== "client" ? (
       <CustomersPage customers={customers} setCustomers={setCustomers} onMirror={setMirrorCustomer} />
