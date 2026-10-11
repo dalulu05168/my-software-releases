@@ -340,3 +340,183 @@
   .loginForm{padding:26px 20px!important;border-radius:14px!important}
   .mobileLogo{display:flex!important;justify-content:flex-start!important}
 }
+
+
+/* ===== P004 / BRANTONE VEYLOR: GREY-WHITE REFERENCE UI =====
+   Isolated migration theme, avoids altering business logic and account connections.
+   Outer 16:9 canvas; lengthy tables and navigation scroll inside their own panels. */
+.loginPage,.appShell{
+  width:min(100vw,177.77778dvh)!important;height:min(100dvh,56.25vw)!important;
+  min-height:0!important;margin:0 auto!important;overflow:hidden!important;
+  box-sizing:border-box!important;background:#f7f8fa!important;color:#263140!important;
+  border:1px solid #e2e6eb!important;box-shadow:none!important;border-radius:0!important;
+  font-family:Inter,"Noto Sans SC","Segoe UI",Arial,sans-serif!important
+}
+.loginPage{grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr)!important}
+.loginVisual{
+  background:radial-gradient(circle at 22% 90%,#fff2e8 0%,transparent 40%),linear-gradient(140deg,#f6f8fa 0%,#e9edf2 100%)!important;
+  border-color:#e7eaf0!important;color:#263140!important;
+  display:flex!important;flex-direction:column!important;justify-content:space-between!important;
+  padding:clamp(24px,3.2vw,52px)!important;min-height:0!important
+}
+.loginVisual:after{display:none!important;background:none!important}
+.loginBrand .logoBlock img{
+  width:clamp(260px,31vw,480px)!important;max-width:100%!important;height:auto!important;
+  max-height:132px!important;object-fit:contain!important;object-position:left center!important;
+  background:transparent!important;border:0!important;filter:none!important;
+  padding:0!important;box-shadow:none!important
+}
+.loginVisual .visualText{margin:auto 0!important;color:#243040!important}
+.visualText h1{
+  font-family:Inter,"Noto Sans SC",sans-serif!important;font-size:clamp(28px,3.1vw,42px)!important;
+  color:#25303e!important;line-height:1.2!important;font-weight:650!important;
+  letter-spacing:-.038em!important
+}
+.visualText p{font-size:clamp(12px,1.05vw,15px)!important;color:#7c8796!important;line-height:1.7!important}
+.eyebrow{color:#ed7742!important;letter-spacing:.13em!important;font-size:10px!important}
+.visualGrid{display:none!important}
+.loginPanel{
+  background:#f6f7f9!important;min-height:0!important;
+  padding:clamp(16px,3vw,45px)!important;overflow-y:auto!important;
+  display:flex!important;align-items:center!important;justify-content:center!important
+}
+.loginPanel:before{display:none!important;content:none!important}
+.loginForm{
+  width:100%!important;max-width:500px!important;margin:auto!important;
+  background:#fff!important;border:1px solid #e6e9ee!important;border-radius:18px!important;
+  padding:clamp(22px,2.8vw,42px)!important;box-shadow:0 16px 50px #18283e0a!important
+}
+.formTitle h2{
+  color:#202a37!important;font-family:Inter,"Noto Sans SC",sans-serif!important;
+  font-size:clamp(24px,2.1vw,32px)!important;letter-spacing:-.04em!important;font-weight:650!important
+}
+.formTitle p{font-size:12px!important;color:#8894a2!important}
+.loginForm label span{font-size:11px!important;color:#667383!important;font-weight:600!important}
+.loginForm input{
+  height:44px!important;background:#fff!important;color:#263443!important;border:1px solid #dfe5eb!important;
+  border-radius:9px!important;font-size:13px!important
+}
+.loginForm input:focus{border-color:#f59466!important;box-shadow:0 0 0 3px #ff7e431c!important}
+.primaryButton,.primarySmall{
+  background:linear-gradient(100deg,#ffa259 0%,#fb6b38 100%)!important;color:white!important;
+  border:0!important;border-radius:9px!important;box-shadow:0 6px 16px #fc714125!important
+}
+.textButton{color:#ed7440!important}
+.roleLabel{background:#fff2e9!important;border:1px solid #ffdfcb!important;color:#d77340!important;border-radius:16px!important}
+.appShell{grid-template-columns:210px minmax(0,1fr)!important;display:grid!important}
+.sidebar{
+  position:relative!important;top:0!important;height:100%!important;min-height:0!important;
+  padding:0 12px!important;background:#f1f4f7!important;
+  border-right:1px solid #e1e6eb!important;border-bottom:1px solid #e1e6eb!important;
+  display:flex!important;flex-direction:column!important;overflow:hidden!important
+}
+.sidebarLogo{height:78px!important;flex:0 0 78px!important;border-bottom:1px solid #e4e8ed!important;justify-content:flex-start!important;padding:0 7px!important;overflow:hidden!important}
+.sidebarLogo .logoBlock,.sidebarLogo .logoCompact{display:flex!important;align-items:center!important;justify-content:flex-start!important}
+.sidebarLogo .logoBlock img,.sidebarLogo .logoCompact img{
+  width:165px!important;max-height:56px!important;max-width:100%!important;
+  object-position:left center!important;height:auto!important;background:transparent!important;
+  border:0!important;filter:none!important
+}
+.sidebarRole{display:flex!important;justify-content:flex-start!important;padding:8px 8px!important}
+.sidebarRole .roleLabel{color:#8b94a1!important;background:white!important;border-color:#e6e9ed!important}
+.nav{flex:1!important;min-height:0!important;display:flex!important;flex-direction:column!important;gap:4px!important;padding:2px 0!important;overflow-y:auto!important;overflow-x:hidden!important}
+.navSectionTitle{padding:11px 11px 6px!important;color:#959eaa!important;font-size:10px!important;font-weight:600!important;letter-spacing:0!important}
+.navItem,.navActive{
+  min-height:36px!important;width:100%!important;display:flex!important;flex-direction:row!important;
+  align-items:center!important;justify-content:flex-start!important;gap:11px!important;
+  padding:7px 12px!important;color:#737d8d!important;font-size:11px!important;border-radius:8px!important;
+  text-align:left!important;box-shadow:none!important;transform:none!important
+}
+.navItem span,.navActive span{display:inline!important;font-size:11px!important;white-space:nowrap!important}
+.navItem svg,.navActive svg{flex:0 0 17px!important}
+.navItem:hover{background:#e7edf4!important;color:#2c3845!important}
+.navActive{background:white!important;color:#1b2736!important;box-shadow:inset 3px 0 #f27d43,0 1px 3px #222a360e!important}
+.logout{min-height:36px!important;display:flex!important;flex-direction:row!important;justify-content:flex-start!important;gap:12px!important;padding:8px 12px!important;margin:6px 0 12px!important;color:#8a94a1!important}
+.logout span{display:inline!important}
+.workspace{min-width:0!important;min-height:0!important;height:100%!important;background:#fff!important;overflow:hidden!important}
+.topbar{
+  height:60px!important;min-height:60px!important;flex:0 0 60px!important;
+  padding:0 18px!important;color:#243140!important;background:#fff!important;
+  border-bottom:1px solid #e7ebef!important
+}
+.topSearch{height:auto!important;min-width:0!important;background:transparent!important;border:0!important;gap:5px!important;color:#222c39!important;padding:0!important}
+.topSearch strong{font-size:14px!important;font-weight:650!important;color:#263241!important}
+.topSearch span{font-size:11px!important;color:#939da9!important}
+.topbarActions>button{background:white!important;border:1px solid #e2e6eb!important;color:#6b7687!important;border-radius:9px!important}
+.profile{border-color:#e7e9ee!important}.profile strong{color:#283544!important}.profile span{color:#919ca9!important}
+.avatar{color:#d9703c!important;background:#fff2e9!important;border:1px solid #ffe1cf!important}
+.topbarMarket{background:transparent!important}.topbarMarket strong{color:#263444!important}
+.workspaceBody{
+  height:calc(100% - 60px)!important;min-height:0!important;flex:1!important;
+  padding:15px 17px!important;background:#fff!important;color:#263443!important;
+  border-bottom:1px solid #e1e5ea!important;overflow:hidden!important
+}
+.contentStack{height:100%!important;min-height:0!important;overflow-y:auto!important;gap:12px!important;align-content:start!important}
+.pageHeader h1{font-size:17px!important;color:#202b38!important;font-weight:650!important}
+.pageHeader p{font-size:11px!important;color:#8a96a3!important}
+.metricGrid{gap:10px!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.metricCard{
+  min-height:108px!important;border:1px solid #e4e8ed!important;background:white!important;
+  box-shadow:none!important;border-radius:9px!important;padding:13px!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr) 30px!important;align-items:start!important;gap:8px!important
+}
+.metricCard>div:last-child{grid-column:1!important;grid-row:1!important;display:grid!important;gap:5px!important;min-width:0!important}
+.metricIcon{grid-column:2!important;grid-row:1!important;width:30px!important;height:30px!important;border-radius:8px!important;background:#fff1e7!important;color:#e9743b!important}
+.metricGrid .metricCard:nth-child(2) .metricIcon{background:#eaf2ff!important;color:#377fe0!important}
+.metricGrid .metricCard:nth-child(3) .metricIcon{background:#e9f8f2!important;color:#22aa7c!important}
+.metricCard span,.metricCard small{font-size:10px!important;color:#8995a4!important}
+.metricCard strong{font-size:clamp(14px,1.2vw,20px)!important;color:#1d2937!important;font-weight:650!important;white-space:nowrap!important}
+.fourStats,.panel,.tablePanel,.filterBar{
+  background:#fff!important;border:1px solid #e4e8ed!important;box-shadow:none!important;border-radius:10px!important
+}
+.fourStats div{border-right-color:#e9ecef!important}.fourStats span{color:#8b97a5!important}
+.fourStats strong{color:#25313e!important}.fourStats small{color:#199975!important}
+.panel{padding:13px!important}.panelTitle h3{font-size:12px!important;color:#263342!important}
+.panelTitle p{color:#8a95a3!important}.panelTitle>button{color:#ea7542!important}
+.segment button{background:#fff!important;color:#85919f!important}.segment .segmentActive{background:#fff1e9!important;color:#e97641!important}
+.todoList button{background:#fff!important;border-color:#eef0f3!important;color:#657383!important}.todoList strong{color:#e97b46!important}
+.heroBalance{background:linear-gradient(120deg,#fbfcfe,#fff4eb)!important;border:1px solid #e5eaf0!important;color:#283442!important}
+.heroBalance span,.heroBalance small{color:#8593a3!important}.heroBalance strong{color:#253240!important}
+.tablePanel{min-height:0!important;max-height:calc(100% - 86px)!important;overflow:auto!important}
+.tablePanel th{background:#f8fafb!important;color:#83909e!important;border-color:#e8ebef!important}
+.tablePanel td{background:#fff!important;color:#263442!important;border-color:#eef0f3!important}
+.tablePanel tbody tr:hover{background:#fafbfc!important}
+.filterBar,.searchBox,.filterBar select{background:#fff!important;border-color:#e4e8ed!important;color:#81909f!important}
+.secondaryButton{background:#fff!important;border-color:#e2e7ed!important;color:#697788!important}
+.marketTerminal{
+  width:100%!important;height:100%!important;min-height:0!important;
+  display:grid!important;grid-template-columns:180px minmax(0,1fr) 260px!important;
+  background:#fff!important;border:1px solid #e2e7ec!important;border-radius:10px!important;box-shadow:none!important
+}
+.marketList,.marketCenter,.candleChart,.stockItem,.stockItemActive{background:#fff!important;border-color:#e5e8ed!important}
+.marketListHeader,.marketTabs,.quoteHeader,.chartToolbar,.marketBottom{background:#f9fafb!important;border-color:#e5e9ee!important}
+.quoteHeader h2,.quoteValue strong,.stockItem strong{color:#253444!important}
+.stockItemActive{background:#fff3ec!important;box-shadow:inset 3px 0 #f47940!important}
+.chartToolbar .chartActive,.marketTabs .marketTabActive{background:#fff0e7!important;color:#ed7640!important;border-color:#e87841!important}
+.orderPanel,.orderTabs button,.orderSummary{background:#fff!important;border-color:#e2e7ec!important;color:#6f7c8a!important}
+.orderPanel input{background:#fff!important;border-color:#dfe4ea!important;color:#263442!important}
+.quickQty button{background:#fff!important;color:#6a7888!important;border-color:#e1e6eb!important}
+.buyButton{background:#1ba879!important;color:#fff!important}.sellButton{background:#ed5f62!important;color:#fff!important}
+.drawer,.modal,.modalWide{background:#fff!important;color:#263441!important;border-color:#e3e8ec!important}
+.drawerHeader,.modalHeader,.drawerSection,.drawerFooter,.modalFooter{border-color:#e6e9ee!important}
+@media (max-width:1100px) and (min-width:901px){
+  .appShell{grid-template-columns:175px minmax(0,1fr)!important}
+  .sidebarLogo .logoBlock img{width:135px!important;max-height:45px!important}
+  .marketTerminal{grid-template-columns:155px minmax(0,1fr) 215px!important}
+}
+@media(max-width:900px){
+  .loginPage,.appShell{width:100%!important;height:100dvh!important;min-height:0!important;display:block!important}
+  .loginVisual{display:none!important}
+  .loginPanel{height:100dvh!important;padding:15px!important}
+  .loginForm{padding:22px!important}
+  .mobileLogo{display:flex!important;justify-content:center!important}
+  .mobileLogo .logoBlock img{width:min(80vw,320px)!important;max-height:105px!important}
+  .sidebar{position:fixed!important;top:auto!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:64px!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;border:0!important;border-top:1px solid #e5e9ee!important;padding:0!important;background:#f7f9fa!important;z-index:60!important}
+  .sidebarLogo,.sidebarRole,.logout,.navSectionTitle{display:none!important}
+  .nav{display:contents!important}.navItem,.navActive{display:grid!important;place-items:center!important;gap:2px!important;padding:5px!important;border-radius:0!important}
+  .navItem span,.navActive span{display:block!important;font-size:8px!important}
+  .workspaceBody{padding:10px 10px 75px!important}
+  .metricGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .marketTerminal{display:block!important;overflow:auto!important}
+}
+
