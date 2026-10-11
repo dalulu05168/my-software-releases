@@ -237,11 +237,11 @@ function LoginScreen({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setLoginError("");
-    if (mode === "forgot") {
-      setResetMessage(
+    if (mode !== "login") {
+      setLoginError(
         portal === "client"
-          ? "Verificare finalizată. Setați o parolă nouă."
-          : "验证完成，请设置新的登录密码。",
+          ? "Înregistrarea și resetarea parolei nu sunt încă conectate la un serviciu de verificare. Nu s-a modificat niciun cont."
+          : "密码重置尚未接入经过身份验证的后台服务，未修改任何账户。",
       );
       return;
     }
@@ -268,24 +268,22 @@ function LoginScreen({
       }
       return;
     }
-    const role: Role =
-      portal === "client"
-        ? "client"
-        : /^(ops|sub|运营|子账户)/i.test(account.trim())
-          ? "ops"
-          : "master";
-    const displayName =
-      mode === "register"
-        ? name.trim() || "Client"
-        : account.includes("@")
-          ? account.split("@")[0]
-          : account.trim() ||
-            (role === "master"
-              ? "Master Admin"
-              : role === "ops"
-                ? "Operations Admin"
-                : "Carlos Ramírez");
-    onLogin(role, displayName);
+    // Fail closed: no client identity or balance can be trusted without a server-verified session.
+    // This preview does not have an implemented client login endpoint yet.
+    setLoggingIn(true);
+    try {
+      const result = await project4Api.loginClient(account.trim(), password);
+      onLogin("client", result.displayName);
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "CLIENT_LOGIN_FAILED";
+      setLoginError(
+        code === "CLIENT_AUTH_NOT_CONFIGURED" || code === "MASTER_SESSION_REQUIRED"
+          ? "Autentificarea clienților nu este încă disponibilă. Accesul este blocat până la activarea verificării serverului."
+          : "Autentificare nereușită. Verificați datele sau contactați administratorul.",
+      );
+    } finally {
+      setLoggingIn(false);
+    }
   };
 
   const isClient = portal === "client";
@@ -398,9 +396,10 @@ function LoginScreen({
           ) : null}
 
           {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
+          {isClient ? <div className={enh.formNotice} role="status">Versiune de verificare: autentificarea clienților este blocată până la conectarea serviciului real. Nu sunt afișate solduri sau tranzacții simulate.</div> : null}
           {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
 
-          <button className={styles.primaryButton} type="submit">
+          <button className={styles.primaryButton} type="submit" disabled={loggingIn}>
             {isClient
               ? mode === "register"
                 ? "Creează cont"
