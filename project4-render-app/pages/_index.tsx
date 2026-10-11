@@ -241,10 +241,10 @@ function LoginScreen({
     event.preventDefault();
     setLoginError("");
     if (mode === "register" && portal === "client") {
-      if (!name.trim() || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(account.trim()) ||
+      if (!name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account.trim()) ||
           password.length < 12 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) ||
-          !/[0-9]/.test(password) || password !== confirmPassword || invite.trim().length < 8) {
-        setLoginError("Completați numele, e-mailul, o parolă de cel puțin 12 caractere (majuscule, minuscule și cifre), confirmarea și codul de invitație.");
+          !/[0-9]/.test(password) || password !== confirmPassword || !/^[0-9]{6}$/.test(invite.trim())) {
+        setLoginError("Completați numele, e-mailul, o parolă de cel puțin 12 caractere (majuscule, minuscule și cifre), confirmarea și codul numeric de invitație din 6 cifre.");
         return;
       }
       setLoggingIn(true);
@@ -410,8 +410,10 @@ function LoginScreen({
 
           {isClient && mode === "register" ? (
             <label>
-              <span>Cod de invitație</span>
-              <input value={invite} onChange={(e) => setInvite(e.target.value)} placeholder="Introduceți codul de invitație" />
+              <span>Cod de invitație (6 cifre)</span>
+              <input type="text" inputMode="numeric" autoComplete="off" maxLength={6} pattern="[0-9]{6}"
+                value={invite} onChange={(e) => setInvite(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+                placeholder="Introduceți codul numeric (6 cifre)" />
             </label>
           ) : null}
 
