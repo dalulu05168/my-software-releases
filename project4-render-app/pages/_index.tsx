@@ -524,95 +524,61 @@ function Metric({ title, value, sub, icon: Icon }: any) {
   );
 }
 
+function PendingIntegrationPage({ title, client = false }: { title: string; client?: boolean }) {
+  return (
+    <div className={styles.contentStack}>
+      <div className={styles.pageHeader}>
+        <div><h1>{title}</h1><p>{client ? "Datele vor fi disponibile după verificarea contului." : "业务数据验证状态"}</p></div>
+      </div>
+      <section className={styles.panel} role="status" style={{ minHeight: 150, display: "grid", gap: 12, alignContent: "center" }}>
+        <h3 style={{ margin: 0, color: "#202A37" }}>{client ? "Date reale indisponibile" : "暂未接入可核验的真实数据"}</h3>
+        <p style={{ margin: 0, color: "#4B5563", lineHeight: 1.7 }}>
+          {client
+            ? "Pentru protecția contului, această secțiune nu afișează solduri, ordine sau rezultate simulate. Serviciul de cont securizat nu este încă disponibil."
+            : "此模块原先使用前端预置数据或本地状态。已暂停虚拟客户、资金、订单及权限操作展示。完成真实业务接口与权限校验后再开放。"}
+        </p>
+      </section>
+    </div>
+  );
+}
+
 function Dashboard({
   role,
   name,
   onOpenMarket,
-  onNavigate,
 }: {
   role: Role;
   name: string;
   onOpenMarket: () => void;
   onNavigate: (view: View) => void;
 }) {
-  if (role === "client") {
-    return (
-      <div className={styles.contentStack}>
-        <div className={styles.pageHeader}>
-          <div><h1>Prezentare cont</h1><p>Bine ai revenit, {name}</p></div>
-          <button className={styles.primarySmall} onClick={onOpenMarket}>Deschide piața <ChevronRight size={15} /></button>
-        </div>
-        <section className={styles.heroBalance}>
-          <div><span>Valoare totală cont</span><strong>248,630.80</strong><small>Disponibil 186,240.00 · USD 3,471.20</small></div>
-          <div className={styles.heroStats}>
-            <div><span>Variație astăzi</span><strong className={styles.green}>+2,418.70</strong></div>
-            <div><span>Poziții</span><strong>8</strong></div>
-            <div><span>Nivel cont</span><strong>VIP3</strong></div>
-          </div>
-        </section>
-        <div className={styles.metricGrid}>
-          <Metric icon={WalletCards} title="Fonduri disponibile" value="186,240" sub="Disponibil acum" />
-          <Metric icon={LineChart} title="Valoare poziții" value="62,390" sub="8 poziții" />
-          <Metric icon={Heart} title="Favorite" value="12" sub="US / MX" />
-          <Metric icon={ShieldCheck} title="Verificare" value="Finalizată" sub="Cont activ" />
-        </div>
-        <div className={styles.twoColumns}>
-          <section className={styles.panel}>
-            <div className={styles.panelTitle}><div><h3>Instrumente urmărite</h3><p>Ultimele cotații</p></div><button onClick={onOpenMarket}>Toată piața</button></div>
-            <StockRows compact />
-          </section>
-          <section className={styles.panel}>
-            <div className={styles.panelTitle}><div><h3>Ordine recente</h3><p>Activitatea contului</p></div></div>
-            <OrderRows />
-          </section>
-        </div>
-      </div>
-    );
-  }
-
+  const securitiesQuery = useQuery({
+    queryKey: ["p004-dashboard-verified-securities", role],
+    queryFn: role === "master" ? project4Api.listAdminSecurities : project4Api.listClientSecurities,
+    staleTime: 10_000,
+  });
+  const verified = securitiesQuery.data || [];
+  const count = securitiesQuery.isError ? "读取失败" : securitiesQuery.isPending ? "查询中" : String(verified.filter((s) => s.visible && s.status === "ACTIVE").length);
   return (
     <div className={styles.contentStack}>
       <div className={styles.pageHeader}>
-        <div><h1>{role === "master" ? "运营总览" : "子账户总览"}</h1><p>{role === "master" ? "查看全平台客户、资金与订单状态" : "查看当前子账户名下客户和运营数据"}</p></div>
-        <div className={styles.headerPills}><span>US</span><span>MX</span><span>系统正常</span></div>
+        <div><h1>{role === "client" ? "Prezentare cont" : "运营总览"}</h1><p>{name} · {role === "client" ? "Situație verificată" : "只展示已核验的系统记录"}</p></div>
+        <button className={styles.secondaryButton} onClick={onOpenMarket}> {role === "client" ? "Piață" : "查看已上架证券"} <ChevronRight size={15}/></button>
       </div>
       <div className={styles.metricGrid}>
-        <Metric icon={Users} title="客户总数" value={role === "master" ? "2,846" : "428"} sub="+18 今日新增" />
-        <Metric icon={Banknote} title="累计入金" value="MXN 18.62M" sub="USD 624,830" />
-        <Metric icon={Activity} title="订单数量" value="1,284" sub="今日 74" />
-        <Metric icon={BadgeDollarSign} title="持仓市值" value="MXN 26.84M" sub="USD 906,420" />
+        <Metric icon={LineChart} title={role === "client" ? "Instrumente listate" : "已上架证券"} value={count} sub={securitiesQuery.isError ? "服务器读取失败" : "来自证券 API"} />
+        <Metric icon={Users} title={role === "client" ? "Date cont" : "客户账户"} value="—" sub="尚未连接账户认证" />
+        <Metric icon={WalletCards} title={role === "client" ? "Sold verificat" : "核验资金余额"} value="—" sub="尚未连接真实账本" />
+        <Metric icon={ListFilter} title={role === "client" ? "Ordine reale" : "真实订单"} value="—" sub="尚未连接订单服务" />
       </div>
-      <div className={styles.fourStats}>
-        {[
-          ["今日充值", "MXN 386,200", "+12.8%"],
-          ["今日提现", "MXN 94,700", "-4.2%"],
-          ["今日买入", "MXN 612,540", "+18.6%"],
-          ["今日卖出", "MXN 428,310", "+7.4%"],
-        ].map(([title, value, change]) => (
-          <div key={title}><span>{title}</span><strong>{value}</strong><small>{change}</small></div>
-        ))}
-      </div>
-      <div className={styles.twoColumnsWide}>
-        <section className={styles.panel}>
-          <div className={styles.panelTitle}><div><h3>资金趋势</h3><p>近 7 日运营变化</p></div><div className={styles.segment}><button className={styles.segmentActive}>MXN</button><button>USD</button></div></div>
-          <div className={styles.chartArea}>
-            <InteractiveTrendChart />
-          </div>
-        </section>
-        <section className={styles.panel}>
-          <div className={styles.panelTitle}><div><h3>待处理事项</h3><p>需要运营确认</p></div></div>
-          <div className={styles.todoList}>
-            {[
-              ["实名认证审核", "18", FileCheck2, "customers"],
-              ["充值审核", "12", Banknote, "cash"],
-              ["提现审核", "7", CreditCard, "cash"],
-              ["人工通知", "24", Bell, "notifications"],
-            ].map(([label,count,Icon,target]:any)=>(
-              <button key={label} onClick={() => onNavigate(target)}><span><Icon size={16}/>{label}</span><strong>{count}</strong><ChevronRight size={15}/></button>
-            ))}
-          </div>
-        </section>
-      </div>
+      <section className={styles.panel} role="status">
+        <div className={styles.panelTitle}><div><h3>{role === "client" ? "Date reale indisponibile" : "真实业务状态"}</h3><p>{role === "client" ? "Nu se afișează active simulate" : "未连接的数据不展示虚拟资产与趋势"}</p></div></div>
+        <p style={{ color: "#4B5563", marginTop: 10, lineHeight: 1.8 }}>
+          {role === "client"
+            ? "Autentificarea, soldurile, pozițiile și ordinele necesită un serviciu de cont verificat. Nu există date financiare simulate în acest panou."
+            : "客户、订单、持仓、资金流水目前未完成前后端联通。本页不再把示例金额和图表当作真实统计。"}
+        </p>
+      </section>
     </div>
   );
 }
@@ -858,7 +824,7 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
         {visibleStocks.length===0?<div className={enh.emptyMarket}>Nu există instrumente disponibile</div>:null}
       </section>
       <section className={styles.marketCenter}>
-        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>231.44</b></span><span>Minim <b>223.98</b></span><span>Volum <b>42.8M</b></span><span>Piață <b>{selected.market}</b></span></div></div>
+        <div className={styles.quoteHeader}><div><h2>{selected.symbol}</h2><span>{selected.name}</span><button className={favorites.includes(selected.symbol)?enh.favoriteOn:enh.favoriteOff} onClick={()=>setFavorites(favorites.includes(selected.symbol)?favorites.filter((item)=>item!==selected.symbol):[...favorites,selected.symbol])}><Heart size={13}/>{favorites.includes(selected.symbol)?"În favorite":"Adaugă la favorite"}</button></div><div className={styles.quoteValue}><strong>{selected.price}</strong><span className={selected.up?styles.green:styles.red}>{selected.change}</span></div><div className={styles.quoteFacts}><span>Maxim <b>—</b></span><span>Minim <b>—</b></span><span>Volum <b>—</b></span><span>Piață <b>{selected.market}</b></span></div></div>
         <div className={styles.chartToolbar}>
           {["1D","7D","1L","3L","1A","Max"].map((item) => (
             <button
@@ -871,20 +837,20 @@ function MarketPage({ riskControls }: { riskControls: RiskControl[] }) {
           ))}
         </div>
         <div className={styles.candleChart}>
-          <InteractiveCandleChart symbol={selected.symbol} interval={interval} />
+          <div role="status" style={{padding:22, color:"#4B5563", fontSize:13}}>Datele istorice verificabile nu sunt încă disponibile. Graficul simulat a fost dezactivat.</div>
         </div>
-        <div className={styles.marketBottom}><section><h3>Cumpărători</h3>{[1,2,3,4,5].map(i=><div key={i}><span>Cump. {i}</span><b className={styles.green}>{(Number(selected.price)-i*.05).toFixed(2)}</b><small>{(4200+i*731).toLocaleString()}</small></div>)}</section><section><h3>Tranzacții recente</h3>{["14:35:18","14:35:12","14:35:04","14:34:58","14:34:51"].map((t,i)=><div key={t}><span>{t}</span><b className={i%2?styles.red:styles.green}>{(Number(selected.price)+(i-2)*.03).toFixed(2)}</b><small>{[120,80,240,60,180][i]}</small></div>)}</section></div>
+        <div className={styles.marketBottom}><section><h3>Cumpărători</h3><p style={{color:"#4B5563"}}>Date în timp real indisponibile.</p></section><section><h3>Tranzacții recente</h3><p style={{color:"#4B5563"}}>Nu există tranzacții verificate.</p></section></div>
       </section>
       <section className={styles.orderPanel}>
         <div className={styles.orderTabs}><button className={side==="buy"?styles.buyTab:""} onClick={()=>setSide("buy")}>Cumpără</button><button className={side==="sell"?styles.sellTab:""} onClick={()=>setSide("sell")}>Vinde</button></div>
-        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>186,240.00</strong></div>
+        <div className={styles.orderSummary}><span>Fonduri disponibile</span><strong>—</strong></div>
         <label><span>Instrument</span><input value={selected.symbol} readOnly/></label>
         <label><span>Preț ordin</span><input value={selected.price} readOnly/></label>
         <label><span>Cantitate</span><input value={qty} onChange={(e)=>setQty(e.target.value)}/></label>
-        <div className={styles.quickQty}>{[["25%",.25],["50%",.5],["75%",.75],["100%",1]].map(([label,ratio])=><button key={String(label)} onClick={()=>choosePercent(Number(ratio))}>{label}</button>)}</div>
+        <div className={styles.quickQty}>{["25%","50%","75%","100%"].map(label=><button key={label} disabled title="Soldul verificat nu este disponibil">{label}</button>)}</div>
         <div className={styles.orderEstimate}><span>Valoare estimată</span><strong>{(Number(selected.price)*Number(qty||0)).toLocaleString(undefined,{maximumFractionDigits:2})}</strong></div>
-        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled={!orderEnabled || !selected.tradable} onClick={()=>orderEnabled&&selected.tradable&&setNotice(`Ordin ${side==="buy"?"de cumpărare":"de vânzare"} înregistrat: ${selected.symbol} × ${qty}`)}>{!selected.symbol?"Niciun instrument disponibil":!selected.tradable?"Tranzacționarea nu este activată":orderEnabled?(side==="buy"?"Plasează ordinul":"Plasează ordinul"):"Tranzacționare restricționată"}</button>
-        <p className={styles.brokerNote}>Ordinele sunt înregistrate în sistemul curent; execuția externă prin broker nu este conectată.</p>
+        <button className={side==="buy"?styles.buyButton:styles.sellButton} disabled title="Tranzacționarea este dezactivată până la integrarea backend-ului">Tranzacționare indisponibilă</button>
+        <p className={styles.brokerNote}>Nu se înregistrează ordine. Conectarea contului și procesarea ordinelor sunt în curs de implementare.</p>
         {!orderEnabled?<div className={enh.riskHint}>Accesul la ordine este restricționat de controlul de risc.</div>:null}
         {notice?<div className={styles.orderNotice}>{notice}</div>:null}
       </section>
@@ -1181,17 +1147,19 @@ export default function App() {
     view === "dashboard" ? (
       <Dashboard role={role} name={name} onOpenMarket={()=>setView("market")} onNavigate={setView} />
     ) : view === "customers" && role !== "client" ? (
-      <CustomersPage customers={customers} setCustomers={setCustomers} onMirror={setMirrorCustomer} />
+      <PendingIntegrationPage title="会员管理" />
     ) : view === "market" ? (
       <MarketPage riskControls={riskControls} />
     ) : ["products", "loans", "notifications", "opsAccounts", "audit"].includes(view) ? (
-      <OperationsPage view={view as OperationsView} role={role} />
+      <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
     ) : ["securities", "purchaseAccess", "risk", "support"].includes(view) ? (
-      <AdminControlPage view={view as AdminControlView} role={role} accountName={name} riskControls={riskControls} onRiskControlsChange={setRiskControls} />
+      view === "securities" && role === "master"
+        ? <AdminControlPage view="securities" role={role} accountName={name} riskControls={riskControls} onRiskControlsChange={setRiskControls} />
+        : <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "管理模块"} client={role === "client"}/>
     ) : ["orders", "cash", "positions", "settings"].includes(view) ? (
-      <CoreWorkflowPage view={view as CoreWorkflowView} role={role} accountName={name} riskControls={riskControls} />
+      <PendingIntegrationPage title={role === "client" ? clientNavLabels[view] || "Cont" : navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
     ) : (
-      <GenericPage view={view} />
+      <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "模块"} client={role === "client"}/>
     );
 
   return (
