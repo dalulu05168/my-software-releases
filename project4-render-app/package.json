@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "prebuild": "node scripts/process-logo.mjs",
+    "prebuild": "node scripts/process-logo.mjs && node scripts/create-desktop-icon.mjs",
     "desktop:test": "node --test desktop/server.test.cjs",
     "desktop:package": "electron-builder --win nsis --x64 --publish never",
     "desktop:dev": "npm run build && electron .",
@@ -51,7 +51,8 @@
           ]
         }
       ],
-      "signAndEditExecutable": false
+      "signAndEditExecutable": true,
+      "icon": "build/icon.png"
     },
     "nsis": {
       "oneClick": false,
