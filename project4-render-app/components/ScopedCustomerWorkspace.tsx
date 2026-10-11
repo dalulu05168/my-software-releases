@@ -24,12 +24,12 @@ function cell(row: Row, key: string) {
 function saveCsv(rows: Row[], columns: Array<[string,string]>) {
   if (!rows.length) return;
   const quote = (v: string) => {
-    const safe = /^[\\s]*[=+@-]/.test(v) ? "'" + v : v;
+    const safe = /^[\s]*[=+@-]/.test(v) ? "'" + v : v;
     return '"' + safe.replaceAll('"','""') + '"';
   };
   const lines = [columns.map(([,label]) => quote(label)).join(","),
     ...rows.map(row => columns.map(([key]) => quote(cell(row,key))).join(","))];
-  const url = URL.createObjectURL(new Blob(["\\uFEFF" + lines.join("\\r\\n")], { type: "text/csv;charset=utf-8" }));
+  const url = URL.createObjectURL(new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" }));
   const anchor = document.createElement("a");
   anchor.href = url; anchor.download = "P004-customers-" + new Date().toISOString().slice(0,10) + ".csv";
   document.body.appendChild(anchor); anchor.click(); anchor.remove();
