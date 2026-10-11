@@ -71,11 +71,11 @@ export function VerifiedOpsAccountsPage({
       {accounts.isError ? <p className={styles.error} role="alert">账户列表读取失败。请检查管理员会话或服务状态。</p> : accounts.isPending ?
       <p className={styles.note}>正在读取服务器账户记录…</p> :
       <div className={styles.tableWrap}>
-        <table><thead><tr><th>账户名</th><th>显示名称</th><th>市场权限</th><th>状态</th><th>运营邀请码</th><th>客户明细</th></tr></thead>
+        <table><thead><tr><th>账户名</th><th>显示名称</th><th>市场权限</th><th>状态</th><th>客户注册邀请码（6位）</th><th>客户明细</th></tr></thead>
           <tbody>
             {accounts.data.map((row) => <tr key={row.id}>
               <td>{row.username || "—"}</td><td>{row.name}</td>
-              <td>{row.markets?.join(", ") || "—"}</td><td>{row.status}</td><td>{row.invite || "—"}</td>
+              <td>{row.markets?.join(", ") || "—"}</td><td>{row.status}</td><td>{/^[0-9]{6}$/.test(row.invite || "") ? row.invite : "—（旧格式，禁止发放）"}</td>
               <td><button type="button" className={styles.lightButton}
                 onClick={() => onOpenCustomers?.({ id: row.id, name: row.name })}>
                 查看所属客户
@@ -93,14 +93,15 @@ export function VerifiedOpsAccountsPage({
         <button className={styles.lightButton} onClick={() => setIssued(null)}>关闭并清除显示</button>
       </div>
       <p>账户：{issued.username}（{issued.name}）</p>
-      <p>邀请码：<code>{issued.invite}</code></p>
-      <p>2FA 绑定密钥：<code>{issued.totpSecret}</code></p>
+      <p>客户注册邀请码（固定六位数字）：<code>{/^[0-9]{6}$/.test(issued.invite) ? issued.invite : "邀请码格式异常，不得发放"}</code></p>
+      <p>管理员 2FA 绑定密钥（不是邀请码）：<code>{issued.totpSecret}</code></p>
+      <p className={styles.note}>2FA 密钥仅用于该子账户身份验证器；六位数字邀请码用于下属客户注册并自动归属此子账户。请勿将 2FA 密钥发给客户。</p>
       <p className={styles.note}>立即在授权管理员的身份验证器中绑定。不要在公开场合共享密钥。</p>
     </section> : null}
     {open ? <div className={styles.shade}>
       <form className={styles.dialog} onSubmit={submit}>
         <h2>创建真实子账户</h2>
-        <p className={styles.note}>提交后服务器将创建账户并生成一次性 2FA 绑定信息。请确认资料无误。</p>
+        <p className={styles.note}>确认后系统将为此子账户生成独立的管理员 2FA 绑定密钥，以及唯一、固定的六位数字客户注册码。两者用途不同。</p>
         <label>子账户名称<input value={name} onChange={(event) => setName(event.target.value)} maxLength={100} required/></label>
         <label>登录用户名<input value={username} onChange={(event) => setUsername(event.target.value)} pattern="[A-Za-z0-9._-]{3,64}" required/></label>
         <label>临时登录密码（至少 12 位）<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={12} maxLength={128} autoComplete="new-password" required/></label>
