@@ -520,3 +520,44 @@
   .marketTerminal{display:block!important;overflow:auto!important}
 }
 
+
+
+/* P004 contrast pass 2026-10-11: verified WCAG AA text on light surfaces.
+   Keep the original transparent Brantone Veylor logo and 16:9 layout unchanged. */
+.loginPage,.appShell{color:#374151!important}
+.loginVisual{background:radial-gradient(circle at 22% 90%,#fff2e8 0%,transparent 40%),linear-gradient(140deg,#f6f8fa 0%,#e9edf2 100%)!important}
+.loginPanel{background:#F3F5F7!important}
+.loginForm,.metricCard,.panel,.tablePanel,.fourStats{background:#FFFFFF!important;border-color:#D8DEE6!important}
+.loginForm input,.orderPanel input,.filterBar input,.searchBox input{
+  background:#FFFFFF!important;color:#374151!important;border-color:#D8DEE6!important
+}
+.loginForm input::placeholder,.orderPanel input::placeholder,.filterBar input::placeholder,.searchBox input::placeholder{
+  color:#667085!important;opacity:1!important
+}
+.loginPage .formTitle h2,.pageHeader h1,.panelTitle h3,.topSearch strong{color:#202A37!important}
+.loginForm label span,.formTitle p,.visualText p,.loginVisual .visualText p,
+.pageHeader p,.panelTitle p,.profile span,.headerPills span,.metricCard span,.metricCard small,
+.fourStats span,.fourStats small,.tablePanel th,.tablePanel td>span,
+.heroBalance span,.heroBalance small,.navSectionTitle,.brokerNote{
+  color:#4B5563!important
+}
+.loginForm label span,.topbarMarket span,.navItem,.logout,.topSearch span{color:#4B5563!important}
+.navActive{color:#202A37!important}
+.roleLabel{color:#B94D1C!important;background:#FFF4EF!important;border-color:#E9C4B5!important}
+.primaryButton,.primarySmall{
+  background:linear-gradient(105deg,#B94D1C 0%,#9F3E1B 100%)!important;
+  color:#FFFFFF!important;text-shadow:none!important;border-color:#9F3E1B!important
+}
+.primaryButton:hover,.primarySmall:hover{background:linear-gradient(105deg,#A34219,#8E3617)!important}
+.textButton,.panelTitle>button,.rowActions button,.tableLink{color:#A3411C!important}
+.sidebar{background:#F3F5F7!important;border-right-color:#D8DEE6!important;border-bottom-color:#D8DEE6!important}
+.workspaceBody{background:#FFFFFF!important;border-bottom-color:#D8DEE6!important}
+.metricCard,.tablePanel,.fourStats,.panel,.filterBar{border-color:#D8DEE6!important}
+.tablePanel th{color:#4B5563!important;background:#F3F5F7!important;border-bottom-color:#D8DEE6!important}
+.tablePanel td{color:#374151!important}
+.orderPanel,.orderSummary,.orderTabs button,.marketTerminal{border-color:#D8DEE6!important}
+.secondaryButton,.topbarActions>button{color:#374151!important;border-color:#D8DEE6!important}
+.segment button,.marketTabs button,.chartToolbar button,.quickQty button{color:#4B5563!important}
+.metricGrid .metricCard:nth-child(2) .metricIcon{color:#286BC5!important}
+.metricGrid .metricCard:nth-child(3) .metricIcon{color:#137A58!important}
+@media(max-width:900px){.loginPanel,.sidebar{background:#F3F5F7!important}}
