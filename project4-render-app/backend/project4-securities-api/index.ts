@@ -545,7 +545,6 @@ Deno.serve(async (req: Request) => {
             status: row.status,
             enabled: identity?.enabled !== false && policy?.enabled !== false,
             invite: invite?.display_code || "",
-            clients: 0,
           };
         }),
       });
