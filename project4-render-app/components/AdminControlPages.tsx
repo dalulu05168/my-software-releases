@@ -179,6 +179,11 @@ function SecuritiesPage() {
   const [searching, setSearching] = useState(false);
   const [providerRows, setProviderRows] = useState<SecurityRow[]>([]);
   const [selected, setSelected] = useState<SecurityRow | null>(null);
+  const [showManualEntry, setShowManualEntry] = useState(false);
+  const [newSymbol, setNewSymbol] = useState("");
+  const [newName, setNewName] = useState("");
+  const [manualMarket, setManualMarket] = useState<"US" | "MX">("US");
+  const [manualError, setManualError] = useState("");
 
   const visible = rows.filter(
     (row) =>
@@ -189,35 +194,40 @@ function SecuritiesPage() {
         .includes(query.toLowerCase()),
   );
 
-  const searchProvider = () => {
+  // This searches only records returned by the real project database.
+  // Never invent a ticker or present a fabricated external-provider result.
+  const searchProvider = async () => {
     setSearching(true);
-    setTimeout(() => {
-      const candidates = rows.filter((row) =>
-        [row.symbol, row.name]
-          .join(" ")
-          .toLowerCase()
-          .includes(query.toLowerCase()),
+    setProviderRows([]);
+    try {
+      const refreshed = await securitiesQuery.refetch();
+      if (refreshed.error) throw refreshed.error;
+      const found = (refreshed.data || []).filter((item) =>
+        (market === "ALL" || item.market === market) &&
+        [item.symbol, item.name, item.providerExchange || ""]
+          .join(" ").toLowerCase().includes(query.trim().toLowerCase())
       );
-      setProviderRows(
-        candidates.length
-          ? candidates
-          : [
-              {
-                symbol: query.trim().toUpperCase() || "NEW",
-                name: query.trim().toUpperCase() || "待录入证券",
-                market: market === "MX" ? "MX" : "US",
-                exchange: market === "MX" ? "BMV" : "NASDAQ",
-                mic: market === "MX" ? "XMEX" : "XNAS",
-                currency: market === "MX" ? "MXN" : "USD",
-                visible: true,
-                internalOrder: false,
-                quote: "—",
-                sync: "刚刚",
-              },
-            ],
-      );
+      setProviderRows(found.map((item) => ({
+        id: item.id,
+        status: item.status,
+        symbol: item.symbol,
+        name: item.name,
+        market: item.market,
+        exchange: item.providerExchange || "—",
+        mic: item.micCode || "—",
+        currency: item.currency,
+        visible: item.visible,
+        internalOrder: item.tradable,
+        quote: item.quote?.lastPrice == null ? "—" : String(item.quote.lastPrice),
+        sync: item.providerSyncedAt ? new Date(item.providerSyncedAt).toLocaleString() : "—",
+      })));
+      if (!found.length) setManualError("数据库中没有匹配记录。可选择手工录入，不会伪称来自外部行情提供商。");
+      else setManualError("");
+    } catch {
+      setManualError("真实数据库查询失败，请检查管理员登录及后端连接。");
+    } finally {
       setSearching(false);
-    }, 180);
+    }
   };
 
   const refreshSecurities = async () => {
@@ -250,10 +260,39 @@ function SecuritiesPage() {
     onSuccess: refreshSecurities,
   });
 
-  const update = (symbol: string, patch: Partial<SecurityRow>) => {
-    const row = rows.find((item) => item.symbol === symbol);
+  const update = (id: string, patch: Partial<SecurityRow>) => {
+    const row = rows.find((item) => item.id === id);
     if (!row?.id) return;
     updateMutation.mutate({ row, patch });
+  };
+
+  const createManualSecurity = async (event: FormEvent) => {
+    event.preventDefault();
+    setManualError("");
+    const symbol = newSymbol.trim().toUpperCase();
+    const name = newName.trim();
+    if (!/^[A-Z0-9.-]{1,20}$/.test(symbol) || name.length < 2 || name.length > 160) {
+      setManualError("请输入有效证券代码（1-20位大写字母/数字/点/横线）及完整名称。");
+      return;
+    }
+    if (rows.some(item => item.symbol === symbol && item.market === manualMarket)) {
+      setManualError("此证券已在数据库，禁止重复录入。");
+      return;
+    }
+    try {
+      await upsertMutation.mutateAsync({
+        symbol, name, market: manualMarket,
+        currency: manualMarket === "MX" ? "MXN" : "USD",
+        exchange: "—", mic: "—",
+        visible: false, internalOrder: false, quote: "—", sync: "—",
+      });
+      setNewSymbol("");
+      setNewName("");
+      setShowManualEntry(false);
+      setProviderRows([]);
+    } catch (err) {
+      setManualError("录入失败：" + (err instanceof Error ? err.message : "数据库不可用"));
+    }
   };
 
   return (
@@ -269,8 +308,8 @@ function SecuritiesPage() {
       <section className={styles.providerBox}>
         <div className={styles.providerTitle}>
           <div>
-            <strong>证券数据源搜索</strong>
-            <span>按代码或名称查找 US / MX 证券资料</span>
+            <strong>已入库证券查询</strong>
+            <span>仅查询服务器已保存的 US / MX 证券资料；未接入外部证券发现服务</span>
           </div>
           <LineChart size={20} />
         </div>
@@ -293,8 +332,11 @@ function SecuritiesPage() {
               placeholder="AAPL / WALMEX / 公司名称"
             />
           </div>
-          <button className={styles.primary} onClick={searchProvider}>
-            {searching ? "查询中…" : "查询证券"}
+          <button type="button" className={styles.primary} disabled={searching} onClick={() => void searchProvider()}>
+            {searching ? "读取服务器中…" : "查询数据库"}
+          </button>
+          <button type="button" className={styles.link} onClick={() => { setShowManualEntry(!showManualEntry);setManualError(""); }}>
+            {showManualEntry ? "取消手工录入" : "手工录入证券"}
           </button>
         </div>
         {providerRows.length ? (
@@ -304,14 +346,35 @@ function SecuritiesPage() {
                 <strong>{row.symbol}</strong>
                 <span>{row.name}</span>
                 <span>{row.exchange} · {row.mic}</span>
-                <button
-                  onClick={() => upsertMutation.mutate({ ...row, internalOrder: false })}
-                >
-                  {upsertMutation.isPending ? "上架中…" : "加入证券列表"}
-                </button>
+                <button type="button" onClick={() => setSelected(row)}>查看已入库详情</button>
               </div>
             ))}
           </div>
+        ) : null}
+        {manualError ? <p role="status" style={{color:"#9F3E1B",fontSize:12}}>{manualError}</p> : null}
+        {securitiesQuery.isError ? <p role="alert" style={{color:"#9F3E1B"}}>证券数据库读取失败，当前不展示任何预设数据。</p> : null}
+        {updateMutation.isError ? <p role="alert" style={{color:"#9F3E1B"}}>证券可见性更新失败，请刷新后重试。</p> : null}
+        {showManualEntry ? (
+          <form onSubmit={(event) => void createManualSecurity(event)}
+            style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(135px,1fr))",gap:10,alignItems:"end",padding:12,border:"1px solid #D8DEE6",borderRadius:10}}>
+            <label style={{fontSize:12}}>市场
+              <select value={manualMarket} onChange={event=>setManualMarket(event.target.value as "US"|"MX")}>
+                <option value="US">US</option><option value="MX">MX</option>
+              </select>
+            </label>
+            <label style={{fontSize:12}}>证券代码
+              <input required maxLength={20} value={newSymbol}
+                onChange={event=>setNewSymbol(event.target.value.toUpperCase())} placeholder="AAPL" />
+            </label>
+            <label style={{fontSize:12}}>证券全称
+              <input required maxLength={160} value={newName}
+                onChange={event=>setNewName(event.target.value)} placeholder="完整法定名称" />
+            </label>
+            <button type="submit" className={styles.primary} disabled={upsertMutation.isPending}>
+              {upsertMutation.isPending ? "保存到服务器中…" : "保存为隐藏证券"}
+            </button>
+            <span style={{gridColumn:"1/-1",fontSize:11,color:"#667085"}}>手工录入不等于官方行情核验；默认对客户端隐藏且不允许下单。审核证券信息后可单独开启客户端可见。</span>
+          </form>
         ) : null}
       </section>
 
@@ -345,19 +408,14 @@ function SecuritiesPage() {
                   <Switch
                     value={row.visible}
                     onChange={() =>
-                      update(row.symbol, { visible: !row.visible })
+                      update(row.id || "", { visible: !row.visible })
                     }
                   />
                 </td>
                 <td>
-                  <Switch
-                    value={row.internalOrder}
-                    onChange={() =>
-                      update(row.symbol, {
-                        internalOrder: !row.internalOrder,
-                      })
-                    }
-                  />
+                  <span title="订单执行端点尚未集成，本页面不允许开启虚假的可交易状态">
+                    {row.internalOrder ? "数据库标记允许（实际交易未接入）" : "交易暂未开放"}
+                  </span>
                 </td>
                 <td>
                   <button
