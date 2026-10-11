@@ -52,6 +52,7 @@ import {
 import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
 import { VerifiedOpsAccountsPage } from "../components/VerifiedOpsAccounts";
+import { VerifiedAdminRecordsPage } from "../components/VerifiedAdminRecords";
 
 type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
@@ -1225,7 +1226,7 @@ export default function App() {
     view === "dashboard" ? (
       <Dashboard role={role} name={name} onOpenMarket={()=>setView("market")} onNavigate={setView} />
     ) : view === "customers" && role !== "client" ? (
-      <PendingIntegrationPage title="会员管理" />
+      <VerifiedAdminRecordsPage kind="clients" />
     ) : view === "market" ? (
       <MarketPage riskControls={riskControls} />
     ) : view === "opsAccounts" && role === "master" ? (
@@ -1236,10 +1237,14 @@ export default function App() {
       view === "securities" && role === "master"
         ? <AdminControlPage view="securities" role={role} accountName={name} riskControls={riskControls} onRiskControlsChange={setRiskControls} />
         : <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "管理模块"} client={role === "client"}/>
-    ) : ["orders", "cash", "positions", "settings"].includes(view) ? (
+    ) : ["orders", "cash", "positions"].includes(view) ? (
       role === "client" && (view === "orders" || view === "positions")
         ? <ClientPortfolioRecordsPage view={view} />
-        : <PendingIntegrationPage title={role === "client" ? clientNavLabels[view] || "Cont" : navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
+        : role !== "client"
+          ? <VerifiedAdminRecordsPage kind={view as "orders" | "cash" | "positions"} />
+          : <PendingIntegrationPage title={clientNavLabels[view] || "Cont"} client />
+    ) : view === "settings" ? (
+      <PendingIntegrationPage title={role === "client" ? "Setări" : "系统设置"} client={role === "client"}/>
     ) : (
       <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "模块"} client={role === "client"}/>
     );
