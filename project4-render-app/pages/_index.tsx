@@ -307,6 +307,11 @@ function LoginScreen({
   };
 
   const isClient = portal === "client";
+  const isInstalledDesktop =
+    typeof window !== "undefined" &&
+    window.location.hostname === "127.0.0.1" &&
+    new URLSearchParams(window.location.search).get("desktop") === "1";
+
 
   return (
     <main className={styles.loginPage}>
@@ -333,6 +338,14 @@ function LoginScreen({
       <section className={styles.loginPanel}>
         <div className={styles.mobileLogo}><Logo /></div>
 
+        {isInstalledDesktop ? (
+          <div style={{display:"flex",gap:10,justifyContent:"center",padding:"12px 0"}}>
+            <button type="button" className={styles.textButton} disabled={!isClient}
+              onClick={() => window.location.assign("/?desktop=1&portal=admin")}>总账户 / 子账户登录</button>
+            <button type="button" className={styles.textButton} disabled={isClient}
+              onClick={() => window.location.assign("/?desktop=1&portal=client")}>客户登录</button>
+          </div>
+        ) : null}
         <form className={styles.loginForm} onSubmit={submit}>
           <div className={styles.formTitle}>
             <span className={styles.roleLabel}>
