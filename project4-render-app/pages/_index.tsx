@@ -53,6 +53,7 @@ import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
 import { VerifiedOpsAccountsPage } from "../components/VerifiedOpsAccounts";
 import { VerifiedAdminRecordsPage } from "../components/VerifiedAdminRecords";
+import { ScopedCustomerWorkspace } from "../components/ScopedCustomerWorkspace";
 
 type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
@@ -1212,6 +1213,7 @@ export default function App() {
   const [view, setView] = useState<View>("dashboard");
   const [customers, setCustomers] = useState(initialCustomers);
   const [mirrorCustomer, setMirrorCustomer] = useState<Customer | null>(null);
+  const [selectedOpsAccount, setSelectedOpsAccount] = useState<{ id: string; name: string } | null>(null);
   const [riskControls, setRiskControls] = useState<RiskControl[]>(defaultRiskControls);
   const portal: Portal =
     typeof window !== "undefined" &&
@@ -1223,18 +1225,25 @@ export default function App() {
       : "client";
 
   if (!role) {
-    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setRole(nextRole);setName(nextName);setView("dashboard");}} />;
+    return <LoginScreen portal={portal} onLogin={(nextRole, nextName)=>{setSelectedOpsAccount(null);setRole(nextRole);setName(nextName);setView("dashboard");}} />;
   }
 
   const content =
     view === "dashboard" ? (
       <Dashboard role={role} name={name} onOpenMarket={()=>setView("market")} onNavigate={setView} />
     ) : view === "customers" && role !== "client" ? (
-      <VerifiedAdminRecordsPage kind="clients" />
+      <ScopedCustomerWorkspace
+        opsAccountId={role==="master" ? selectedOpsAccount?.id : null}
+        opsAccountName={role==="master" ? selectedOpsAccount?.name : null}
+        onClearOpsScope={()=>setSelectedOpsAccount(null)}
+      />
     ) : view === "market" ? (
       <MarketPage riskControls={riskControls} />
     ) : view === "opsAccounts" && role === "master" ? (
-      <VerifiedOpsAccountsPage />
+      <VerifiedOpsAccountsPage onOpenCustomers={account=>{
+        setSelectedOpsAccount(account);
+        setView("customers");
+      }} />
     ) : ["products", "loans", "notifications", "opsAccounts", "audit"].includes(view) ? (
       <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
     ) : ["securities", "purchaseAccess", "risk", "support"].includes(view) ? (
@@ -1255,7 +1264,7 @@ export default function App() {
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutAdmin();else void project4Api.logoutClient();queryClient.clear();setRole(null);setName("");setView("dashboard");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutAdmin();else void project4Api.logoutClient();queryClient.clear();setSelectedOpsAccount(null);setRole(null);setName("");setView("dashboard");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
         <div className={styles.workspaceBody}>{content}</div>
