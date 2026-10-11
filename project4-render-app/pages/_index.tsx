@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { project4Api } from "../helpers/project4Api";
 import {
   Activity,
@@ -557,6 +557,13 @@ function Dashboard({
     queryFn: role === "master" ? project4Api.listAdminSecurities : project4Api.listClientSecurities,
     staleTime: 10_000,
   });
+  const clientPortfolio = useQuery({
+    queryKey: ["p004-client-dashboard-portfolio", name],
+    queryFn: project4Api.getClientPortfolio,
+    enabled: role === "client",
+    staleTime: 0,
+    retry: false,
+  });
   const verified = securitiesQuery.data || [];
   const count = securitiesQuery.isError ? "读取失败" : securitiesQuery.isPending ? "查询中" : String(verified.filter((s) => s.visible && s.status === "ACTIVE").length);
   return (
@@ -567,18 +574,85 @@ function Dashboard({
       </div>
       <div className={styles.metricGrid}>
         <Metric icon={LineChart} title={role === "client" ? "Instrumente listate" : "已上架证券"} value={count} sub={securitiesQuery.isError ? "服务器读取失败" : "来自证券 API"} />
-        <Metric icon={Users} title={role === "client" ? "Date cont" : "客户账户"} value="—" sub="尚未连接账户认证" />
+        <Metric icon={Users} title={role === "client" ? "Poziții reale" : "客户账户"} value={role === "client" && clientPortfolio.isSuccess ? String(clientPortfolio.data.positions.length) : "—"} sub={role === "client" ? "Date din contul autentificat" : "未接入账户汇总"} />
         <Metric icon={WalletCards} title={role === "client" ? "Sold verificat" : "核验资金余额"} value="—" sub="尚未连接真实账本" />
-        <Metric icon={ListFilter} title={role === "client" ? "Ordine reale" : "真实订单"} value="—" sub="尚未连接订单服务" />
+        <Metric icon={ListFilter} title={role === "client" ? "Ordine reale" : "真实订单"} value={role === "client" && clientPortfolio.isSuccess ? String(clientPortfolio.data.orders.length) : "—"} sub={role === "client" ? "Ultimele maximum 100 de ordine" : "尚未连接订单汇总"} />
       </div>
       <section className={styles.panel} role="status">
         <div className={styles.panelTitle}><div><h3>{role === "client" ? "Date reale indisponibile" : "真实业务状态"}</h3><p>{role === "client" ? "Nu se afișează active simulate" : "未连接的数据不展示虚拟资产与趋势"}</p></div></div>
         <p style={{ color: "#4B5563", marginTop: 10, lineHeight: 1.8 }}>
           {role === "client"
-            ? "Autentificarea, soldurile, pozițiile și ordinele necesită un serviciu de cont verificat. Nu există date financiare simulate în acest panou."
+            ? clientPortfolio.isError
+              ? "Nu se pot încărca datele contului; sesiunea poate fi expirată. Vă rugăm să vă autentificați din nou."
+              : "Pozițiile și ordinele sunt citite doar din contul autentificat. Soldul disponibil nu este încă calculat și tranzacționarea este dezactivată."
             : "客户、订单、持仓、资金流水目前未完成前后端联通。本页不再把示例金额和图表当作真实统计。"}
         </p>
       </section>
+    </div>
+  );
+}
+
+
+function ClientPortfolioRecordsPage({ view }: { view: "orders" | "positions" }) {
+  const query = useQuery({
+    queryKey: ["p004-client-real-records", view],
+    queryFn: project4Api.getClientPortfolio,
+    staleTime: 0,
+    retry: false,
+  });
+  const orders = query.data?.orders || [];
+  const positions = query.data?.positions || [];
+  return (
+    <div className={styles.contentStack}>
+      <div className={styles.pageHeader}>
+        <div>
+          <h1>{view === "orders" ? "Ordine" : "Poziții"}</h1>
+          <p>Numai înregistrări din contul autentificat · vizualizare fără tranzacționare</p>
+        </div>
+        <button className={styles.secondaryButton} type="button" onClick={() => void query.refetch()}>Actualizare</button>
+      </div>
+      {query.isError ? (
+        <section className={styles.panel} role="alert" style={{color:"#9F3E1B"}}>
+          Datele nu pot fi încărcate. Verificați sesiunea și încercați din nou.
+        </section>
+      ) : query.isPending ? (
+        <section className={styles.panel} role="status">Se verifică înregistrările...</section>
+      ) : (
+        <section className={styles.tablePanel}>
+          {view === "orders" ? (
+            <table>
+              <thead><tr><th>Ordin</th><th>Sens</th><th>Cantitate</th><th>Monedă</th><th>Stare</th><th>Înregistrat</th></tr></thead>
+              <tbody>
+                {orders.map((item) => <tr key={item.id}>
+                  <td className={styles.mono}>{item.id.slice(0, 12)}</td>
+                  <td>{item.side}</td>
+                  <td className={styles.mono}>{item.quantity ?? "—"}</td>
+                  <td>{item.currency}</td>
+                  <td>{item.state}</td>
+                  <td>{item.created_at ? new Date(item.created_at).toLocaleString("ro-RO") : "—"}</td>
+                </tr>)}
+                {orders.length === 0 ? <tr><td colSpan={6}>Nu există ordine înregistrate pentru acest cont.</td></tr> : null}
+              </tbody>
+            </table>
+          ) : (
+            <table>
+              <thead><tr><th>Instrument</th><th>Cantitate</th><th>Cost mediu</th><th>Monedă</th></tr></thead>
+              <tbody>
+                {positions.map((item) => <tr key={item.security_id}>
+                  <td><strong>{item.security?.symbol || "—"}</strong><span>{item.security?.name || "Instrument neidentificat"}</span></td>
+                  <td className={styles.mono}>{item.quantity}</td>
+                  <td className={styles.mono}>{item.average_cost}</td>
+                  <td>{item.currency}</td>
+                </tr>)}
+                {positions.length === 0 ? <tr><td colSpan={4}>Nu există poziții înregistrate pentru acest cont.</td></tr> : null}
+              </tbody>
+            </table>
+          )}
+        </section>
+      )}
+      <p style={{fontSize:11,color:"#4B5563"}}>
+        Datele provin din API-ul de client; nu se afișează solduri calculate sau profituri estimate.
+      </p>
     </div>
   );
 }
@@ -1124,6 +1198,7 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
 }
 
 export default function App() {
+  const queryClient = useQueryClient();
   const [role, setRole] = useState<Role | null>(null);
   const [name, setName] = useState("");
   const [view, setView] = useState<View>("dashboard");
@@ -1157,14 +1232,16 @@ export default function App() {
         ? <AdminControlPage view="securities" role={role} accountName={name} riskControls={riskControls} onRiskControlsChange={setRiskControls} />
         : <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "管理模块"} client={role === "client"}/>
     ) : ["orders", "cash", "positions", "settings"].includes(view) ? (
-      <PendingIntegrationPage title={role === "client" ? clientNavLabels[view] || "Cont" : navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
+      role === "client" && (view === "orders" || view === "positions")
+        ? <ClientPortfolioRecordsPage view={view} />
+        : <PendingIntegrationPage title={role === "client" ? clientNavLabels[view] || "Cont" : navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
     ) : (
       <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "模块"} client={role === "client"}/>
     );
 
   return (
     <main className={styles.appShell}>
-      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutAdmin();setRole(null);setName("");}} />
+      <Sidebar role={role} view={view} onView={setView} onLogout={()=>{if(role==="master" || role==="ops") project4Api.logoutAdmin();else void project4Api.logoutClient();queryClient.clear();setRole(null);setName("");setView("dashboard");}} />
       <div className={styles.workspace}>
         <Topbar name={name} role={role} onNavigate={setView} />
         <div className={styles.workspaceBody}>{content}</div>
