@@ -704,8 +704,14 @@ Deno.serve(async (req: Request) => {
       const opsAccountId = String(body?.opsAccountId || "");
       const status = body?.status === "SUSPENDED" ? "SUSPENDED" : "ACTIVE";
 
-      const { error: accountError } = await supabase.from("ops_accounts").update({ status }).eq("id", opsAccountId);
+      if (!/^[0-9a-f-]{36}$/i.test(opsAccountId)) {
+        return json({ error: "INVALID_OPS_ACCOUNT_ID" }, 400);
+      }
+      const { data: statusRow, error: accountError } = await supabase
+        .from("ops_accounts").update({ status }).eq("id", opsAccountId)
+        .select("id,status").maybeSingle();
       if (accountError) throw accountError;
+      if (!statusRow) return json({ error: "OPS_ACCOUNT_NOT_FOUND" }, 404);
 
       const enabled = status === "ACTIVE";
       const { data: identities } = await supabase
@@ -724,6 +730,19 @@ Deno.serve(async (req: Request) => {
         }
       }
 
+      const { error: auditError } = await supabase.from("audit_events").insert({
+        actor_id: auth.identity.id,
+        actor_role: "MASTER_ADMIN",
+        action: status === "SUSPENDED" ? "OPS_ACCOUNT_SUSPENDED" : "OPS_ACCOUNT_REACTIVATED",
+        entity_type: "OPS_ACCOUNT",
+        entity_id: opsAccountId,
+        after_value: { status, activeSessionsRevoked: !enabled },
+        reason: "ADMIN_OPS_ACCOUNTS_UI",
+      });
+      if (auditError) {
+        console.error("ops status audit failure", auditError.code);
+        return json({ error: "OPS_STATUS_CHANGED_BUT_AUDIT_FAILED" }, 503);
+      }
       return json({ ok: true, status });
     }
 
