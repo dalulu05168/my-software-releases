@@ -2,6 +2,8 @@ const PROJECT4_API =
   "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-securities-api";
 const PROJECT4_CLIENT_API =
   "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-client-api";
+const PROJECT4_REPORTS_API =
+  "https://nukvroaolkxewfnqfiui.supabase.co/functions/v1/project4-reporting-api";
 
 const SESSION_KEY = "project4_master_session";
 const CLIENT_SESSION_KEY = "project4_client_session";
@@ -141,6 +143,27 @@ export const project4Api = {
   },
   logoutMaster() {
     this.logoutAdmin();
+  },
+
+  async listAdminReport(action: "clients" | "orders" | "cash" | "positions"): Promise<{
+    rows: Array<Record<string, string | number | boolean | null>>;
+    limit: number;
+    possiblyMore: boolean;
+  }> {
+    const token = typeof window === "undefined" ? null : window.localStorage.getItem(SESSION_KEY);
+    if (!token) throw new Error("AUTHORIZED_ADMIN_SESSION_REQUIRED");
+    const response = await fetch(PROJECT4_REPORTS_API + "?action=" + encodeURIComponent(action), {
+      headers: { Authorization: "Bearer " + token },
+      cache: "no-store",
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.error || "REPORTING_UNAVAILABLE");
+    if (!Array.isArray(data?.rows)) throw new Error("INVALID_REPORTING_RESPONSE");
+    return {
+      rows: data.rows,
+      limit: typeof data.limit === "number" ? data.limit : 200,
+      possiblyMore: data.possiblyMore === true,
+    };
   },
 
   async listOpsAccounts(): Promise<Array<{
