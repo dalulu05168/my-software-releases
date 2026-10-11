@@ -209,9 +209,16 @@ async function signup(db: DB, payload: Record<string,unknown>, origin: string|nu
  const encoder=new TextEncoder();
  const hex=(bytes:Uint8Array)=>Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
  const inviteDigest=await sha256(invite);
+ // An invite has only six decimal digits. Rate-limit by verified source IP,
+ // NOT by email, otherwise an attacker can rotate email addresses to bypass
+ // the RPC's 12-attempts-per-15-minutes guard.
  const clientAddress=(request.headers.get("cf-connecting-ip")||"").trim();
- // Do not trust spoofable forwarded headers. Cloudflare edge provides cf-connecting-ip in Supabase hosting.
- const rateKey=await sha256("p004-signup:"+clientAddress+":"+email);
+ // Only the trusted Supabase/Cloudflare edge may provide this header.
+ // Fail closed when unavailable, never accept a caller-supplied X-Forwarded-For.
+ if (!/^[0-9a-fA-F:.]{3,45}$/.test(clientAddress)) {
+   return json({error:"SIGNUP_SOURCE_UNAVAILABLE"},503,origin);
+ }
+ const rateKey=await sha256("p004-signup-v2:ip:"+clientAddress);
  const salt=crypto.getRandomValues(new Uint8Array(16));
  const key=await crypto.subtle.importKey("raw",encoder.encode(password),"PBKDF2",false,["deriveBits"]);
  const derived=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",iterations:600000,salt},key,256);
