@@ -7,7 +7,7 @@ const source = resolve("public/brantone-veyor-logo.webp");
 const output = resolve("build/icon.png");
 await mkdir(resolve("build"), { recursive: true });
 const logo = await sharp(source)
-  .resize({ width: 850, height: 370, fit: "inside", withoutEnlargement: true })
+  .resize({ width: 850, height: 370, fit: "inside" })
   .png()
   .toBuffer();
 const { width = 0, height = 0 } = await sharp(logo).metadata();
