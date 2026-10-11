@@ -239,12 +239,27 @@ function LoginScreen({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setLoginError("");
+    if (mode === "register" && portal === "client") {
+      if (!name.trim() || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(account.trim()) ||
+          password.length < 12 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) ||
+          !/[0-9]/.test(password) || password !== confirmPassword || invite.trim().length < 8) {
+        setLoginError("Completați numele, e-mailul, o parolă de cel puțin 12 caractere (majuscule, minuscule și cifre), confirmarea și codul de invitație.");
+        return;
+      }
+      setLoggingIn(true);
+      try {
+        await project4Api.registerClient({ name:name.trim(),email:account.trim(),password,invite:invite.trim() });
+        setPassword("");setConfirmPassword("");setInvite("");
+        setResetMessage("Contul a fost înregistrat. Verificarea identității este în așteptare; tranzacționarea și retragerile rămân dezactivate.");
+        setMode("login");
+      } catch (error) {
+        const code=error instanceof Error?error.message:"SIGNUP_UNAVAILABLE";
+        setLoginError(code==="RATE_LIMITED"?"Prea multe încercări. Așteptați 15 minute.":code==="INVALID_INVITE_OR_ACCOUNT"?"Codul de invitație nu este valid sau contul există deja.":"Înregistrarea nu a reușit. Verificați informațiile și încercați din nou.");
+      } finally {setLoggingIn(false);}
+      return;
+    }
     if (mode !== "login") {
-      setLoginError(
-        portal === "client"
-          ? "Înregistrarea și resetarea parolei nu sunt încă conectate la un serviciu de verificare. Nu s-a modificat niciun cont."
-          : "密码重置尚未接入经过身份验证的后台服务，未修改任何账户。",
-      );
+      setLoginError("Recuperarea parolei este disponibilă doar prin administrator până la implementarea verificării securizate.");
       return;
     }
     if (portal === "admin") {
@@ -348,8 +363,8 @@ function LoginScreen({
           ) : null}
 
           <label>
-            <span>{isClient ? "Telefon / e-mail / cont" : "后台账户"}</span>
-            <input value={account} onChange={(e) => setAccount(e.target.value)} placeholder={isClient ? "+40... / nume@exemplu.ro" : "请输入后台账户"} />
+            <span>{isClient && mode === "register" ? "E-mail" : isClient ? "Telefon / e-mail / cont" : "后台账户"}</span>
+            <input type={isClient && mode === "register" ? "email" : "text"} autoComplete={isClient && mode === "register" ? "email" : "username"} required value={account} onChange={(e) => setAccount(e.target.value)} placeholder={isClient && mode === "register" ? "nume@exemplu.ro" : isClient ? "+40... / nume@exemplu.ro" : "请输入后台账户"} />
           </label>
 
           {mode !== "forgot" ? (
@@ -400,7 +415,7 @@ function LoginScreen({
           ) : null}
 
           {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
-          {isClient ? <div className={enh.formNotice} role="status">Autentificare verificată pe server. Numai conturile activate pot accesa datele proprii; soldurile și tranzacțiile simulate nu sunt afișate.</div> : null}
+          {isClient && mode==="login" ? <div className={enh.formNotice} role="status">Autentificare verificată pe server. Tranzacționarea și retragerile sunt supuse verificării identității.</div> : null}
           {loginError ? <div className={styles.formError} role="alert">{loginError}</div> : null}
 
           <button className={styles.primaryButton} type="submit" disabled={loggingIn}>
@@ -414,9 +429,10 @@ function LoginScreen({
             <ChevronRight size={17} />
           </button>
 
-          {isClient && mode === "login" ? (
-            <p className={styles.unavailableNotice}>Înregistrarea și recuperarea parolei vor fi activate după implementarea verificării securizate. Contactați administratorul pentru acces.</p>
-          ) : null}
+          {isClient ? <div style={{display:"flex",gap:12,justifyContent:"center",alignItems:"center",flexWrap:"wrap",fontSize:12}}>
+            {mode !== "register" ? <button type="button" className={styles.textButton} onClick={()=>{setMode("register");setLoginError("");setResetMessage("");}}>Creează cont cu invitație</button> : null}
+            {mode !== "login" ? <button type="button" className={styles.textButton} onClick={()=>{setMode("login");setLoginError("");}}>Înapoi la autentificare</button> : null}
+          </div> : null}
         </form>
       </section>
     </main>
