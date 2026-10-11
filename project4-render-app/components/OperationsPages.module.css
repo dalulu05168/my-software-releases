@@ -50,3 +50,23 @@
 .noticeIcon{background:#fff1e9!important;color:#ee7843!important}
 .noticeRight button{background:#fff!important;color:#687889!important;border-color:#e2e6ea!important}
 .auditSearch,.auditSearch input{background:#fff!important;color:#263444!important;border-color:#e3e8ed!important}
+
+
+/* AA contrast refinement — customers, orders and notices */
+.stack,.tablePanel,.drawer,.modal{color:#374151!important}
+.header h1,.detailGrid strong,.noticeGrid h3{color:#202A37!important}
+.header p,.noticeGrid p,.noticeMeta small,.detailGrid span,.drawerHeader span,
+.drawerSection label span,.form label span,.resultBox p,.resultBox span{color:#4B5563!important}
+.tablePanel,.noticeGrid article,.detailGrid{border-color:#D8DEE6!important}
+.tablePanel th{color:#4B5563!important;border-color:#D8DEE6!important}
+.tablePanel td{color:#374151!important}
+.form input,.drawerSection input,.drawerSection textarea,.auditSearch input{color:#374151!important;border-color:#D8DEE6!important}
+.form input::placeholder,.drawerSection input::placeholder,.drawerSection textarea::placeholder,
+.auditSearch input::placeholder{color:#667085!important;opacity:1!important}
+.primary{
+  background:linear-gradient(105deg,#B94D1C,#9F3E1B)!important;
+  border-color:#9F3E1B!important;color:#FFFFFF!important;text-shadow:none!important
+}
+.secondary{color:#374151!important;border-color:#D8DEE6!important}
+.actions button,.auditButton{color:#215DA8!important}
+
