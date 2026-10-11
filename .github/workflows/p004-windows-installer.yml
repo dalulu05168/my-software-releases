@@ -1,0 +1,65 @@
+name: P004 Windows Desktop Installer
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - p004-windows-installer-20261012
+    paths:
+      - 'project4-render-app/**'
+      - '.github/workflows/p004-windows-installer.yml'
+  pull_request:
+    branches:
+      - p004-account-flow-readonly-20261011
+    paths:
+      - 'project4-render-app/**'
+      - '.github/workflows/p004-windows-installer.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  windows-installer:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: project4-render-app
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: 'false'
+    steps:
+      - name: Check out P004 Windows branch
+        uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build actual bundled frontend
+        run: npm run build
+      - name: TypeScript strict typecheck
+        run: npm run typecheck
+      - name: Verify desktop local HTTP and proxy safety
+        run: npm run desktop:test
+      - name: Security and functional regressions
+        run: node --test tests/security-acceptance.test.mjs
+      - name: Package Windows setup installer
+        run: npm run desktop:package
+      - name: Verify installer exists and is not empty
+        shell: pwsh
+        run: |
+          $installers = Get-ChildItem -Path desktop-release -Filter "*.exe" -File
+          if ($installers.Count -lt 1) { throw "No Windows .exe installer produced" }
+          foreach ($exe in $installers) {
+            if ($exe.Length -lt 1000000) { throw "Installer is too small: $($exe.Name)" }
+            Write-Host "Installer $($exe.Name) $($exe.Length) bytes"
+            Get-FileHash $exe.FullName -Algorithm SHA256 | Format-List
+          }
+      - name: Upload Windows installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: P004-Brantone-Veylor-Windows-x64-Installer
+          path: project4-render-app/desktop-release/*.exe
+          if-no-files-found: error
+          retention-days: 30
