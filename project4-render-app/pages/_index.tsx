@@ -51,6 +51,7 @@ import {
 } from "../components/OperationsPages";
 import enh from "../components/Enhancements.module.css";
 import styles from "./_index.module.css";
+import { VerifiedOpsAccountsPage } from "../components/VerifiedOpsAccounts";
 
 type Role = "client" | "ops" | "master";
 type Portal = "client" | "admin";
@@ -1227,6 +1228,8 @@ export default function App() {
       <PendingIntegrationPage title="会员管理" />
     ) : view === "market" ? (
       <MarketPage riskControls={riskControls} />
+    ) : view === "opsAccounts" && role === "master" ? (
+      <VerifiedOpsAccountsPage />
     ) : ["products", "loans", "notifications", "opsAccounts", "audit"].includes(view) ? (
       <PendingIntegrationPage title={navItems.find((item) => item.key === view)?.label || "业务模块"} client={role === "client"}/>
     ) : ["securities", "purchaseAccess", "risk", "support"].includes(view) ? (
