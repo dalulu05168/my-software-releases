@@ -709,63 +709,61 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === "upsert_security") {
+      // This endpoint ONLY creates an unverified/manual security; it must
+      // never overwrite existing provider data or silently enable trading.
       const symbol = String(body?.security?.symbol || "").trim().toUpperCase();
       const name = String(body?.security?.name || "").trim();
-      const market = body?.security?.market === "MX" ? "MX" : "US";
-      const currency = body?.security?.currency === "MXN" ? "MXN" : market === "MX" ? "MXN" : "USD";
-
-      if (!/^[A-Z0-9.\-]{1,20}$/.test(symbol) || !name) {
+      const market = String(body?.security?.market || "");
+      if (!["US", "MX"].includes(market) ||
+          !/^[A-Z0-9.-]{1,20}$/.test(symbol) ||
+          name.length < 2 || name.length > 160) {
         return json({ error: "INVALID_SECURITY_INPUT" }, 400);
       }
 
+      const now = new Date().toISOString();
       const payload = {
         market,
         symbol,
         name,
-        currency,
+        currency: market === "MX" ? "MXN" : "USD",
         status: "ACTIVE",
-        visible: body?.security?.visible !== false,
-        tradable: body?.security?.tradable === true,
-        block_eligible: body?.security?.blockEligible === true,
-        ipo_related: body?.security?.ipoRelated === true,
-        purchase_authorization_mode:
-          body?.security?.purchaseAuthorizationMode === "MASTER_CODE" ? "MASTER_CODE" : "OPEN",
-        market_data_provider_key:
-          String(body?.security?.marketDataProviderKey || "").trim() || `MANUAL:${market}:${symbol}`,
-        reference_provider:
-          String(body?.security?.referenceProvider || "").trim() || "MANUAL",
-        provider_exchange:
-          String(body?.security?.providerExchange || "").trim() || (market === "MX" ? "BMV" : "NASDAQ"),
-        mic_code:
-          String(body?.security?.micCode || "").trim() || (market === "MX" ? "XMEX" : "XNAS"),
-        country:
-          String(body?.security?.country || "").trim() || market,
-        instrument_type:
-          String(body?.security?.instrumentType || "").trim() || "EQUITY",
-        provider_synced_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        visible: false,
+        tradable: false,
+        block_eligible: false,
+        ipo_related: false,
+        purchase_authorization_mode: "OPEN",
+        market_data_provider_key: `MANUAL:${market}:${symbol}`,
+        reference_provider: "MANUAL",
+        provider_exchange: null,
+        mic_code: null,
+        country: null,
+        instrument_type: null,
+        provider_synced_at: null,
+        updated_at: now,
       };
 
       const { data: security, error } = await supabase
         .from("securities")
-        .upsert(payload, { onConflict: "market,symbol" })
+        .insert(payload)
         .select("*")
         .single();
-      if (error) throw error;
+      if (error?.code === "23505") return json({ error: "SECURITY_ALREADY_EXISTS" }, 409);
+      if (error || !security) throw error || new Error("SECURITY_CREATE_FAILED");
 
       await supabase.from("audit_events").insert({
         actor_id: auth.identity.id,
         actor_role: "MASTER_ADMIN",
-        action: "SECURITY_UPSERTED",
+        action: "SECURITY_CREATED_MANUAL",
         entity_type: "SECURITY",
         entity_id: security.id,
         after_value: {
           market: security.market,
           symbol: security.symbol,
-          visible: security.visible,
-          tradable: security.tradable,
+          visible: false,
+          tradable: false,
+          reference_provider: "MANUAL",
         },
-        reason: "ADMIN_SECURITIES_UI",
+        reason: "ADMIN_SECURITIES_MANUAL_ENTRY",
       });
 
       return json({ ok: true, security });
@@ -778,7 +776,10 @@ Deno.serve(async (req: Request) => {
       };
 
       if (typeof body?.patch?.visible === "boolean") patch.visible = body.patch.visible;
-      if (typeof body?.patch?.tradable === "boolean") patch.tradable = body.patch.tradable;
+      // The brokerage execution engine is not integrated yet.
+      // Prevent a UI/API toggle from falsely marketing a stock as tradable.
+      if (body?.patch?.tradable === true) return json({ error: "ORDER_EXECUTION_NOT_CONNECTED" }, 409);
+      if (body?.patch?.tradable === false) patch.tradable = false;
       if (["ACTIVE", "SUSPENDED", "DELISTED"].includes(body?.patch?.status)) {
         patch.status = body.patch.status;
       }
@@ -810,10 +811,7 @@ Deno.serve(async (req: Request) => {
 
     return json({ error: "UNKNOWN_ACTION" }, 400);
   } catch (error) {
-    console.error("project4-securities-api", error);
-    return json(
-      { error: "INTERNAL_ERROR", detail: error instanceof Error ? error.message : String(error) },
-      500,
-    );
+    console.error("project4-securities-api", error instanceof Error ? error.name : "unknown");
+    return json({ error: "INTERNAL_ERROR" }, 500);
   }
 });
