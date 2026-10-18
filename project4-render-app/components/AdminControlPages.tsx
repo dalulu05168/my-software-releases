@@ -609,7 +609,7 @@ function RiskPage({
           <h1>风控中心</h1>
           <p>集中控制内部订单、提现和安全策略</p>
         </div>
-        <span className={styles.boundary}>所有变更写入审计记录</span>
+        <span className={styles.boundary}>演示数据 · 风控变更暂不可用</span>
       </div>
       <div className={styles.riskGrid}>
         {rows.map((row) => (
@@ -623,15 +623,7 @@ function RiskPage({
             </div>
             <Switch
               value={row.enabled}
-              onChange={() =>
-                onChange(
-                  rows.map((item) =>
-                    item.key === row.key
-                      ? { ...item, enabled: !item.enabled }
-                      : item,
-                  ),
-                )
-              }
+              onChange={() => { /* Backend risk policy and audit required. */ }}
             />
           </article>
         ))}
