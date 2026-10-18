@@ -1,28 +1,13 @@
-name: Node.js CI (legacy root)
+# This repository has no root Node.js package.
+# P004 checks are maintained in project4-frontend-ci.yml.
+name: Legacy root Node.js CI (manual only)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/node.js.yml"
-  pull_request:
-    branches: [main]
-    paths:
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/node.js.yml"
+  workflow_dispatch:
 
 jobs:
-  build:
-    if: ${{ hashFiles('package.json') != '' }}
+  notice:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - run: npm install --no-audit --no-fund
-      - run: npm run build --if-present
-      - run: npm test --if-present
+      - name: Explain scoped CI
+        run: echo "No root package.json; use P004 frontend checks for project4-render-app."
