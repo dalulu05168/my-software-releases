@@ -683,26 +683,11 @@ function SupportPage({
       <div className={styles.header}>
         <div>
           <h1>{role === "client" ? "客服支持" : "客户服务"}</h1>
-          <p>{role === "client" ? "查看并继续账户服务会话" : "处理客户咨询与业务跟进"}</p>
+          <p>{role === "client" ? "查看演示会话（消息服务尚未接入）" : "查看演示会话（消息服务尚未接入）"}</p>
         </div>
         <button
           className={styles.primary}
-          onClick={() => {
-            const id = `SUP-${7200 + threads.length}`;
-            setThreads([
-              {
-                id,
-                customer: role === "client" ? accountName : "新客户",
-                subject: "新服务会话",
-                status: "待回复",
-                last: "新会话已创建",
-                time: "刚刚",
-              },
-              ...threads,
-            ]);
-            setSelectedId(id);
-            setMessages([]);
-          }}
+          disabled title="客服消息服务尚未接入后端"
         >
           <MessageSquareText size={15} />
           新建会话
@@ -754,13 +739,13 @@ function SupportPage({
               </div>
             ))}
           </div>
-          <form className={styles.chatForm} onSubmit={send}>
+          <form className={styles.chatForm} onSubmit={(event) => event.preventDefault()}>
             <input
               value={message}
               onChange={(event) => setMessage(event.target.value)}
-              placeholder="输入消息内容"
+              placeholder="消息发送尚未接入后端" disabled
             />
-            <button className={styles.primary} type="submit">
+            <button className={styles.primary} type="submit" disabled title="消息发送尚未接入后端">
               发送
             </button>
           </form>
