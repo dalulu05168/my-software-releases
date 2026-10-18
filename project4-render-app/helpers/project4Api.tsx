@@ -40,7 +40,7 @@ async function request(init?: RequestInit, scope?: "client" | "admin", authentic
   headers.set("Content-Type", "application/json");
   if (authenticated && token) headers.set("Authorization", `Bearer ${token}`);
 
-  const response = await fetch(url, { ...init, headers });
+  const response = await fetch(url, { ...init, headers, cache: "no-store" });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
