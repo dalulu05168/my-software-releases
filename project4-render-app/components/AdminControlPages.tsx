@@ -473,10 +473,7 @@ function PurchaseAccessPage() {
         </div>
         <button
           className={styles.primary}
-          onClick={() => {
-            setCreating(true);
-            setCreatedCode("");
-          }}
+          disabled title="购买授权码尚未接入后端验证和审计"
         >
           <KeyRound size={15} />
           创建授权
@@ -508,45 +505,21 @@ function PurchaseAccessPage() {
                   <div className={styles.actions}>
                     {row.status === "启用" ? (
                       <button
-                        onClick={() =>
-                          setRows(
-                            rows.map((item) =>
-                              item.id === row.id
-                                ? { ...item, status: "暂停" }
-                                : item,
-                            ),
-                          )
-                        }
+                        disabled title="授权状态操作尚未接入后端"
                       >
                         暂停
                       </button>
                     ) : null}
                     {row.status === "暂停" ? (
                       <button
-                        onClick={() =>
-                          setRows(
-                            rows.map((item) =>
-                              item.id === row.id
-                                ? { ...item, status: "启用" }
-                                : item,
-                            ),
-                          )
-                        }
+                        disabled title="授权状态操作尚未接入后端"
                       >
                         恢复
                       </button>
                     ) : null}
                     {row.status !== "已撤销" ? (
                       <button
-                        onClick={() =>
-                          setRows(
-                            rows.map((item) =>
-                              item.id === row.id
-                                ? { ...item, status: "已撤销" }
-                                : item,
-                            ),
-                          )
-                        }
+                        disabled title="授权状态操作尚未接入后端"
                       >
                         撤销
                       </button>
@@ -636,7 +609,7 @@ function RiskPage({
           <h1>风控中心</h1>
           <p>集中控制内部订单、提现和安全策略</p>
         </div>
-        <span className={styles.boundary}>所有变更写入审计记录</span>
+        <span className={styles.boundary}>演示数据 · 风控变更暂不可用</span>
       </div>
       <div className={styles.riskGrid}>
         {rows.map((row) => (
@@ -650,15 +623,7 @@ function RiskPage({
             </div>
             <Switch
               value={row.enabled}
-              onChange={() =>
-                onChange(
-                  rows.map((item) =>
-                    item.key === row.key
-                      ? { ...item, enabled: !item.enabled }
-                      : item,
-                  ),
-                )
-              }
+              onChange={() => { /* Backend risk policy and audit required. */ }}
             />
           </article>
         ))}
@@ -718,26 +683,11 @@ function SupportPage({
       <div className={styles.header}>
         <div>
           <h1>{role === "client" ? "客服支持" : "客户服务"}</h1>
-          <p>{role === "client" ? "查看并继续账户服务会话" : "处理客户咨询与业务跟进"}</p>
+          <p>{role === "client" ? "查看演示会话（消息服务尚未接入）" : "查看演示会话（消息服务尚未接入）"}</p>
         </div>
         <button
           className={styles.primary}
-          onClick={() => {
-            const id = `SUP-${7200 + threads.length}`;
-            setThreads([
-              {
-                id,
-                customer: role === "client" ? accountName : "新客户",
-                subject: "新服务会话",
-                status: "待回复",
-                last: "新会话已创建",
-                time: "刚刚",
-              },
-              ...threads,
-            ]);
-            setSelectedId(id);
-            setMessages([]);
-          }}
+          disabled title="客服消息服务尚未接入后端"
         >
           <MessageSquareText size={15} />
           新建会话
@@ -789,13 +739,13 @@ function SupportPage({
               </div>
             ))}
           </div>
-          <form className={styles.chatForm} onSubmit={send}>
+          <form className={styles.chatForm} onSubmit={(event) => event.preventDefault()}>
             <input
               value={message}
               onChange={(event) => setMessage(event.target.value)}
-              placeholder="输入消息内容"
+              placeholder="消息发送尚未接入后端" disabled
             />
-            <button className={styles.primary} type="submit">
+            <button className={styles.primary} type="submit" disabled title="消息发送尚未接入后端">
               发送
             </button>
           </form>
