@@ -52,7 +52,17 @@ export const project4Api = {
       method: "POST",
       body: JSON.stringify({ action: "login_master", username, password, totp }),
     });
-    if (data?.ok !== true || data?.role !== "master" || typeof data?.sessionToken !== "string" || !data.sessionToken.trim()) throw new Error("INVALID_AUTH_RESPONSE");
+    const expiresAt = typeof data?.expiresAt === "string" ? Date.parse(data.expiresAt) : NaN;
+    if (
+      data?.ok !== true ||
+      data?.role !== "master" ||
+      typeof data?.sessionToken !== "string" ||
+      !data.sessionToken.trim() ||
+      !Number.isFinite(expiresAt) ||
+      expiresAt <= Date.now()
+    ) {
+      throw new Error("INVALID_AUTH_RESPONSE");
+    }
     if (typeof window !== "undefined" && data.sessionToken) {
       window.localStorage.setItem(SESSION_KEY, data.sessionToken);
     }
