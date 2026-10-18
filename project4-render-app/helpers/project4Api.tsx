@@ -42,7 +42,12 @@ async function request(init?: RequestInit, scope?: "client" | "admin") {
 
   const response = await fetch(url, { ...init, headers });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.error || `HTTP_${response.status}`);
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+    }
+    throw new Error(data?.error || `HTTP_${response.status}`);
+  }
   return data;
 }
 
