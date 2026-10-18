@@ -242,6 +242,10 @@ function LoginScreen({
       return;
     }
     if (portal === "admin") {
+      if (!account.trim() || !password || !/^[0-9]{6}$/.test(totp)) {
+        setLoginError("请填写后台账户、密码及 6 位 2FA 验证码");
+        return;
+      }
       setLoggingIn(true);
       try {
         const result = await project4Api.loginMaster(
@@ -386,7 +390,7 @@ function LoginScreen({
           {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
           {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
 
-          <button className={styles.primaryButton} type="submit">
+          <button className={styles.primaryButton} type="submit" disabled={loggingIn}>
             {isClient
               ? mode === "register"
                 ? "Creează cont"
