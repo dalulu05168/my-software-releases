@@ -30,7 +30,7 @@ type ApiSecurity = {
   } | null;
 };
 
-async function request(init?: RequestInit, scope?: "client" | "admin") {
+async function request(init?: RequestInit, scope?: "client" | "admin", authenticated = true) {
   const token =
     typeof window !== "undefined"
       ? window.localStorage.getItem(SESSION_KEY)
@@ -38,7 +38,7 @@ async function request(init?: RequestInit, scope?: "client" | "admin") {
   const url = scope ? `${PROJECT4_API}?scope=${scope}` : PROJECT4_API;
   const headers = new Headers(init?.headers);
   headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (authenticated && token) headers.set("Authorization", `Bearer ${token}`);
 
   const response = await fetch(url, { ...init, headers });
   const data = await response.json().catch(() => ({}));
@@ -56,7 +56,7 @@ export const project4Api = {
     const data = await request({
       method: "POST",
       body: JSON.stringify({ action: "login_master", username, password, totp }),
-    });
+    }, undefined, false);
     const expiresAt = typeof data?.expiresAt === "string" ? Date.parse(data.expiresAt) : NaN;
     if (
       data?.ok !== true ||
