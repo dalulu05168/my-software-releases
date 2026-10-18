@@ -227,7 +227,9 @@ function CashPage({
           </div>
         </div>
       ) : null}
-      </div>\n  );\n}
+    </div>
+  );
+}
 
 function PositionsPage({ role, accountName }: { role: Role; accountName: string }) {
   const [selected, setSelected] = useState<(typeof positionSeed)[number] | null>(null);
