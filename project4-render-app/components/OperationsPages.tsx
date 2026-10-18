@@ -130,7 +130,7 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
           <h1>{role === "master" ? "产品管理" : role === "ops" ? "产品运营" : "Produse"}</h1>
           <p>{role === "master" ? "大宗、IPO 与基金项目统一配置和状态管理" : role === "ops" ? "查看当前开放项目、客户范围与运营状态" : "Consultați produsele disponibile pentru participare."}</p>
         </div>
-        {role === "master" ? <button className={styles.primary} onClick={() => setCreatingProduct(true)}><Layers3 size={15} /> 创建产品</button> : null}
+        {role === "master" ? <button className={styles.primary} disabled title="产品创建尚未接入后端"><Layers3 size={15} /> 创建产品</button> : null}
       </div>
       <div className={styles.tabs}>
         {(["大宗", "IPO", "基金"] as const).map((item) => (
@@ -156,11 +156,11 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
                 <td>
                   <div className={styles.actions}>
                     <button onClick={() => setSelected(row)}>{role === "client" ? "Detalii" : "详情"}</button>
-                    {role === "master" && row.status === "已上架" ? <button onClick={() => updateStatus(row.id, "已暂停")}>暂停</button> : null}
-                    {role === "master" && row.status === "已暂停" ? <button onClick={() => updateStatus(row.id, "已上架")}>恢复</button> : null}
-                    {role === "master" && row.status !== "已结束" ? <button onClick={() => updateStatus(row.id, "已结束")}>结束</button> : null}
+                    {role === "master" && row.status === "已上架" ? <button disabled title="产品状态修改尚未接入后端">暂停</button> : null}
+                    {role === "master" && row.status === "已暂停" ? <button disabled title="产品状态修改尚未接入后端">恢复</button> : null}
+                    {role === "master" && row.status !== "已结束" ? <button disabled title="产品状态修改尚未接入后端">结束</button> : null}
                     {role === "client" && row.status === "已上架" ? (
-                      <button onClick={() => { setClientProduct(row); setSubmitMessage(""); }}>Deschide</button>
+                      <button disabled title="产品申购尚未接入真实交易后端">Deschide</button>
                     ) : null}
                   </div>
                 </td>
@@ -187,7 +187,7 @@ function ProductsPage({ role }: { role: "client" | "ops" | "master" }) {
               <label><span>单客户额度</span><input defaultValue={selected.type === "大宗" ? "MXN 2,000,000" : "MXN 500,000"}/></label>
               <label><span>开放窗口</span><input defaultValue={selected.window}/></label>
             </section>
-            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button><button className={styles.primary} onClick={() => setSelected(null)}>保存配置</button></div>
+            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button><button className={styles.primary} disabled title="产品配置尚未接入后端">保存配置</button></div>
           </aside>
         </div>
       ) : null}
@@ -272,7 +272,7 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
 
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>{role === "client" ? "Credit" : "贷款申请"}</h1><p>{role === "client" ? "Urmăriți solicitările de credit și starea lor." : "审核客户贷款申请和查看处理记录"}</p></div>{role === "client" ? <button className={styles.primary} onClick={() => setCreating(true)}><Landmark size={15}/> Solicitare nouă</button> : null}</div>
+      <div className={styles.header}><div><h1>{role === "client" ? "Credit" : "贷款申请"}</h1><p>{role === "client" ? "Urmăriți solicitările de credit și starea lor." : "审核客户贷款申请和查看处理记录"}</p></div>{role === "client" ? <button className={styles.primary} disabled title="贷款申请尚未接入后端"><Landmark size={15}/> Solicitare nouă</button> : null}</div>
       <section className={styles.tablePanel}>
         <table>
           <thead><tr><th>申请编号</th>{role !== "client" ? <th>客户</th> : null}<th>申请金额</th><th>状态</th><th>申请时间</th><th>操作</th></tr></thead>
@@ -284,7 +284,7 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
                 <td className={styles.mono}>{row.amount}</td>
                 <td><Status value={row.status}/></td>
                 <td>{row.date}</td>
-                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>查看</button>{role !== "client" && row.status !== "已通过" && row.status !== "已拒绝" ? <><button onClick={() => update(row.id, "已通过")}>通过</button><button onClick={() => update(row.id, "已拒绝")}>拒绝</button></> : null}</div></td>
+                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>查看</button>{role !== "client" && row.status !== "已通过" && row.status !== "已拒绝" ? <><button disabled title="贷款审批尚未接入后端">通过</button><button disabled title="贷款审批尚未接入后端">拒绝</button></> : null}</div></td>
               </tr>
             ))}
           </tbody>
@@ -296,7 +296,7 @@ function LoansPage({ role }: { role: "client" | "ops" | "master" }) {
             <div className={styles.drawerHeader}><div><span>贷款申请</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
             <div className={styles.detailGrid}><div><span>客户</span><strong>{selected.name}</strong></div><div><span>申请金额</span><strong>{selected.amount}</strong></div><div><span>申请时间</span><strong>{selected.date}</strong></div><div><span>当前状态</span><Status value={selected.status}/></div></div>
             <section className={styles.drawerSection}><h3>审核说明</h3><textarea placeholder="输入审核备注或说明" /></section>
-            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button>{role !== "client" ? <button className={styles.primary} onClick={() => { update(selected.id, "已通过"); setSelected(null); }}>确认通过</button> : null}</div>
+            <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button>{role !== "client" ? <button className={styles.primary} disabled title="贷款审批尚未接入后端">确认通过</button> : null}</div>
           </div>
         </div>
       ) : null}
@@ -364,11 +364,11 @@ function OpsAccountsPage() {
 
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>子账户管理</h1><p>创建子账户并管理邀请码、2FA 与市场权限</p></div><button className={styles.primary} onClick={() => { setCreating(true); setResult(null); }}><UserPlus size={15}/> 创建子账户</button></div>
+      <div className={styles.header}><div><h1>子账户管理</h1><p>创建子账户并管理邀请码、2FA 与市场权限</p></div><button className={styles.primary} disabled title="子账户创建尚未接入后端"><UserPlus size={15}/> 创建子账户</button></div>
       <section className={styles.tablePanel}>
         <table>
           <thead><tr><th>子账户</th><th>名称</th><th>管理员</th><th>市场</th><th>客户数</th><th>邀请码</th><th>2FA</th><th>状态</th><th>操作</th></tr></thead>
-          <tbody>{rows.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td><td>{row.name}</td><td>{row.manager}</td><td>{row.markets}</td><td>{row.clients}</td><td className={styles.mono}>{row.invite}</td><td><span className={styles.good}>已启用</span></td><td><Status value={row.status}/></td><td><div className={styles.actions}><button onClick={() => { setEditing(row); setResetSecret(""); }}>权限</button><button onClick={() => { setEditing(row); setResetSecret(`VS${row.id.replaceAll("-", "")}${Date.now().toString().slice(-6)}`); }}>重置2FA</button><button onClick={() => setRows(rows.map((item) => item.id === row.id ? { ...item, status: item.status === "启用" ? "暂停" : "启用" } : item))}>{row.status === "启用" ? "暂停" : "恢复"}</button></div></td></tr>)}</tbody>
+          <tbody>{rows.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td><td>{row.name}</td><td>{row.manager}</td><td>{row.markets}</td><td>{row.clients}</td><td className={styles.mono}>{row.invite}</td><td><span className={styles.good}>已启用</span></td><td><Status value={row.status}/></td><td><div className={styles.actions}><button disabled title="子账户权限尚未接入后端">权限</button><button disabled title="2FA 重置尚未接入后端">重置2FA</button><button disabled title="子账户状态尚未接入后端">{row.status === "启用" ? "暂停" : "恢复"}</button></div></td></tr>)}</tbody>
         </table>
       </section>
       {creating ? (

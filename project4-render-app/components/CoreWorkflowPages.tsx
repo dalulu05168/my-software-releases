@@ -121,14 +121,13 @@ function OrdersPage({ role, accountName }: { role: Role; accountName: string }) 
     [rows, query, type, role, accountName],
   );
 
-  const transition = (id: string, status: string) =>
-    setRows(rows.map((row) => (row.id === id ? { ...row, status } : row)));
+  // Order transitions require an authenticated backend; local demo records are read-only.
 
   return (
     <div className={styles.stack}>
       <div className={styles.header}>
         <div><h1>{role === "client" ? "Ordinele mele" : "订单管理"}</h1><p>{role === "client" ? "Urmăriți starea ordinelor și istoricul operațiunilor." : "查看股票、大宗、IPO 与基金订单状态和处理记录"}</p></div>
-        <button className={styles.secondary} onClick={() => setExported(true)}><Filter size={14}/> {role === "client" ? (exported ? "Export pregătit" : "Exportă") : (exported ? "已生成导出记录" : "导出筛选结果")}</button>
+        <button className={styles.secondary} disabled title="真实订单导出尚未接入后端"><Filter size={14}/> {role === "client" ? (exported ? "Export pregătit" : "Exportă") : (exported ? "已生成导出记录" : "导出筛选结果")}</button>
       </div>
       <section className={styles.filters}>
         <div className={styles.search}><Search size={14}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={role === "client" ? "Nr. ordin / produs / stare" : "订单号 / 客户 / 产品 / 状态"}/></div>
@@ -150,7 +149,7 @@ function OrdersPage({ role, accountName }: { role: Role; accountName: string }) 
                 <td className={styles.mono}>{row.amount}</td>
                 <td><Badge value={role === "client" ? roStatus(row.status) : row.status}/></td>
                 <td>{row.time}</td>
-                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>详情</button>{role !== "client" && row.type === "IPO" && row.status === "待配售" ? <button onClick={() => transition(row.id, "已配售")}>配售</button> : null}{role !== "client" && ["待确认","处理中","已配售"].includes(row.status) ? <button onClick={() => transition(row.id, "已完成")}>完成</button> : null}{role === "client" && ["待确认","处理中","待配售"].includes(row.status) ? <button onClick={() => transition(row.id, "已取消")}>取消</button> : null}</div></td>
+                <td><div className={styles.actions}><button onClick={() => setSelected(row)}>详情</button>{role !== "client" && row.type === "IPO" && row.status === "待配售" ? <button disabled title="订单操作尚未接入后端">配售</button> : null}{role !== "client" && ["待确认","处理中","已配售"].includes(row.status) ? <button disabled title="订单操作尚未接入后端">完成</button> : null}{role === "client" && ["待确认","处理中","待配售"].includes(row.status) ? <button disabled title="订单操作尚未接入后端">取消</button> : null}</div></td>
               </tr>
             ))}
           </tbody>
@@ -189,30 +188,19 @@ function CashPage({
   accountName: string;
   riskControls: RiskControl[];
 }) {
-  const [rows, setRows] = useState(cashSeed);
+  const rows = cashSeed;
   const [type, setType] = useState<"充值" | "提现">("充值");
   const [selected, setSelected] = useState<(typeof cashSeed)[number] | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [amount, setAmount] = useState("50000");
-  const [created, setCreated] = useState("");
   const [proofOpen, setProofOpen] = useState(false);
   const withdrawEnabled =
     riskControls.find((item) => item.key === "WITHDRAW")?.enabled ?? true;
   const visible = rows.filter((row) => row.type === type && (role !== "client" || row.user === accountName));
 
-  const move = (id: string, status: string) => setRows(rows.map((row) => row.id === id ? { ...row, status } : row));
-
-  const createRequest = (event: FormEvent) => {
-    event.preventDefault();
-    const id = `${type === "充值" ? "DEP" : "WDR"}-${String(70000 + rows.length * 13)}`;
-    const next = { id, user: accountName || "Carlos Ramírez", type, currency: "MXN", amount: Number(amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }), status: "待审核", bank: "BBVA México · ••7812", ref: id, time: "刚刚" };
-    setRows([next, ...rows]);
-    setCreated(id);
-  };
+  // Cash operations require a verified backend and must not mutate demo records.
 
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>{role === "client" ? "Fonduri" : "资金审核"}</h1><p>{role === "client" ? "Depuneri, retrageri și starea solicitărilor." : "处理客户充值、提现与银行信息"}</p></div>{role === "client" ? <button className={styles.primary} disabled={type === "提现" && !withdrawEnabled} onClick={() => { if (type === "提现" && !withdrawEnabled) return; setCreating(true); setCreated(""); }}><Banknote size={14}/> Solicitare nouă</button> : null}</div>
+      <div className={styles.header}><div><h1>{role === "client" ? "Fonduri" : "资金审核"}</h1><p>{role === "client" ? "Depuneri, retrageri și starea solicitărilor." : "处理客户充值、提现与银行信息"}</p></div>{role === "client" ? <button className={styles.primary} disabled title="真实资金申请尚未接入后端"><Banknote size={14}/> Solicitare nouă</button> : null}</div>
       <div className={styles.summaryGrid}>
         <div><span>{role === "client" ? "Disponibil" : "可用资金"}</span><strong>MXN 186,240.00</strong></div>
         <div><span>{role === "client" ? "Blocat" : "冻结资金"}</span><strong>MXN 21,400.00</strong></div>
@@ -224,7 +212,7 @@ function CashPage({
       <section className={styles.tablePanel}>
         <table>
           <thead><tr><th>申请号</th>{role !== "client" ? <th>客户</th> : null}<th>币种</th><th>金额</th><th>银行信息</th><th>参考号</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>
-          <tbody>{visible.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td>{role !== "client" ? <td>{row.user}</td> : null}<td>{row.currency}</td><td className={styles.mono}>{row.amount}</td><td>{row.bank}</td><td className={styles.mono}>{row.ref}</td><td><Badge value={role === "client" ? roStatus(row.status) : row.status}/></td><td>{row.time}</td><td><div className={styles.actions}><button onClick={() => setSelected(row)}>查看</button>{role !== "client" && !["已通过","已拒绝"].includes(row.status) ? <><button onClick={() => move(row.id, "已通过")}>通过</button><button onClick={() => move(row.id, "已拒绝")}>拒绝</button></> : null}</div></td></tr>)}</tbody>
+          <tbody>{visible.map((row) => <tr key={row.id}><td className={styles.mono}>{row.id}</td>{role !== "client" ? <td>{row.user}</td> : null}<td>{row.currency}</td><td className={styles.mono}>{row.amount}</td><td>{row.bank}</td><td className={styles.mono}>{row.ref}</td><td><Badge value={role === "client" ? roStatus(row.status) : row.status}/></td><td>{row.time}</td><td><div className={styles.actions}><button onClick={() => setSelected(row)}>查看</button>{role !== "client" && !["已通过","已拒绝"].includes(row.status) ? <><button disabled title="资金审批尚未接入后端">通过</button><button disabled title="资金审批尚未接入后端">拒绝</button></> : null}</div></td></tr>)}</tbody>
         </table>
       </section>
       {selected ? (
@@ -235,14 +223,6 @@ function CashPage({
             <section className={styles.proof}><FileCheck2 size={26}/><div><strong>{selected.type === "充值" ? "付款凭证" : "银行账户快照"}</strong><span>{selected.type === "充值" ? "已提交凭证 · 可查看凭证信息" : "申请时账户信息已锁定"}</span></div><button onClick={() => setProofOpen(!proofOpen)}>{proofOpen ? "收起" : "查看"}</button></section>
             {proofOpen ? <section className={extra.proofDetail}><div><span>文件编号</span><strong>{selected.ref}-DOC</strong></div><div><span>提交时间</span><strong>{selected.time}</strong></div><div><span>校验状态</span><strong>资料完整</strong></div></section> : null}
             <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button></div>
-          </div>
-        </div>
-      ) : null}
-      {creating ? (
-        <div className={styles.shade}>
-          <div className={styles.modal}>
-            <div className={styles.drawerHeader}><div><span>资金申请</span><h2>新建{type}申请</h2></div><button onClick={() => setCreating(false)}><X size={18}/></button></div>
-            {!created ? <form className={styles.form} onSubmit={createRequest}><label><span>币种</span><select><option>MXN</option><option>USD</option></select></label><label><span>金额</span><input value={amount} onChange={(e) => setAmount(e.target.value)}/></label><label><span>银行账户</span><select><option>BBVA México · ••7812</option><option>Santander · ••3097</option></select></label>{type === "充值" ? <label><span>付款参考号</span><input placeholder="输入银行转账参考号"/></label> : <label><span>交易密码</span><input type="password" placeholder="输入交易密码"/></label>}<button className={styles.primary} type="submit">提交申请</button></form> : <div className={styles.doneBox}><CircleCheck size={34}/><h3>申请已提交</h3><p>申请编号 {created}</p><button className={styles.primary} onClick={() => setCreating(false)}>完成</button></div>}
           </div>
         </div>
       ) : null}
@@ -267,13 +247,10 @@ function PositionsPage({ role, accountName }: { role: Role; accountName: string 
 function SettingsPage({ role, accountName }: { role: Role; accountName: string }) {
   const [section, setSection] = useState<"security"|"bank"|"identity"|"permissions"|null>(null);
   const [saved, setSaved] = useState("");
-  const [banks, setBanks] = useState([
+  const banks = [
     { name: "BBVA México", number: "•••• 7812", primary: true },
     { name: "Santander", number: "•••• 3097", primary: false },
-  ]);
-  const [addingBank, setAddingBank] = useState(false);
-  const [bankName, setBankName] = useState("");
-  const [bankNumber, setBankNumber] = useState("");
+  ];
   const cards = role === "client"
     ? [
         ["security","Securitate",ShieldCheck,"Parole și sesiuni active"],
@@ -290,7 +267,7 @@ function SettingsPage({ role, accountName }: { role: Role; accountName: string }
     <div className={styles.stack}>
       <div className={styles.header}><div><h1>{role === "client" ? "Setări" : "系统设置"}</h1><p>{role === "client" ? "Cont, securitate și informații bancare." : "账户、安全、银行和权限设置"}</p></div></div>
       <div className={styles.settingsGrid}>{cards.map(([key,title,Icon,desc]) => <button key={key} onClick={() => { setSection(key); setSaved(""); }}><div className={styles.settingsIcon}><Icon size={20}/></div><div><strong>{title}</strong><span>{desc}</span></div><ChevronRight size={16}/></button>)}</div>
-      {section ? <div className={styles.shade} onMouseDown={() => setSection(null)}><div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}><div className={styles.drawerHeader}><div><span>账户设置</span><h2>{cards.find((item)=>item[0]===section)?.[1]}</h2></div><button onClick={() => setSection(null)}><X size={18}/></button></div>{section==="security"?<div className={styles.form}><label><span>当前账户</span><input value={accountName} readOnly/></label><label><span>当前密码</span><input type="password"/></label><label><span>新密码</span><input type="password"/></label><label><span>确认新密码</span><input type="password"/></label>{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} onClick={()=>setSaved("密码设置已保存")}>保存密码</button></div>:null}{section==="bank"?<div className={styles.bankList}>{banks.map((bank,index)=><article key={bank.name+index}><div className={styles.bankIcon}>{index===0?<Building2 size={18}/>:<Landmark size={18}/>}</div><div><strong>{bank.name}</strong><span>{bank.number} · MXN{bank.primary?" · 默认账户":""}</span></div>{bank.primary?<Badge value="已绑定"/>:<button className={styles.linkButton} onClick={()=>setBanks(banks.map((item,i)=>({...item,primary:i===index})))}>设为默认</button>}</article>)}{addingBank?<form className={extra.inlineBankForm} onSubmit={(event)=>{event.preventDefault();setBanks([...banks,{name:bankName||"新银行",number:bankNumber||"•••• 0000",primary:false}]);setAddingBank(false);setBankName("");setBankNumber("");}}><input value={bankName} onChange={(e)=>setBankName(e.target.value)} placeholder="银行名称"/><input value={bankNumber} onChange={(e)=>setBankNumber(e.target.value)} placeholder="账户尾号"/><button className={styles.primary} type="submit">添加</button></form>:<button className={styles.addBank} onClick={()=>setAddingBank(true)}><CreditCard size={16}/> 添加银行卡</button>}</div>:null}{section==="identity"?<div className={styles.identityPanel}><div><FileCheck2 size={28}/><strong>实名认证已完成</strong><span>姓名：{accountName || "Carlos Ramírez"}</span><span>证件：MEX••••••2481</span></div><button className={styles.secondary} onClick={()=>setSaved("身份资料完整，当前状态正常")}>查看身份资料</button>{saved?<div className={extra.savedMessage}>{saved}</div>:null}</div>:null}{section==="permissions"?<div className={styles.permissionList}>{["US 市场","MX 市场","股票","大宗","IPO","基金","客户审核","资金审核"].map((label)=><label key={label}><span>{label}</span><input type="checkbox" defaultChecked={label!=="IPO"}/></label>)}{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} onClick={()=>setSaved("权限设置已保存")}>保存权限</button></div>:null}</div></div> : null}
+      {section ? <div className={styles.shade} onMouseDown={() => setSection(null)}><div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}><div className={styles.drawerHeader}><div><span>账户设置</span><h2>{cards.find((item)=>item[0]===section)?.[1]}</h2></div><button onClick={() => setSection(null)}><X size={18}/></button></div>{section==="security"?<div className={styles.form}><label><span>当前账户</span><input value={accountName} readOnly/></label><label><span>当前密码</span><input type="password"/></label><label><span>新密码</span><input type="password"/></label><label><span>确认新密码</span><input type="password"/></label>{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} disabled title="密码修改尚未接入后端认证服务">密码修改暂不可用</button></div>:null}{section==="bank"?<div className={styles.bankList}>{banks.map((bank,index)=><article key={bank.name+index}><div className={styles.bankIcon}>{index===0?<Building2 size={18}/>:<Landmark size={18}/>}</div><div><strong>{bank.name}</strong><span>{bank.number} · MXN{bank.primary?" · 默认账户":""}</span></div>{bank.primary?<Badge value="已绑定"/>:<button className={styles.linkButton} disabled title="银行账户管理尚未接入后端">暂不可更改</button>}</article>)}<button className={styles.addBank} disabled title="银行账户管理尚未接入后端"><CreditCard size={16}/> 添加银行卡暂不可用</button></div>:null}{section==="identity"?<div className={styles.identityPanel}><div><FileCheck2 size={28}/><strong>身份认证状态待核验（演示数据）</strong><span>姓名：{accountName || "Carlos Ramírez"}</span><span>证件：MEX••••••2481</span></div><button className={styles.secondary} disabled title="身份认证状态尚未接入后端">查看身份资料</button>{saved?<div className={extra.savedMessage}>{saved}</div>:null}</div>:null}{section==="permissions"?<div className={styles.permissionList}>{["US 市场","MX 市场","股票","大宗","IPO","基金","客户审核","资金审核"].map((label)=><label key={label}><span>{label}</span><input type="checkbox" defaultChecked={label!=="IPO"} disabled/></label>)}{saved?<div className={extra.savedMessage}>{saved}</div>:null}<button className={styles.primary} disabled title="权限管理尚未接入后端">权限修改暂不可用</button></div>:null}</div></div> : null}
     </div>
   );
 }
