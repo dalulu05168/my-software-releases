@@ -422,7 +422,7 @@ function AuditPage() {
   const rows = useMemo(() => auditSeed.filter((row) => Object.values(row).join(" ").toLowerCase().includes(query.toLowerCase())), [query]);
   return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>审计日志</h1><p>查看后台敏感操作、对象与时间记录</p></div><div className={styles.auditSearch}><Search size={14}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="操作人 / 动作 / 对象ID"/></div></div>
+      <div className={styles.header}><div><h1>审计日志</h1><p>演示审计数据 · 尚未接入真实后端审计日志</p></div><div className={styles.auditSearch}><Search size={14}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="操作人 / 动作 / 对象ID"/></div></div>
       <section className={styles.tablePanel}>
         <table>
           <thead><tr><th>日志编号</th><th>时间</th><th>操作人</th><th>动作</th><th>对象</th><th>来源IP</th><th>详情</th></tr></thead>
@@ -433,7 +433,7 @@ function AuditPage() {
         <div className={styles.shade} onMouseDown={() => setSelected(null)}>
           <div className={styles.modal} onMouseDown={(event) => event.stopPropagation()}>
             <div className={styles.drawerHeader}><div><span>审计详情</span><h2>{selected.id}</h2></div><button onClick={() => setSelected(null)}><X size={18}/></button></div>
-            <div className={styles.detailGrid}><div><span>操作人</span><strong>{selected.actor}</strong></div><div><span>动作</span><strong>{selected.action}</strong></div><div><span>对象</span><strong>{selected.target}</strong></div><div><span>来源IP</span><strong>{selected.ip}</strong></div><div><span>时间</span><strong>{selected.time}</strong></div><div><span>结果</span><strong>已记录</strong></div></div>
+            <div className={styles.detailGrid}><div><span>操作人</span><strong>{selected.actor}</strong></div><div><span>动作</span><strong>{selected.action}</strong></div><div><span>对象</span><strong>{selected.target}</strong></div><div><span>来源IP</span><strong>{selected.ip}</strong></div><div><span>时间</span><strong>{selected.time}</strong></div><div><span>结果</span><strong>演示记录（未验证）</strong></div></div>
             <div className={styles.drawerFooter}><button className={styles.secondary} onClick={() => setSelected(null)}>关闭</button></div>
           </div>
         </div>
