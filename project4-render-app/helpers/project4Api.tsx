@@ -30,7 +30,7 @@ type ApiSecurity = {
   } | null;
 };
 
-async function request(init?: RequestInit, scope?: "client" | "admin") {
+async function request(init?: RequestInit, scope?: "client" | "admin", authenticated = true) {
   const token =
     typeof window !== "undefined"
       ? window.localStorage.getItem(SESSION_KEY)
@@ -38,12 +38,30 @@ async function request(init?: RequestInit, scope?: "client" | "admin") {
   const url = scope ? `${PROJECT4_API}?scope=${scope}` : PROJECT4_API;
   const headers = new Headers(init?.headers);
   headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (authenticated && token) headers.set("Authorization", `Bearer ${token}`);
 
-  const response = await fetch(url, { ...init, headers });
+  const response = await fetch(url, { ...init, headers, cache: "no-store" });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.error || `HTTP_${response.status}`);
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+    }
+    throw new Error(data?.error || `HTTP_${response.status}`);
+  }
   return data;
+}
+
+export function hasValidMasterSession(): boolean {
+  if (typeof window === "undefined") return false;
+  const token = window.localStorage.getItem(SESSION_KEY);
+  const expiry = window.localStorage.getItem("project4_master_session_expiry");
+  const timestamp = expiry ? Date.parse(expiry) : NaN;
+  if (!token || !Number.isFinite(timestamp) || timestamp <= Date.now()) {
+    window.localStorage.removeItem(SESSION_KEY);
+    window.localStorage.removeItem("project4_master_session_expiry");
+    return false;
+  }
+  return true;
 }
 
 export const project4Api = {
@@ -51,10 +69,21 @@ export const project4Api = {
     const data = await request({
       method: "POST",
       body: JSON.stringify({ action: "login_master", username, password, totp }),
-    });
-    if (data?.ok !== true || data?.role !== "master" || typeof data?.sessionToken !== "string" || !data.sessionToken.trim()) throw new Error("INVALID_AUTH_RESPONSE");
+    }, undefined, false);
+    const expiresAt = typeof data?.expiresAt === "string" ? Date.parse(data.expiresAt) : NaN;
+    if (
+      data?.ok !== true ||
+      data?.role !== "master" ||
+      typeof data?.sessionToken !== "string" ||
+      !data.sessionToken.trim() ||
+      !Number.isFinite(expiresAt) ||
+      expiresAt <= Date.now()
+    ) {
+      throw new Error("INVALID_AUTH_RESPONSE");
+    }
     if (typeof window !== "undefined" && data.sessionToken) {
       window.localStorage.setItem(SESSION_KEY, data.sessionToken);
+      window.localStorage.setItem("project4_master_session_expiry", data.expiresAt);
     }
     return data as {
       ok: boolean;
@@ -66,7 +95,10 @@ export const project4Api = {
   },
 
   logoutMaster() {
-    if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(SESSION_KEY);
+      window.localStorage.removeItem("project4_master_session_expiry");
+    }
   },
 
   async listClientSecurities() {
