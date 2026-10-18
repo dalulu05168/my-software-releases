@@ -662,7 +662,7 @@ function CustomersPage({
 
   return (
     <div className={styles.contentStack}>
-      <div className={styles.pageHeader}><div><h1>会员管理</h1><p>客户账户、权限、等级与身份资料</p></div><button className={styles.primarySmall} onClick={()=>setCreatingCustomer(true)}><Users size={15}/> 新增客户</button></div>
+      <div className={styles.pageHeader}><div><h1>会员管理</h1><p>演示客户数据 · 账户权限、等级和身份审核尚未接入后端</p></div><button className={styles.primarySmall} disabled title="客户创建尚未接入后端"><Users size={15}/> 新增客户</button></div>
       <section className={styles.filterBar}>
         <div className={styles.searchBox}><Search size={15}/><input value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="用户ID / 手机 / 姓名 / 邀请码"/></div>
         <select><option>全部等级</option><option>VIP1</option><option>VIP2</option><option>VIP3</option><option>VIP4</option><option>VIP5</option></select>
@@ -677,14 +677,14 @@ function CustomersPage({
               <tr key={c.id}>
                 <td className={styles.mono}>{c.id}</td>
                 <td><strong>{c.name}</strong><span>{c.phone}</span></td>
-                <td><button className={styles.vipBadge} onClick={()=>setVipCustomer(c)}>{c.vip}</button></td>
-                <td><button className={c.kyc==="已认证"?styles.okBadge:styles.pendingBadge} onClick={()=>setKycCustomer(c)}>{c.kyc}</button></td>
-                <td><Toggle value={c.login} onChange={()=>update(c.id,{login:!c.login})}/></td>
-                <td><Toggle value={c.trading} onChange={()=>update(c.id,{trading:!c.trading})}/></td>
-                <td><Toggle value={c.withdrawal} onChange={()=>update(c.id,{withdrawal:!c.withdrawal})}/></td>
+                <td><button className={styles.vipBadge} disabled title="客户等级尚未接入后端">{c.vip}</button></td>
+                <td><button className={c.kyc==="已认证"?styles.okBadge:styles.pendingBadge} disabled title="实名认证审核尚未接入后端">{c.kyc}</button></td>
+                <td><Toggle value={c.login} onChange={()=>{}}/></td>
+                <td><Toggle value={c.trading} onChange={()=>{}}/></td>
+                <td><Toggle value={c.withdrawal} onChange={()=>{}}/></td>
                 <td className={styles.mono}>{c.balance}</td>
                 <td className={styles.mono}>{c.invite}</td>
-                <td><div className={styles.rowActions}><button onClick={()=>setSelected(c)}>编辑</button><button onClick={()=>onMirror(c)}><Smartphone size={14}/> APP</button></div></td>
+                <td><div className={styles.rowActions}><button disabled title="客户资料修改尚未接入后端">编辑</button><button disabled title="演示客户不支持真实 APP 登录"><Smartphone size={14}/> APP</button></div></td>
               </tr>
             ))}
           </tbody>
@@ -702,7 +702,7 @@ function CustomersPage({
               ))}
             </div>
             <div className={styles.drawerSection}><h3>安全设置</h3><button className={styles.drawerAction}>修改登录密码<ChevronRight size={15}/></button><button className={styles.drawerAction}>修改交易密码<ChevronRight size={15}/></button></div>
-            <div className={styles.drawerFooter}><button className={styles.secondaryButton} onClick={()=>setSelected(null)}>取消</button><button className={styles.primarySmall} onClick={()=>setSelected(null)}>保存修改</button></div>
+            <div className={styles.drawerFooter}><button className={styles.secondaryButton} onClick={()=>setSelected(null)}>取消</button><button className={styles.primarySmall} disabled title="客户资料修改尚未接入后端">保存修改</button></div>
           </aside>
         </div>
       ) : null}
@@ -716,7 +716,7 @@ function CustomersPage({
                 <button key={level} className={vipCustomer.vip===level?styles.vipOptionActive:styles.vipOption} onClick={()=>setVipCustomer({...vipCustomer,vip:level})}><strong>{level}</strong><span>{level==="普通会员"?"基础客户等级":`客户权益等级 ${level.replace("VIP","")}`}</span></button>
               ))}
             </div>
-            <div className={styles.modalFooter}><button className={styles.secondaryButton} onClick={()=>setVipCustomer(null)}>取消</button><button className={styles.primarySmall} onClick={()=>{update(vipCustomer.id,{vip:vipCustomer.vip});setVipCustomer(null);}}>确认等级</button></div>
+            <div className={styles.modalFooter}><button className={styles.secondaryButton} onClick={()=>setVipCustomer(null)}>取消</button><button className={styles.primarySmall} disabled title="客户等级尚未接入后端">确认等级</button></div>
           </div>
         </div>
       ) : null}
@@ -726,7 +726,7 @@ function CustomersPage({
           <div className={styles.modalWide}>
             <div className={styles.modalHeader}><div><span>实名认证</span><h2>{kycCustomer.name}</h2></div><button onClick={()=>setKycCustomer(null)}><X size={18}/></button></div>
             <div className={styles.kycGrid}><label><span>姓名</span><input defaultValue={kycCustomer.name}/></label><label><span>证件号码</span><input defaultValue="MEX••••••2481"/></label><div className={styles.idCard}><span>证件正面</span><FileCheck2 size={28}/><small>已上传</small></div><div className={styles.idCard}><span>证件反面</span><FileCheck2 size={28}/><small>已上传</small></div></div>
-            <div className={styles.modalFooter}><button className={styles.secondaryButton} onClick={()=>setKycCustomer(null)}>关闭</button><button className={styles.primarySmall} onClick={()=>{update(kycCustomer.id,{kyc:"已认证"});setKycCustomer(null);}}>审核通过</button></div>
+            <div className={styles.modalFooter}><button className={styles.secondaryButton} onClick={()=>setKycCustomer(null)}>关闭</button><button className={styles.primarySmall} disabled title="KYC 审核尚未接入后端">审核通过</button></div>
           </div>
         </div>
       ) : null}
