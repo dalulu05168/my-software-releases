@@ -113,7 +113,7 @@ function OrdersPage({ role, accountName }: { role: Role; accountName: string }) 
   const filtered = useMemo(
     () =>
       rows.filter((row) => {
-        const roleMatch = role !== "client" || row.user === accountName || row.user === "Carlos Ramírez";
+        const roleMatch = role !== "client" || row.user === accountName;
         const typeMatch = type === "全部" || row.type === type;
         const textMatch = [row.id, row.user, row.product, row.status].join(" ").toLowerCase().includes(query.toLowerCase());
         return roleMatch && typeMatch && textMatch;
@@ -198,7 +198,7 @@ function CashPage({
   const [proofOpen, setProofOpen] = useState(false);
   const withdrawEnabled =
     riskControls.find((item) => item.key === "WITHDRAW")?.enabled ?? true;
-  const visible = rows.filter((row) => row.type === type && (role !== "client" || row.user === "Carlos Ramírez" || row.user === accountName));
+  const visible = rows.filter((row) => row.type === type && (role !== "client" || row.user === accountName));
 
   const move = (id: string, status: string) => setRows(rows.map((row) => row.id === id ? { ...row, status } : row));
 
@@ -253,7 +253,7 @@ function CashPage({
 function PositionsPage({ role, accountName }: { role: Role; accountName: string }) {
   const [selected, setSelected] = useState<(typeof positionSeed)[number] | null>(null);
   const [market, setMarket] = useState<"ALL"|"US"|"MX">("ALL");
-  const visible = positionSeed.filter((row) => (role !== "client" || row.user === "Carlos Ramírez" || row.user === accountName) && (market === "ALL" || row.market === market));
+  const visible = positionSeed.filter((row) => (role !== "client" || row.user === accountName) && (market === "ALL" || row.market === market));
   return (
     <div className={styles.stack}>
       <div className={styles.header}><div><h1>{role === "client" ? "Pozițiile mele" : "客户持仓"}</h1><p>{role === "client" ? "Cantitate, cost, valoare și variația pozițiilor curente." : "查看当前证券数量、成本、市值与浮动变化"}</p></div><div className={extra.marketFilter}>{(["ALL","US","MX"] as const).map((item)=><button key={item} className={market===item?extra.marketFilterActive:""} onClick={()=>setMarket(item)}>{item==="ALL"?(role === "client" ? "Toate" : "全部"):item}</button>)}</div></div>

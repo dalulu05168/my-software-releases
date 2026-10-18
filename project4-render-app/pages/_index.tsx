@@ -238,14 +238,14 @@ function LoginScreen({
     event.preventDefault();
     setLoginError("");
     if (mode === "forgot") {
-      setResetMessage(
-        portal === "client"
-          ? "Verificare finalizată. Setați o parolă nouă."
-          : "验证完成，请设置新的登录密码。",
-      );
+      setLoginError("密码重置服务尚未接入，请联系平台管理员。");
       return;
     }
     if (portal === "admin") {
+      if (!account.trim() || !password || !/^[0-9]{6}$/.test(totp)) {
+        setLoginError("请填写后台账户、密码及 6 位 2FA 验证码");
+        return;
+      }
       setLoggingIn(true);
       try {
         const result = await project4Api.loginMaster(
@@ -268,24 +268,9 @@ function LoginScreen({
       }
       return;
     }
-    const role: Role =
-      portal === "client"
-        ? "client"
-        : /^(ops|sub|运营|子账户)/i.test(account.trim())
-          ? "ops"
-          : "master";
-    const displayName =
-      mode === "register"
-        ? name.trim() || "Client"
-        : account.includes("@")
-          ? account.split("@")[0]
-          : account.trim() ||
-            (role === "master"
-              ? "Master Admin"
-              : role === "ops"
-                ? "Operations Admin"
-                : "Carlos Ramírez");
-    onLogin(role, displayName);
+    // Never derive permissions from the account name or accept an unauthenticated login.
+    // Client and ops login remain disabled until backend identity verification is available.
+    setLoginError("客户端及子账户认证服务尚未接入，当前禁止模拟登录。");
   };
 
   const isClient = portal === "client";
@@ -405,7 +390,7 @@ function LoginScreen({
           {resetMessage ? <div className={enh.formNotice}>{resetMessage}</div> : null}
           {loginError ? <div className={enh.formNotice}>{loginError}</div> : null}
 
-          <button className={styles.primaryButton} type="submit">
+          <button className={styles.primaryButton} type="submit" disabled={loggingIn}>
             {isClient
               ? mode === "register"
                 ? "Creează cont"
@@ -957,7 +942,7 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
         <div className={styles.phoneTop}><span>9:41</span><i/><button onClick={onClose} aria-label="Cerrar espejo"><X size={15}/></button></div>
 
         <div className={styles.phoneHeader}>
-          <img src={logoUrl} alt="Visionary Studio"/>
+          <img src="/brantone-veyor-logo-clean.webp" alt="Brantone Veylor"/>
           <div><strong>Visionary Trading</strong><span>{customer.name} · {customer.vip}</span></div>
           <button className={styles.phoneHeaderAction} onClick={()=>setTab("support")} aria-label="Soporte"><MessageSquareText size={16}/></button>
         </div>

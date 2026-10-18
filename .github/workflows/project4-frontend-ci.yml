@@ -1,0 +1,30 @@
+name: P004 frontend checks
+
+on:
+  pull_request:
+    paths:
+      - "project4-render-app/**"
+      - ".github/workflows/project4-frontend-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "project4-render-app/**"
+      - ".github/workflows/project4-frontend-ci.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: project4-render-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Build
+        run: npm run build
