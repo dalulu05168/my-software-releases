@@ -188,20 +188,19 @@ function CashPage({
   accountName: string;
   riskControls: RiskControl[];
 }) {
-  const [rows, setRows] = useState(cashSeed);
+  const rows = cashSeed;
   const [type, setType] = useState<"充值" | "提现">("充值");
   const [selected, setSelected] = useState<(typeof cashSeed)[number] | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [amount, setAmount] = useState("50000");
-  const [created, setCreated] = useState("");
   const [proofOpen, setProofOpen] = useState(false);
   const withdrawEnabled =
     riskControls.find((item) => item.key === "WITHDRAW")?.enabled ?? true;
   const visible = rows.filter((row) => row.type === type && (role !== "client" || row.user === accountName));
 
-  // Cash operations require a verified backend and must not mutate demo records.\n\n  return (
+  // Cash operations require a verified backend and must not mutate demo records.
+
+  return (
     <div className={styles.stack}>
-      <div className={styles.header}><div><h1>{role === "client" ? "Fonduri" : "资金审核"}</h1><p>{role === "client" ? "Depuneri, retrageri și starea solicitărilor." : "处理客户充值、提现与银行信息"}</p></div>{role === "client" ? <button className={styles.primary} disabled={type === "提现" && !withdrawEnabled} disabled title="真实资金申请尚未接入后端"><Banknote size={14}/> Solicitare nouă</button> : null}</div>
+      <div className={styles.header}><div><h1>{role === "client" ? "Fonduri" : "资金审核"}</h1><p>{role === "client" ? "Depuneri, retrageri și starea solicitărilor." : "处理客户充值、提现与银行信息"}</p></div>{role === "client" ? <button className={styles.primary} disabled title="真实资金申请尚未接入后端"><Banknote size={14}/> Solicitare nouă</button> : null}</div>
       <div className={styles.summaryGrid}>
         <div><span>{role === "client" ? "Disponibil" : "可用资金"}</span><strong>MXN 186,240.00</strong></div>
         <div><span>{role === "client" ? "Blocat" : "冻结资金"}</span><strong>MXN 21,400.00</strong></div>
