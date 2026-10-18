@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { project4Api } from "../helpers/project4Api";
+import { hasValidMasterSession, project4Api } from "../helpers/project4Api";
 import {
   Activity,
   BadgeDollarSign,
@@ -1149,6 +1149,19 @@ function AppMirror({ customer, onClose }: { customer: Customer; onClose: () => v
 
 export default function App() {
   const [role, setRole] = useState<Role | null>(null);
+  useEffect(() => {
+    const checkSession = () => {
+      if (!hasValidMasterSession()) {
+        setRole((current) => current === "master" ? null : current);
+      }
+    };
+    const interval = window.setInterval(checkSession, 30_000);
+    window.addEventListener("focus", checkSession);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", checkSession);
+    };
+  }, []);
   const [name, setName] = useState("");
   const [view, setView] = useState<View>("dashboard");
   const [customers, setCustomers] = useState(initialCustomers);
