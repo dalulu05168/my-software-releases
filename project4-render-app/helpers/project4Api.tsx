@@ -51,6 +51,19 @@ async function request(init?: RequestInit, scope?: "client" | "admin", authentic
   return data;
 }
 
+export function hasValidMasterSession(): boolean {
+  if (typeof window === "undefined") return false;
+  const token = window.localStorage.getItem(SESSION_KEY);
+  const expiry = window.localStorage.getItem("project4_master_session_expiry");
+  const timestamp = expiry ? Date.parse(expiry) : NaN;
+  if (!token || !Number.isFinite(timestamp) || timestamp <= Date.now()) {
+    window.localStorage.removeItem(SESSION_KEY);
+    window.localStorage.removeItem("project4_master_session_expiry");
+    return false;
+  }
+  return true;
+}
+
 export const project4Api = {
   async loginMaster(username: string, password: string, totp: string) {
     const data = await request({
@@ -70,6 +83,7 @@ export const project4Api = {
     }
     if (typeof window !== "undefined" && data.sessionToken) {
       window.localStorage.setItem(SESSION_KEY, data.sessionToken);
+      window.localStorage.setItem("project4_master_session_expiry", data.expiresAt);
     }
     return data as {
       ok: boolean;
@@ -81,7 +95,10 @@ export const project4Api = {
   },
 
   logoutMaster() {
-    if (typeof window !== "undefined") window.localStorage.removeItem(SESSION_KEY);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(SESSION_KEY);
+      window.localStorage.removeItem("project4_master_session_expiry");
+    }
   },
 
   async listClientSecurities() {
