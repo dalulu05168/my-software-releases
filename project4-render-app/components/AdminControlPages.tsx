@@ -473,10 +473,7 @@ function PurchaseAccessPage() {
         </div>
         <button
           className={styles.primary}
-          onClick={() => {
-            setCreating(true);
-            setCreatedCode("");
-          }}
+          disabled title="购买授权码尚未接入后端验证和审计"
         >
           <KeyRound size={15} />
           创建授权
@@ -508,45 +505,21 @@ function PurchaseAccessPage() {
                   <div className={styles.actions}>
                     {row.status === "启用" ? (
                       <button
-                        onClick={() =>
-                          setRows(
-                            rows.map((item) =>
-                              item.id === row.id
-                                ? { ...item, status: "暂停" }
-                                : item,
-                            ),
-                          )
-                        }
+                        disabled title="授权状态操作尚未接入后端"
                       >
                         暂停
                       </button>
                     ) : null}
                     {row.status === "暂停" ? (
                       <button
-                        onClick={() =>
-                          setRows(
-                            rows.map((item) =>
-                              item.id === row.id
-                                ? { ...item, status: "启用" }
-                                : item,
-                            ),
-                          )
-                        }
+                        disabled title="授权状态操作尚未接入后端"
                       >
                         恢复
                       </button>
                     ) : null}
                     {row.status !== "已撤销" ? (
                       <button
-                        onClick={() =>
-                          setRows(
-                            rows.map((item) =>
-                              item.id === row.id
-                                ? { ...item, status: "已撤销" }
-                                : item,
-                            ),
-                          )
-                        }
+                        disabled title="授权状态操作尚未接入后端"
                       >
                         撤销
                       </button>
